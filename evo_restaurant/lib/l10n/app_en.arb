@@ -2,5 +2,44 @@
   "helloWorld": "Hello World!",
   "@helloWorld": {
     "description": "The conventional newborn programmer greeting"
+  },
+
+  "loginText": "Login",
+  "@loginText": {
+    "description": "something Went Wrong Text"
+  },
+
+
+  "somethingWentWrongText": "Something went wrong!",
+  "@somethingWentWrongText": {
+    "description": "something Went Wrong Text"
+  },
+
+  "enterAUserNameHintText": "Enter a user name",
+  "@enterAUserNameHintText": {
+    "description": "Enter A User Name Hint Text"
+  },
+
+  "enterACorrectUserNameText": "Enter a correct user name",
+  "@enterACorrectUserNameText": {
+    "description": "Enter A Correct User Name Text"
+  },
+
+  "passwordText": "Password",
+  "@passwordText": {
+    "description": "password Text"
+  },
+
+  "enterPasswordHintText": "Enter Password",
+  "@enterPasswordHintText": {
+    "description": "Enter Password Hint Text"
+  },
+
+  "rememberUserNameText": "Remember User Name",
+  "@rememberUserNameText": {
+    "description": "Remember User Name Text"
   }
+
+
+
 }

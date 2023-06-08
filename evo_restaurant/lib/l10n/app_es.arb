@@ -1,3 +1,35 @@
 {
-    "helloWorld": "¡Hola Mundo!"
+  "helloWorld": "¡Hola Mundo!",
+  "somethingWentWrongText": "Algo Salio Mal",
+  "@somethingWentWrongText": {
+    "description": "something Went Wrong Text"
+  },
+
+  "loginText": "Inicio de sesión",
+  "@loginText": {
+    "description": "something Went Wrong Text"
+  },
+
+  "enterAUserNameHintText": "Ingrese un nombre de usuario",
+  "@enterAUserNameHintText": {
+    "description": "Enter A User Name Hint Text"
+  },
+  "enterACorrectUserNameText": "Ingrese un nombre de usuario correcto",
+  "@enterACorrectUserNameText": {
+    "description": "Enter A Correct User Name Text"
+  },
+  "passwordText": "Contraseña",
+  "@passwordText": {
+    "description": "password Text"
+  },
+
+  "enterPasswordHintText": "Ingrese la contraseña",
+  "@enterPasswordHintText": {
+    "description": "Enter Password Hint Text"
+  },
+
+  "rememberUserNameText": "Recordar Nombre de Usuario",
+  "@rememberUserNameText": {
+    "description": "Remember User Name Text"
+  }
 }
