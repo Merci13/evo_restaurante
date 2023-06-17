@@ -1,3 +1,4 @@
+import 'package:evo_restaurant/repositories/enums/type_information_modal.dart';
 import 'package:evo_restaurant/ui/views/widgets/base_widget.dart';
 import 'package:evo_restaurant/ui/views/widgets/loading/loading_provider.dart';
 import 'package:flutter/material.dart';
@@ -12,13 +13,11 @@ import '../../repositories/service/auth/authentication_service.dart';
 import '../../repositories/view_models/base_widget_model.dart';
 import '../../repositories/view_models/login_view_model.dart';
 import '../../utils/share/ui_helpers.dart';
-
-
+import 'widgets/information_modal/information_modal.dart';
 
 part 'login_view.g.dart';
 
 class LoginView extends BaseWidget {
-
   const LoginView({Key? key}) : super(key: key);
 
   @override
@@ -28,11 +27,11 @@ class LoginView extends BaseWidget {
         LoginViewModel>(
       create: (_) => LoginViewModel(),
       update: (_, authenticationService, loadingProvider, model) =>
-      (model ?? LoginViewModel())
-        ..authenticationService = authenticationService
-        ..context = context
-        ..loadingProvider = loadingProvider
-        ..init(context),
+          (model ?? LoginViewModel())
+            ..authenticationService = authenticationService
+            ..context = context
+            ..loadingProvider = loadingProvider
+            ..init(context),
       child: Consumer<LoginViewModel>(
         builder: (context, model, _) {
           Size mediaQuery = MediaQuery.of(context).size;
@@ -63,7 +62,7 @@ class LoginView extends BaseWidget {
                         child: Text(
                           AppLocalizations.of(context)?.loginText ?? "",
                           style: TextStyle(
-                            // fontFamily: commonFamily,
+                              // fontFamily: commonFamily,
                               fontWeight: FontWeight.w500,
                               color: Colors.grey[600],
                               fontSize: 20),
@@ -93,7 +92,7 @@ Widget __buttonEnterContainer(BuildContext context) {
     builder: (context, model, baseWidgetModel, _) {
       Size mediaQuery = MediaQuery.of(context).size;
       return SizedBox(
-        width: mediaQuery.width * 0.90,
+        width: mediaQuery.width * 0.40,
         height: mediaQuery.height * 0.07,
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
@@ -109,40 +108,17 @@ Widget __buttonEnterContainer(BuildContext context) {
           onPressed: () async {
             baseWidgetModel.showOverLayWidget(
               true,
-              Dialog(
-                  alignment: Alignment.center,
-                  elevation: 2,
-                  child: Container(
-                    height: mediaQuery.height * 0.20,
-                    width: mediaQuery.width * 0.80,
-                    color: Colors.white,
-                    child: const Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        CircularProgressIndicator(
-                          color: Colors.grey,
-                        ),
-                        Text("Loading"),
-                      ],
-                    ),
-                  )),
+              const InformationModal(
+                typeInformationModal: TypeInformationModal.LOADING,
+              ),
             );
-            ResponseObject result = await model.login();
-            baseWidgetModel.showOverLayWidget(false, Container());
-            bool res = result.status ?? false;
-            if (!res) {
-              //mostrar una alerta de que fue erroneo el login
-
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Center(
-                    child: Text(
-                        AppLocalizations.of(context)?.somethingWentWrongText ??
-                            ""),
-                  ),
-                ),
-              );
-            }
+            // ResponseObject result = await model.login();
+            // baseWidgetModel.showOverLayWidget(false, Container());
+            // bool res = result.status ?? false;
+            // if (!res) {
+            //   //mostrar una alerta de que fue erroneo el login
+            //
+            // }
           },
         ),
       );
@@ -230,12 +206,16 @@ Widget __userTextFormField(BuildContext context) {
             }
           },
           decoration: InputDecoration(
-              focusedBorder:  OutlineInputBorder(
-                borderSide: BorderSide(width: 2, color: Colors.blue[900] ?? Colors.blue),
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                    width: 2, color: Colors.blue[900] ?? Colors.blue),
               ),
-              labelText: AppLocalizations.of(context)?.enterAUserNameHintText ?? "",
+              labelText:
+                  AppLocalizations.of(context)?.enterAUserNameHintText ?? "",
               labelStyle: const TextStyle(
-                  fontSize: 16, fontWeight: FontWeight.w500, color: Colors.grey),
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.grey),
               prefixIcon: Container(
                 padding: const EdgeInsets.all(10),
                 child: const Icon(
@@ -243,21 +223,23 @@ Widget __userTextFormField(BuildContext context) {
                   color: Colors.grey,
                 ),
               ),
-              hintText: AppLocalizations.of(context)?.enterAUserNameHintText ?? "",
+              hintText:
+                  AppLocalizations.of(context)?.enterAUserNameHintText ?? "",
               hintStyle: const TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w500,
                   color: Colors.grey),
               border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
-                  borderSide:
-                   BorderSide(width: 2, color: Colors.blue[900] ?? Colors.blue)),
+                  borderSide: BorderSide(
+                      width: 2, color: Colors.blue[900] ?? Colors.blue)),
               filled: true,
               contentPadding: const EdgeInsets.all(16),
               fillColor: Colors.white),
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return AppLocalizations.of(context)?.enterACorrectUserNameText ?? "";
+              return AppLocalizations.of(context)?.enterACorrectUserNameText ??
+                  "";
             }
             return null;
           },
@@ -288,7 +270,9 @@ Widget __passwordTextFormField(BuildContext context) {
           decoration: InputDecoration(
               labelText: AppLocalizations.of(context)?.passwordText ?? "",
               labelStyle: const TextStyle(
-                  fontSize: 16, fontWeight: FontWeight.w500, color: Colors.grey),
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.grey),
               prefixIcon: Container(
                 padding: const EdgeInsets.all(10),
                 child: const Icon(
@@ -300,25 +284,27 @@ Widget __passwordTextFormField(BuildContext context) {
                 padding: const EdgeInsets.all(10),
                 child: model.showPassword
                     ? IconButton(
-                    icon: const Icon(
-                      Icons.visibility_off,
-                      color: Colors.grey,
-                    ),
-                    onPressed: () {
-                      model.showPassword = !model.showPassword;
-                    })
+                        icon: const Icon(
+                          Icons.visibility_off,
+                          color: Colors.grey,
+                        ),
+                        onPressed: () {
+                          model.showPassword = !model.showPassword;
+                        })
                     : IconButton(
-                    icon: const Icon(
-                      Icons.visibility,
-                      color: Colors.grey,
-                    ),
-                    onPressed: () {
-                      model.showPassword = !model.showPassword;
-                    }),
+                        icon: const Icon(
+                          Icons.visibility,
+                          color: Colors.grey,
+                        ),
+                        onPressed: () {
+                          model.showPassword = !model.showPassword;
+                        }),
               ),
-              hintText: AppLocalizations.of(context)?.enterPasswordHintText ?? "",
-              focusedBorder:  OutlineInputBorder(
-                borderSide: BorderSide(width: 2, color: Colors.blue[900] ?? Colors.blue),
+              hintText:
+                  AppLocalizations.of(context)?.enterPasswordHintText ?? "",
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                    width: 2, color: Colors.blue[900] ?? Colors.blue),
               ),
               hintStyle: const TextStyle(
                   fontSize: 15,
@@ -326,14 +312,15 @@ Widget __passwordTextFormField(BuildContext context) {
                   color: Colors.grey),
               border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
-                  borderSide:
-                   BorderSide(width: 2, color: Colors.blue[900] ?? Colors.blue)),
+                  borderSide: BorderSide(
+                      width: 2, color: Colors.blue[900] ?? Colors.blue)),
               filled: true,
               contentPadding: const EdgeInsets.all(16),
               fillColor: Colors.white),
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return AppLocalizations.of(context)?.enterACorrectUserNameText ?? "";
+              return AppLocalizations.of(context)?.enterACorrectUserNameText ??
+                  "";
             }
             return null;
           },
@@ -353,9 +340,8 @@ Widget __containerOfLogo(BuildContext context) {
       SizedBox(
         height: mediaQuery.height * 0.25,
         width: mediaQuery.width * 0.50,
-        child: Image.asset(
-        "assets/evo_icon.png"//image route here,
-        ),
+        child: Image.asset("assets/evo_icon.png" //image route here,
+            ),
       ),
       UIHelper.verticalSpace(10),
       Text(
