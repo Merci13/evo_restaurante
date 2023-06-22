@@ -3,6 +3,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:evo_restaurant/global/config.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -10,6 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
 import '../repositories/models/error_object.dart';
+import '../repositories/models/family.dart';
 import '../repositories/models/response_object.dart';
 import '../repositories/models/user.dart';
 import 'error_codes.dart';
@@ -31,7 +33,9 @@ class HasUserId {
 
 class ApiSource {
   String? _token;
-  String basePath = " ";
+  String basePath = Config.basePath;
+  String apiKey= Config.apiKey;
+  String table = Config.table;
 
   final StreamController<HasToken> _hasToken = StreamController.broadcast();
   final StreamController<HasUserId> _hasUserID = StreamController.broadcast();
@@ -177,4 +181,104 @@ class ApiSource {
               errorMessage: error.toString()));
     }
   }
+
+
+  Future<ResponseObject> getFamilies()async{
+    try{
+
+      String path = "$basePath/$table/fam_m?[off]=0&api_key=$apiKey";
+      Uri url = Uri.parse(path);
+
+      http.Response response = await http.post(url, headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+      });
+
+      if(response.statusCode != 200){
+        return   ResponseObject(
+            status: false,
+            errorObject: ErrorObject(
+              status: false,
+              errorObject: response.body,
+              errorMessage: response.body,
+            )
+        );
+      }
+      Map<String, dynamic> body = {};
+      return ResponseObject(
+        status: true,
+        errorObject: null,
+        responseObject: Family.fromJson(body)
+      );
+
+    }catch(err){
+      print("Error in getFamilies Method. Error: $err ------------------>>>>");
+      return ResponseObject(
+        status: false,
+        errorObject: ErrorObject(
+          status: false,
+          errorObject: err,
+          errorMessage: err.toString(),
+        )
+      );
+
+    }
+  }
+
+  Future<ResponseObject> loadUsers()async {
+
+    try{
+
+      //http://209.145.58.91/Pruebas/vERP_2_dat_dat/v1/dep_t?&api_key=mzZ58he3
+      String path = "$basePath/$table/dep_t?&api_key=$apiKey";
+      Uri url = Uri.parse(path);
+
+      http.Response response = await http.get(url, headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+      });
+
+      if(response.statusCode != 200){
+        return   ResponseObject(
+            status: false,
+            errorObject: ErrorObject(
+              status: false,
+              errorObject: response.body,
+              errorMessage: response.body,
+            )
+        );
+      }
+
+
+      Map<String, dynamic> body =  jsonDecode(response.body);
+      List<dynamic> dept = body["dep_t"];
+
+      List<User> users = List.empty(growable: true);
+      for (var element in dept) {
+        users.add(User.fromJson(element));
+      }
+      return ResponseObject(
+          status: true,
+          errorObject: null,
+          responseObject:users
+      );
+
+
+
+    }catch(error){
+      print("Error in getFamilies Method. Error: $error ------------------>>>>");
+      return ResponseObject(
+          status: false,
+          errorObject: ErrorObject(
+            status: false,
+            errorObject: error,
+            errorMessage: error.toString(),
+          )
+      );
+    }
+
+
+  }
+
+
 }

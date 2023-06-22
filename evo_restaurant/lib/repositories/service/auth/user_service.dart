@@ -16,5 +16,9 @@ class UserService{
 
   }
 
+  Future<ResponseObject> loadUsers()async {
+    return _api.loadUsers();
+  }
+
 
 }

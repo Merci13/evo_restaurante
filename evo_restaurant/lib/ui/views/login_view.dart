@@ -1,6 +1,8 @@
 import 'package:evo_restaurant/repositories/enums/type_information_modal.dart';
+import 'package:evo_restaurant/repositories/service/auth/user_service.dart';
 import 'package:evo_restaurant/ui/views/widgets/base_widget.dart';
 import 'package:evo_restaurant/ui/views/widgets/loading/loading_provider.dart';
+import 'package:evo_restaurant/utils/share/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -23,12 +25,13 @@ class LoginView extends BaseWidget {
   @override
   Widget getChild(BuildContext context, BaseWidgetModel baseWidgetModel) {
     var platform = Theme.of(context).platform;
-    return ChangeNotifierProxyProvider2<AuthenticationService, LoadingProvider,
-        LoginViewModel>(
+    return ChangeNotifierProxyProvider3<UserService, AuthenticationService,
+        LoadingProvider, LoginViewModel>(
       create: (_) => LoginViewModel(),
-      update: (_, authenticationService, loadingProvider, model) =>
+      update: (_, userService, authenticationService, loadingProvider, model) =>
           (model ?? LoginViewModel())
             ..authenticationService = authenticationService
+            ..userService = userService
             ..context = context
             ..loadingProvider = loadingProvider
             ..init(context),
@@ -55,10 +58,8 @@ class LoginView extends BaseWidget {
                       const _ContainerOfLogo(),
                       UIHelper.verticalSpace(mediaQuery.height * 0.07),
                       Container(
-                        padding: EdgeInsets.only(
-                          left: mediaQuery.width * 0.1,
-                        ),
-                        alignment: Alignment.centerLeft,
+
+                        alignment: Alignment.center,
                         child: Text(
                           AppLocalizations.of(context)?.loginText ?? "",
                           style: TextStyle(
@@ -112,13 +113,13 @@ Widget __buttonEnterContainer(BuildContext context) {
                 typeInformationModal: TypeInformationModal.LOADING,
               ),
             );
-            // ResponseObject result = await model.login();
-            // baseWidgetModel.showOverLayWidget(false, Container());
-            // bool res = result.status ?? false;
-            // if (!res) {
-            //   //mostrar una alerta de que fue erroneo el login
-            //
-            // }
+            ResponseObject result = await model.login();
+            baseWidgetModel.showOverLayWidget(false, Container());
+            bool res = result.status ?? false;
+            if (!res) {
+              //mostrar una alerta de que fue erroneo el login
+              print("families");
+            }
           },
         ),
       );
@@ -174,7 +175,7 @@ Widget __formContainer(BuildContext context) {
         key: _formKey,
         child: Column(
           children: <Widget>[
-            const _UserTextFormField(),
+            const _UsersDropDown(),
             UIHelper.verticalSpace(10),
             const _PasswordTextFormField(),
           ],
@@ -185,66 +186,54 @@ Widget __formContainer(BuildContext context) {
 }
 
 @swidget
-Widget __userTextFormField(BuildContext context) {
+Widget __usersDropDown(BuildContext context) {
   return Consumer<LoginViewModel>(
     builder: (context, model, _) {
       Size mediaQuery = MediaQuery.of(context).size;
-      return Padding(
-        padding: EdgeInsets.symmetric(horizontal: mediaQuery.width * 0.05),
-        child: TextFormField(
-          inputFormatters: [
-            ///Allows only letters
-            FilteringTextInputFormatter.allow(RegExp("[a-zA-Z0-9@.]"))
-          ],
-          focusNode: model.userNameFocusNode,
-          controller: model.userNameEditingController,
-          textAlign: TextAlign.left,
-          keyboardType: TextInputType.name,
-          onTap: () {
-            if (!model.userNameFocusNode.hasFocus) {
-              model.userNameFocusNode.requestFocus();
-            }
-          },
-          decoration: InputDecoration(
-              focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(
-                    width: 2, color: Colors.blue[900] ?? Colors.blue),
-              ),
-              labelText:
-                  AppLocalizations.of(context)?.enterAUserNameHintText ?? "",
-              labelStyle: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.grey),
-              prefixIcon: Container(
-                padding: const EdgeInsets.all(10),
-                child: const Icon(
-                  Icons.person,
-                  color: Colors.grey,
-                ),
-              ),
-              hintText:
-                  AppLocalizations.of(context)?.enterAUserNameHintText ?? "",
-              hintStyle: const TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.grey),
-              border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide(
-                      width: 2, color: Colors.blue[900] ?? Colors.blue)),
-              filled: true,
-              contentPadding: const EdgeInsets.all(16),
-              fillColor: Colors.white),
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return AppLocalizations.of(context)?.enterACorrectUserNameText ??
-                  "";
-            }
-            return null;
-          },
-        ),
-      );
+      return Container(
+          padding: EdgeInsets.symmetric(horizontal: mediaQuery.width * 0.05),
+          height: mediaQuery.height * 0.06,
+          width: mediaQuery.width * 0.40,
+          decoration: BoxDecoration(
+              color: Colors.white,
+              //background color of dropdown button
+              border: Border.all(color: colorPrimary, width: 1),
+              //border of dropdown button
+              borderRadius: BorderRadius.circular(7),
+              //border raiuds of dropdown button
+              boxShadow: UIHelper.boxShadowHelper
+          ),
+          child: model.listOfUser.isEmpty
+              ? Container()
+              : DropdownButton(
+            isDense: true,
+                  isExpanded: true,
+                  padding: const EdgeInsets.only(top: 10),
+                  elevation: 0,
+                  value: model.selectedUser,
+                  onChanged: (value) {
+                    model.selectUser(value ?? "");
+                  },
+                  icon: const Icon(
+                    Icons.arrow_drop_down,
+                    color: colorPrimary,
+                    size: 25,
+                  ),
+                  items: model.listOfUser.map((String value) {
+                    return DropdownMenuItem<String>(
+                        value: value,
+                        child: Container(
+                          alignment: Alignment.center,
+                            width: double.infinity,
+
+                            child: Text(
+                              value.toUpperCase(),
+                              textAlign: TextAlign.center,
+                            )));
+                  }).toList(),
+                )
+
+          );
     },
   );
 }
@@ -254,14 +243,17 @@ Widget __passwordTextFormField(BuildContext context) {
   return Consumer<LoginViewModel>(
     builder: (context, model, _) {
       Size mediaQuery = MediaQuery.of(context).size;
-      return Padding(
-        padding: EdgeInsets.symmetric(horizontal: mediaQuery.width * 0.05),
+      return Container(
+        height: mediaQuery.height * 0.06,
+        width: mediaQuery.width * 0.40,
+
         child: TextFormField(
           focusNode: model.passwordFocusNode,
           controller: model.passwordEditingController,
           textAlign: TextAlign.left,
           keyboardType: TextInputType.text,
           obscureText: !model.showPassword,
+
           onTap: () {
             if (!model.passwordFocusNode.hasFocus) {
               model.passwordFocusNode.requestFocus();

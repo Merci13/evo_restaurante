@@ -1,4 +1,5 @@
 
+import 'package:evo_restaurant/repositories/service/auth/user_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'global/api_source.dart';
@@ -18,6 +19,12 @@ class AppProviders {
           create: (_) => AuthenticationService(),
           update: (_, api, authenticationService) =>
           (authenticationService ?? AuthenticationService())..api = api,
+        ),
+
+        ProxyProvider<ApiSource, UserService>(
+          create: (_) => UserService(),
+          update: (_, api, authenticationService) =>
+          (authenticationService ?? UserService())..api = api,
         ),
         StreamProvider<HasToken>(
             initialData: HasToken(),

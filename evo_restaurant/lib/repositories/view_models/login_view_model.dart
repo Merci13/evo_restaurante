@@ -1,3 +1,4 @@
+import 'package:evo_restaurant/repositories/service/auth/user_service.dart';
 import 'package:flutter/cupertino.dart';
 
 import '../../global/error_codes.dart';
@@ -5,12 +6,13 @@ import '../../ui/views/widgets/loading/loading_provider.dart';
 import '../enums/view_state.dart';
 import '../models/error_object.dart';
 import '../models/response_object.dart';
+import '../models/user.dart';
 import '../service/auth/authentication_service.dart';
 import 'base_model.dart';
 
-
 class LoginViewModel extends BaseModel {
   late AuthenticationService _authenticationService;
+  late UserService _userService;
   late BuildContext _context;
   FocusNode _userNameFocusNode = FocusNode();
   FocusNode _passwordFocusNode = FocusNode();
@@ -22,6 +24,8 @@ class LoginViewModel extends BaseModel {
   String _errorMessage = "";
   late LoadingProvider _loadingProvider;
   bool _showLoading = false;
+  String _selectedUser = "";
+  List<String> _listOfUser = List.empty(growable: true);
 
   AuthenticationService get authenticationService => _authenticationService;
 
@@ -48,6 +52,26 @@ class LoginViewModel extends BaseModel {
   FocusNode get scaffoldFocusNode => _scaffoldFocusNode;
 
   bool get showLoading => _showLoading;
+
+  UserService get userService => _userService;
+
+  String get selectedUser => _selectedUser;
+
+  List<String> get listOfUser => _listOfUser;
+
+  set listOfUser(List<String> value) {
+    _listOfUser = value;
+    notifyListeners();
+  }
+
+  set selectedUser(String value) {
+    _selectedUser = value;
+    notifyListeners();
+  }
+
+  set userService(UserService value) {
+    _userService = value;
+  }
 
   set showLoading(bool value) {
     _showLoading = value;
@@ -109,11 +133,24 @@ class LoginViewModel extends BaseModel {
   }
 
   init(BuildContext context) async {
+    listOfUser.clear();
+    selectedUser = "";
     String userNameRemember = await authenticationService.getRememberUserName();
     if (userNameRemember != "") {
       _rememberUserName = true;
       _userNameEditingController.text = userNameRemember;
     }
+    //charge list of users
+
+    ResponseObject responseObject = await userService.loadUsers();
+    bool resultUsers = responseObject.status ?? false;
+    if (resultUsers) {
+      List<User> temp = responseObject.responseObject as List<User>;
+      for (User element in temp) {
+        listOfUser.add(element.name ?? "");
+      }
+    }
+    selectedUser = listOfUser.first;
 
     notifyListeners();
   }
@@ -152,5 +189,9 @@ class LoginViewModel extends BaseModel {
             message: "Something went Wrong"),
       );
     }
+  }
+
+  selectUser(String value) {
+    selectedUser = value;
   }
 }

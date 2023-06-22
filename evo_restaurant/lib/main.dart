@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AppProviders.getProviders(MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Evo Restaurant',
       localizationsDelegates: const [
         AppLocalizations.delegate, // Add this line
         GlobalMaterialLocalizations.delegate,
@@ -46,6 +46,18 @@ class MyApp extends StatelessWidget {
         ),
         cardColor: const Color(0xFF00007F),
         useMaterial3: true,
+        colorScheme: ColorScheme(
+            brightness: Brightness.dark,
+            error: Colors.red[900] ?? Colors.red,
+            background: Colors.white,
+            primary: const Color(0xFF250FF3),
+            onPrimary: Color(0xFF250FF3),
+            secondary: Color(0xFF1C0BD6),
+            onSecondary: Color(0xFF1C0BD6),
+            onError: Colors.red[900] ?? Colors.red,
+            onBackground: Colors.white,
+            surface: Color(0xFF00007F),
+            onSurface: Color(0xFF00007F)),
       ),
       routes: {
         /// 'initialRoute' is  not enogh
@@ -70,7 +82,9 @@ class MyApp extends StatelessWidget {
             duration: const Duration(milliseconds: 1000),
             firstChild: const SplashView(),
             secondChild: (tokenSource.hasToken ?? false)
-                ?  const Center(child: Text(" Home "),)//here come the HomeView()
+                ? const Center(
+                    child: Text(" Home "),
+                  ) //here come the HomeView()
                 : const LoginView(),
             crossFadeState: (userIdSource.userId != null)
                 ? CrossFadeState.showSecond
@@ -89,4 +103,3 @@ class MyApp extends StatelessWidget {
     ));
   }
 }
-

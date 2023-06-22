@@ -62,4 +62,11 @@ class UIHelper {
   static double defaultHorizontalPadding(BuildContext context) {
     return MediaQuery.of(context).size.width * 0.10;
   }
+
+  static List<BoxShadow>? boxShadowHelper = const <BoxShadow>[
+    //apply shadow on Dropdown button
+    BoxShadow(
+        color: Color.fromRGBO(0, 0, 0, 0.57), //shadow for button
+        blurRadius: 3) //blur radius of shadow
+  ];
 }
