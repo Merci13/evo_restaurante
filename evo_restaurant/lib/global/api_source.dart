@@ -1,4 +1,3 @@
-
 import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
@@ -34,7 +33,7 @@ class HasUserId {
 class ApiSource {
   String? _token;
   String basePath = Config.basePath;
-  String apiKey= Config.apiKey;
+  String apiKey = Config.apiKey;
   String table = Config.table;
 
   final StreamController<HasToken> _hasToken = StreamController.broadcast();
@@ -65,7 +64,8 @@ class ApiSource {
     print(
         "ID: Remover despues, linea 68 en global/api_source.dart------------>>>>>>>>>>>>>> $_hasUserID \n Token: $_token");
     if (_token?.isNotEmpty ?? false) {
-      ResponseObject result = Future.value(ResponseObject(status: false)) as ResponseObject;//await getUserInformationByToken();
+      ResponseObject result = Future.value(ResponseObject(status: false))
+          as ResponseObject; //await getUserInformationByToken();
       if (result.status ?? false) {
         User user = result.responseObject as User;
         _hasUserID.add(HasUserId(userId: "${user.id ?? ""}"));
@@ -128,45 +128,38 @@ class ApiSource {
     return userNameRemember ?? "";
   }
 
-  Future<ResponseObject> login(
-      String username, String password, bool rememberUserName) async {
+  Future<ResponseObject> login(bool valid, bool rememberUserName, String userName) async {
     try {
       _sharedPreferences = await SharedPreferences.getInstance();
-      //[ ] http://144.91.124.147:8097/api/login/jsolis/1/0?password=Solis21*
-      String path = basePath + "/login/$username/1/1?password=$password";
-      Uri url = Uri.parse(path);
 
-      http.Response response = await http.post(url, headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-        "Access-Token": "",
-        "User-Agent": "Swagger-Codegen/1.0.0/android"
-      });
-      if (response.statusCode >= 400) {
+      if (!valid) {
         return ResponseObject(
+          status: false,
+          errorObject: ErrorObject(
             status: false,
-            errorObject: ErrorObject(
-                status: false,
-                message: response.body,
-                errorObject: response,
-                errorCode: response.statusCode,
-                errorMessage: response.body));
+            message: "The password is not correct",
+            errorObject: null,
+            errorCode: errorPasswordIsNotCorrect,
+            errorMessage: "The password is not correct",
+          ),
+        );
       } else {
         if (rememberUserName) {
           bool containKey = _sharedPreferences!.containsKey("user-name");
           if (containKey) {
             if (await _sharedPreferences!.remove("user-name")) {
-              await _sharedPreferences!.setString("user-name", username);
+              await _sharedPreferences!.setString("user-name", userName);
             }
           } else {
-            await _sharedPreferences!.setString("user-name", username);
+            await _sharedPreferences!.setString("user-name", userName);
           }
         } else {
           await _sharedPreferences!.remove("user-name");
         }
-        String token = response.body.replaceAll("\"", "");
 
-        await updateToken(token, username);
+        String token = "isLogged";
+
+        await updateToken(token, userName);
 
         return ResponseObject(status: true, responseObject: token);
       }
@@ -177,15 +170,13 @@ class ApiSource {
               status: false,
               message: error.toString(),
               errorObject: error,
-              errorCode: 1404,
+              errorCode: errorTokenEmpty,
               errorMessage: error.toString()));
     }
   }
 
-
-  Future<ResponseObject> getFamilies()async{
-    try{
-
+  Future<ResponseObject> getFamilies() async {
+    try {
       String path = "$basePath/$table/fam_m?[off]=0&api_key=$apiKey";
       Uri url = Uri.parse(path);
 
@@ -194,41 +185,34 @@ class ApiSource {
         "Accept": "application/json",
       });
 
-      if(response.statusCode != 200){
-        return   ResponseObject(
+      if (response.statusCode != 200) {
+        return ResponseObject(
             status: false,
             errorObject: ErrorObject(
               status: false,
               errorObject: response.body,
               errorMessage: response.body,
-            )
-        );
+            ));
       }
       Map<String, dynamic> body = {};
       return ResponseObject(
-        status: true,
-        errorObject: null,
-        responseObject: Family.fromJson(body)
-      );
-
-    }catch(err){
+          status: true,
+          errorObject: null,
+          responseObject: Family.fromJson(body));
+    } catch (err) {
       print("Error in getFamilies Method. Error: $err ------------------>>>>");
       return ResponseObject(
-        status: false,
-        errorObject: ErrorObject(
           status: false,
-          errorObject: err,
-          errorMessage: err.toString(),
-        )
-      );
-
+          errorObject: ErrorObject(
+            status: false,
+            errorObject: err,
+            errorMessage: err.toString(),
+          ));
     }
   }
 
-  Future<ResponseObject> loadUsers()async {
-
-    try{
-
+  Future<ResponseObject> loadUsers() async {
+    try {
       //http://209.145.58.91/Pruebas/vERP_2_dat_dat/v1/dep_t?&api_key=mzZ58he3
       String path = "$basePath/$table/dep_t?&api_key=$apiKey";
       Uri url = Uri.parse(path);
@@ -238,19 +222,17 @@ class ApiSource {
         "Accept": "application/json",
       });
 
-      if(response.statusCode != 200){
-        return   ResponseObject(
+      if (response.statusCode != 200) {
+        return ResponseObject(
             status: false,
             errorObject: ErrorObject(
               status: false,
               errorObject: response.body,
               errorMessage: response.body,
-            )
-        );
+            ));
       }
 
-
-      Map<String, dynamic> body =  jsonDecode(response.body);
+      Map<String, dynamic> body = jsonDecode(response.body);
       List<dynamic> dept = body["dep_t"];
 
       List<User> users = List.empty(growable: true);
@@ -258,27 +240,17 @@ class ApiSource {
         users.add(User.fromJson(element));
       }
       return ResponseObject(
-          status: true,
-          errorObject: null,
-          responseObject:users
-      );
-
-
-
-    }catch(error){
-      print("Error in getFamilies Method. Error: $error ------------------>>>>");
+          status: true, errorObject: null, responseObject: users);
+    } catch (error) {
+      print(
+          "Error in getFamilies Method. Error: $error ------------------>>>>");
       return ResponseObject(
           status: false,
           errorObject: ErrorObject(
             status: false,
             errorObject: error,
             errorMessage: error.toString(),
-          )
-      );
+          ));
     }
-
-
   }
-
-
 }

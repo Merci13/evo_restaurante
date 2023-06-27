@@ -31,5 +31,30 @@
   "rememberUserNameText": "Recordar Nombre de Usuario",
   "@rememberUserNameText": {
     "description": "Remember User Name Text"
+  },
+
+  "passwordIsNotCorrectText": "La contraseña no es correcta.",
+  "@passwordIsNotCorrectText": {
+    "description": "Password Is Not Correct Text"
+  },
+
+  "warningText": "Atención!",
+  "@warningText": {
+    "description": "Warining Text"
+  },
+
+  "acceptText": "Aceptar",
+  "@acceptText": {
+    "description": "Accept Text"
+  },
+
+  "okText": "Ok!",
+  "@okText": {
+    "description": "Ok Text"
+  },
+
+  "cancelText": "Cancelar",
+  "@cancelText": {
+    "description": "Cancel Text"
   }
 }

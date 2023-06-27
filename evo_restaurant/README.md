@@ -18,3 +18,7 @@ samples, guidance on mobile development, and a full API reference.
 ## Running generating Functional Widgets
 - to create widgets run 
 *flutter pub pub run build_runner watch --delete-conflicting-outputs*
+
+## Running Localizations Strings 
+- to create the new localizations strings run the next command.
+*flutter gen-l10n*

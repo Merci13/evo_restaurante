@@ -38,8 +38,30 @@
   "rememberUserNameText": "Remember User Name",
   "@rememberUserNameText": {
     "description": "Remember User Name Text"
+  },
+
+  "passwordIsNotCorrectText": "Password Is Not Correct",
+  "@passwordIsNotCorrectText": {
+    "description": "Password Is Not Correct Text"
+  },
+
+  "warningText": "Warning!",
+  "@warningText": {
+    "description": "Warining Text"
+  },
+
+  "acceptText": "Accept",
+  "@acceptText": {
+    "description": "Accept Text"
+  },
+
+  "okText": "Ok!",
+  "@okText": {
+    "description": "Ok Text"
+  },
+
+  "cancelText": "Cancel",
+  "@cancelText": {
+    "description": "Cancel Text"
   }
-
-
-
 }

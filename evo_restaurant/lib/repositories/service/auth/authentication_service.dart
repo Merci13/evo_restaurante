@@ -28,27 +28,10 @@ class AuthenticationService {
     return _api.getRememberUserName();
   }
 
-  Future<ResponseObject> login(
-      String username, String password, bool rememberUserName) async {
+  Future<ResponseObject> login(bool valid, bool rememberUserName, String userName) async {
     ResponseObject result =
-        await _api.login(username, password, rememberUserName);
-    if (result.status ?? false) {
-      ResponseObject getUserInformation =
-          Future.value(ResponseObject(status: false))
-              as ResponseObject;
-      //await _api.getUserInformation(
-      // result.responseObject as String, username);
+        await _api.login(valid, rememberUserName, userName);
 
-      bool resultGetUserInformation = getUserInformation.status ?? false;
-      if (resultGetUserInformation) {
-        _userController.add(getUserInformation.responseObject as User);
-      } else {
-        result = ResponseObject(
-          status: false,
-          errorObject: getUserInformation.errorObject,
-        );
-      }
-    }
 
     return result;
   }

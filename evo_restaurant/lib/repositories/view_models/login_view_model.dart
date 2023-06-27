@@ -25,7 +25,7 @@ class LoginViewModel extends BaseModel {
   late LoadingProvider _loadingProvider;
   bool _showLoading = false;
   String _selectedUser = "";
-  List<String> _listOfUser = List.empty(growable: true);
+  List<User> _listOfUser = List.empty(growable: true);
 
   AuthenticationService get authenticationService => _authenticationService;
 
@@ -57,9 +57,9 @@ class LoginViewModel extends BaseModel {
 
   String get selectedUser => _selectedUser;
 
-  List<String> get listOfUser => _listOfUser;
+  List<User> get listOfUser => _listOfUser;
 
-  set listOfUser(List<String> value) {
+  set listOfUser(List<User> value) {
     _listOfUser = value;
     notifyListeners();
   }
@@ -145,12 +145,9 @@ class LoginViewModel extends BaseModel {
     ResponseObject responseObject = await userService.loadUsers();
     bool resultUsers = responseObject.status ?? false;
     if (resultUsers) {
-      List<User> temp = responseObject.responseObject as List<User>;
-      for (User element in temp) {
-        listOfUser.add(element.name ?? "");
-      }
+      listOfUser = responseObject.responseObject as List<User>;
     }
-    selectedUser = listOfUser.first;
+    selectedUser = listOfUser.first.name ?? "";
 
     notifyListeners();
   }
@@ -173,10 +170,19 @@ class LoginViewModel extends BaseModel {
         throw ErrorDescription("Finish the process to perform a new one");
       }
       setState(ViewState.BUSY);
-      String username = userNameEditingController.text;
+      User userValidation = User();
+      for (User user in _listOfUser) {
+        if (user.name?.toLowerCase() == selectedUser) {
+          userValidation = user;
+        }
+      }
       String password = passwordEditingController.text;
-      ResponseObject result = await authenticationService.login(
-          username, password, rememberUserName);
+
+      ResponseObject result = ResponseObject();
+      if (password == userValidation.pwd) {
+        result = await authenticationService.login(
+            true, rememberUserName, userValidation.name ?? "");
+      }
       setState(ViewState.IDLE);
       return result;
     } catch (error) {

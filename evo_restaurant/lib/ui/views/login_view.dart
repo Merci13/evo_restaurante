@@ -1,16 +1,18 @@
 import 'package:evo_restaurant/repositories/enums/type_information_modal.dart';
+import 'package:evo_restaurant/repositories/models/error_object.dart';
 import 'package:evo_restaurant/repositories/service/auth/user_service.dart';
 import 'package:evo_restaurant/ui/views/widgets/base_widget.dart';
 import 'package:evo_restaurant/ui/views/widgets/loading/loading_provider.dart';
 import 'package:evo_restaurant/utils/share/app_colors.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:functional_widget_annotation/functional_widget_annotation.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../../global/error_codes.dart';
 import '../../repositories/models/response_object.dart';
+import '../../repositories/models/user.dart';
 import '../../repositories/service/auth/authentication_service.dart';
 import '../../repositories/view_models/base_widget_model.dart';
 import '../../repositories/view_models/login_view_model.dart';
@@ -24,7 +26,7 @@ class LoginView extends BaseWidget {
 
   @override
   Widget getChild(BuildContext context, BaseWidgetModel baseWidgetModel) {
-    var platform = Theme.of(context).platform;
+    //var platform = Theme.of(context).platform;
     return ChangeNotifierProxyProvider3<UserService, AuthenticationService,
         LoadingProvider, LoginViewModel>(
       create: (_) => LoginViewModel(),
@@ -38,7 +40,7 @@ class LoginView extends BaseWidget {
       child: Consumer<LoginViewModel>(
         builder: (context, model, _) {
           Size mediaQuery = MediaQuery.of(context).size;
-          var data = MediaQuery.of(context).viewPadding;
+         // var data = MediaQuery.of(context).viewPadding;
 
           return SizedBox(
             width: mediaQuery.width,
@@ -58,10 +60,9 @@ class LoginView extends BaseWidget {
                       const _ContainerOfLogo(),
                       UIHelper.verticalSpace(mediaQuery.height * 0.07),
                       Container(
-
                         alignment: Alignment.center,
                         child: Text(
-                          AppLocalizations.of(context)?.loginText ?? "",
+                          AppLocalizations.of(context).loginText,
                           style: TextStyle(
                               // fontFamily: commonFamily,
                               fontWeight: FontWeight.w500,
@@ -102,14 +103,14 @@ Widget __buttonEnterContainer(BuildContext context) {
             backgroundColor: Colors.blue[900],
           ),
           child: Text(
-            AppLocalizations.of(context)?.loginText ?? "",
+            AppLocalizations.of(context).loginText,
             style: const TextStyle(
                 fontSize: 17, fontWeight: FontWeight.w700, color: Colors.white),
           ),
           onPressed: () async {
             baseWidgetModel.showOverLayWidget(
               true,
-              const InformationModal(
+              const InformationModal.loading(
                 typeInformationModal: TypeInformationModal.LOADING,
               ),
             );
@@ -117,8 +118,21 @@ Widget __buttonEnterContainer(BuildContext context) {
             baseWidgetModel.showOverLayWidget(false, Container());
             bool res = result.status ?? false;
             if (!res) {
-              //mostrar una alerta de que fue erroneo el login
-              print("families");
+              ErrorObject errorObject = result.errorObject ?? ErrorObject();
+              baseWidgetModel.showOverLayWidget(true,
+                  InformationModal(
+                typeInformationModal: TypeInformationModal.WARNING,
+                icon: Icon(Icons.warning, color: Colors.yellow[700],),
+                 acceptButton: (){
+                  baseWidgetModel.showOverLayWidget(false, Container());
+              },
+                cancelButton: null,
+                title: AppLocalizations.of(context).warningText,
+                contentText: errorObject.errorCode == errorPasswordIsNotCorrect
+                    ? AppLocalizations.of(context).passwordIsNotCorrectText ?? ""
+                    : AppLocalizations.of(context).somethingWentWrongText ?? "",
+
+              ));
             }
           },
         ),
@@ -132,9 +146,10 @@ Widget __rememberUserCheckBoxContainer(BuildContext context) {
   return Consumer<LoginViewModel>(
     builder: (context, model, _) {
       Size mediaQuery = MediaQuery.of(context).size;
-      return Container(
-        width: mediaQuery.width * 0.40,
+      return SizedBox(
+        width: mediaQuery.width * 0.20,
         height: mediaQuery.height * 0.07,
+
         child: Row(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -152,7 +167,7 @@ Widget __rememberUserCheckBoxContainer(BuildContext context) {
             Expanded(
                 flex: 70,
                 child: Text(
-                  AppLocalizations.of(context)?.rememberUserNameText ?? "",
+                  AppLocalizations.of(context).rememberUserNameText,
                   style: const TextStyle(
                     fontWeight: FontWeight.w500,
                     fontSize: 15,
@@ -170,9 +185,9 @@ Widget __rememberUserCheckBoxContainer(BuildContext context) {
 Widget __formContainer(BuildContext context) {
   return Consumer<LoginViewModel>(
     builder: (context, model, _) {
-      final _formKey = GlobalKey<FormState>();
+      final formKey = GlobalKey<FormState>();
       return Form(
-        key: _formKey,
+        key: formKey,
         child: Column(
           children: <Widget>[
             const _UsersDropDown(),
@@ -219,15 +234,15 @@ Widget __usersDropDown(BuildContext context) {
                     color: colorPrimary,
                     size: 25,
                   ),
-                  items: model.listOfUser.map((String value) {
+                  items: model.listOfUser.map((User value) {
+
                     return DropdownMenuItem<String>(
-                        value: value,
+                        value: value.name,
                         child: Container(
                           alignment: Alignment.center,
                             width: double.infinity,
-
                             child: Text(
-                              value.toUpperCase(),
+                              value.name?.toUpperCase() ?? "",
                               textAlign: TextAlign.center,
                             )));
                   }).toList(),
@@ -243,7 +258,7 @@ Widget __passwordTextFormField(BuildContext context) {
   return Consumer<LoginViewModel>(
     builder: (context, model, _) {
       Size mediaQuery = MediaQuery.of(context).size;
-      return Container(
+      return SizedBox(
         height: mediaQuery.height * 0.06,
         width: mediaQuery.width * 0.40,
 
@@ -260,7 +275,7 @@ Widget __passwordTextFormField(BuildContext context) {
             }
           },
           decoration: InputDecoration(
-              labelText: AppLocalizations.of(context)?.passwordText ?? "",
+              labelText: AppLocalizations.of(context).passwordText,
               labelStyle: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
@@ -293,7 +308,7 @@ Widget __passwordTextFormField(BuildContext context) {
                         }),
               ),
               hintText:
-                  AppLocalizations.of(context)?.enterPasswordHintText ?? "",
+                  AppLocalizations.of(context).enterPasswordHintText,
               focusedBorder: OutlineInputBorder(
                 borderSide: BorderSide(
                     width: 2, color: Colors.blue[900] ?? Colors.blue),
@@ -311,8 +326,7 @@ Widget __passwordTextFormField(BuildContext context) {
               fillColor: Colors.white),
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return AppLocalizations.of(context)?.enterACorrectUserNameText ??
-                  "";
+              return AppLocalizations.of(context).enterACorrectUserNameText;
             }
             return null;
           },
