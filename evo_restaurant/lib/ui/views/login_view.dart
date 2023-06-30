@@ -40,7 +40,7 @@ class LoginView extends BaseWidget {
       child: Consumer<LoginViewModel>(
         builder: (context, model, _) {
           Size mediaQuery = MediaQuery.of(context).size;
-         // var data = MediaQuery.of(context).viewPadding;
+          // var data = MediaQuery.of(context).viewPadding;
 
           return SizedBox(
             width: mediaQuery.width,
@@ -119,20 +119,31 @@ Widget __buttonEnterContainer(BuildContext context) {
             bool res = result.status ?? false;
             if (!res) {
               ErrorObject errorObject = result.errorObject ?? ErrorObject();
-              baseWidgetModel.showOverLayWidget(true,
+              baseWidgetModel.showOverLayWidget(
+                  true,
                   InformationModal(
-                typeInformationModal: TypeInformationModal.WARNING,
-                icon: Icon(Icons.warning, color: Colors.yellow[700],),
-                 acceptButton: (){
-                  baseWidgetModel.showOverLayWidget(false, Container());
-              },
-                cancelButton: null,
-                title: AppLocalizations.of(context).warningText,
-                contentText: errorObject.errorCode == errorPasswordIsNotCorrect
-                    ? AppLocalizations.of(context).passwordIsNotCorrectText ?? ""
-                    : AppLocalizations.of(context).somethingWentWrongText ?? "",
-
-              ));
+                    typeInformationModal: TypeInformationModal.WARNING,
+                    icon: Icon(
+                      Icons.warning,
+                      color: Colors.yellow[700],
+                      size: 40,
+                    ),
+                    acceptButton: () {
+                      baseWidgetModel.showOverLayWidget(false, Container());
+                    },
+                    cancelButton: () {
+                      baseWidgetModel.showOverLayWidget(false, Container());
+                    },
+                    title: AppLocalizations.of(context).warningText,
+                    contentText:
+                        errorObject.errorCode == errorPasswordIsNotCorrect
+                            ? AppLocalizations.of(context)
+                                    .passwordIsNotCorrectText ??
+                                ""
+                            : AppLocalizations.of(context)
+                                    .somethingWentWrongText ??
+                                "",
+                  ));
             }
           },
         ),
@@ -149,7 +160,6 @@ Widget __rememberUserCheckBoxContainer(BuildContext context) {
       return SizedBox(
         width: mediaQuery.width * 0.20,
         height: mediaQuery.height * 0.07,
-
         child: Row(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -216,12 +226,11 @@ Widget __usersDropDown(BuildContext context) {
               //border of dropdown button
               borderRadius: BorderRadius.circular(7),
               //border raiuds of dropdown button
-              boxShadow: UIHelper.boxShadowHelper
-          ),
+              boxShadow: UIHelper.boxShadowHelper),
           child: model.listOfUser.isEmpty
               ? Container()
               : DropdownButton(
-            isDense: true,
+                  isDense: true,
                   isExpanded: true,
                   padding: const EdgeInsets.only(top: 10),
                   elevation: 0,
@@ -235,20 +244,17 @@ Widget __usersDropDown(BuildContext context) {
                     size: 25,
                   ),
                   items: model.listOfUser.map((User value) {
-
                     return DropdownMenuItem<String>(
                         value: value.name,
                         child: Container(
-                          alignment: Alignment.center,
+                            alignment: Alignment.center,
                             width: double.infinity,
                             child: Text(
                               value.name?.toUpperCase() ?? "",
                               textAlign: TextAlign.center,
                             )));
                   }).toList(),
-                )
-
-          );
+                ));
     },
   );
 }
@@ -261,14 +267,12 @@ Widget __passwordTextFormField(BuildContext context) {
       return SizedBox(
         height: mediaQuery.height * 0.06,
         width: mediaQuery.width * 0.40,
-
         child: TextFormField(
           focusNode: model.passwordFocusNode,
           controller: model.passwordEditingController,
           textAlign: TextAlign.left,
           keyboardType: TextInputType.text,
           obscureText: !model.showPassword,
-
           onTap: () {
             if (!model.passwordFocusNode.hasFocus) {
               model.passwordFocusNode.requestFocus();
@@ -307,8 +311,7 @@ Widget __passwordTextFormField(BuildContext context) {
                           model.showPassword = !model.showPassword;
                         }),
               ),
-              hintText:
-                  AppLocalizations.of(context).enterPasswordHintText,
+              hintText: AppLocalizations.of(context).enterPasswordHintText,
               focusedBorder: OutlineInputBorder(
                 borderSide: BorderSide(
                     width: 2, color: Colors.blue[900] ?? Colors.blue),

@@ -8,3 +8,4 @@ const Color colorPrimaryLight = Color(0xFF250FF3);
 const Color controlColor = Color(0xFFCD969D);
 const Color controlColorGray = Color(0xff9b9b9b); //
 const Color controlDeep = Color(0xffF3F3F4);
+const Color controlContent = Color(0xf0a0404);

@@ -16,13 +16,14 @@ class InformationModal extends BaseWidget {
   final Function? cancelButton;
   final Icon? icon;
 
-  const InformationModal({super.key,
-    required this.typeInformationModal,
-    required this.title,
-    required this.contentText,
-    required this.acceptButton,
-    this.cancelButton,
-    required this.icon});
+  const InformationModal(
+      {super.key,
+      required this.typeInformationModal,
+      required this.title,
+      required this.contentText,
+      required this.acceptButton,
+      this.cancelButton,
+      required this.icon});
 
   const InformationModal.loading({
     super.key,
@@ -36,25 +37,30 @@ class InformationModal extends BaseWidget {
 
   @override
   Widget getChild(BuildContext context, BaseWidgetModel baseWidgetModel) {
-    Size mediaQuery = MediaQuery
-        .of(context)
-        .size;
-    bool loadingVal = typeInformationModal == TypeInformationModal.LOADING
-        ? true
-        : false;
+    Size mediaQuery = MediaQuery.of(context).size;
+    bool loadingVal =
+        typeInformationModal == TypeInformationModal.LOADING ? true : false;
 
     return _ScaffoldOfInformation(
-        loading:  loadingVal);
+      loading: loadingVal,
+      title: title,
+      contentText: contentText,
+      acceptButton: acceptButton,
+      cancelButton: cancelButton,
+      icon: icon,
+    );
   }
 }
 
-
 @swidget
 Widget __scaffoldOfInformation(BuildContext context,
-    {required bool loading }) {
-  Size mediaQuery = MediaQuery
-      .of(context)
-      .size;
+    {required bool loading,
+    String? title,
+    String? contentText,
+    Function? acceptButton,
+    Function? cancelButton,
+    Icon? icon}) {
+  Size mediaQuery = MediaQuery.of(context).size;
   double height = mediaQuery.height * 0.40;
   double width = mediaQuery.width * 0.5;
   if (loading) {
@@ -81,49 +87,117 @@ Widget __scaffoldOfInformation(BuildContext context,
         ),
         child: loading
             ? Center(
-            child: CircularProgressIndicator(
-              color: Colors.blue[900],
-            ))
+                child: CircularProgressIndicator(
+                color: Colors.blue[900],
+              ))
             : Container(
-          padding: const EdgeInsets.all(10),
-          child: Container(
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: Colors.black,
-                width: 1
-              ),
-              borderRadius: const BorderRadius.all(Radius.circular(7))
-            ),
-            child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            mainAxisSize: MainAxisSize.max,
-            children: [
-
-              Expanded(
-                flex: 25, child: Container(
-
-                decoration: const BoxDecoration(
-                  border:  Border(
-                    bottom: BorderSide(
-                      width: 3,
-                      color: controlColorGray
-                    )
-                  )
+                padding: const EdgeInsets.all(10),
+                child: Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                      border: Border.all(color: Colors.black, width: 1),
+                      borderRadius: const BorderRadius.all(Radius.circular(7))),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Expanded(
+                        flex: 25,
+                        child: Container(
+                          alignment: Alignment.center,
+                          child: Row(
+                            children: [
+                              Expanded(
+                                  flex: 75,
+                                  child: Text(
+                                    title ?? "",
+                                    textAlign: TextAlign.center,
+                                    style: styleTitle(),
+                                  )),
+                              Expanded(
+                                flex: 25,
+                                child: icon ??
+                                    Icon(
+                                      Icons.warning,
+                                      size: 25,
+                                      color: Colors.yellow[700],
+                                    ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                      const Divider(
+                        thickness: 2,
+                        color: controlColorGray,
+                      ),
+                      Expanded(
+                        flex: 50,
+                        child: Container(
+                          alignment: Alignment.centerLeft,
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          width: double.infinity,
+                            child: Text(
+                          contentText ?? "",
+                          style: contentStyle(),
+                        )),
+                      ),
+                      Expanded(
+                        flex: 25,
+                        child: Row(
+                          children: [
+                            Expanded(
+                              flex:60,
+                              child: Container(
+                                color: Colors.red,
+                                child: TextButton(
+                                  onPressed: () {
+                                    acceptButton!() ?? () {};
+                                  },
+                                  child:
+                                      Text(AppLocalizations.of(context).acceptText),
+                                ),
+                              ),
+                            ),
+                            cancelButton == null
+                                ? Container()
+                                : Expanded(
+                              flex:60,
+                              child: Container(
+                                color: Colors.green,
+                                child: TextButton(
+                                  onPressed: () {
+                                    acceptButton!() ?? () {};
+                                  },
+                                  child:
+                                  Text(AppLocalizations.of(context).cancelText),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
                 ),
-                ),
               ),
-
-              Expanded(
-                flex: 50, child: Container(),
-              ),
-
-              Expanded(
-                flex: 25, child: Container(color: Colors.red,),
-              )
-            ],
-        ),
-          ),),
       ),
     ),
+  );
+}
+
+TextStyle contentStyle() {
+  return  TextStyle(
+    fontSize: 22,
+    color: Colors.grey[800],
+    fontWeight: FontWeight.w600,
+  );
+}
+
+TextStyle styleTitle() {
+  return const TextStyle(
+    fontSize: 25,
+    color: colorPrimaryDark,
+    fontWeight: FontWeight.bold,
   );
 }
