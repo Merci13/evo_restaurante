@@ -1,3 +1,4 @@
+import 'package:evo_restaurant/ui/views/home_view.dart';
 import 'package:evo_restaurant/ui/views/login_view.dart';
 import 'package:evo_restaurant/ui/views/splash_view.dart';
 import 'package:flutter/material.dart';
@@ -82,9 +83,7 @@ class MyApp extends StatelessWidget {
             duration: const Duration(milliseconds: 1000),
             firstChild: const SplashView(),
             secondChild: (tokenSource.hasToken ?? false)
-                ? const Center(
-                    child: Text(" Home "),
-                  ) //here come the HomeView()
+                ?  const HomeView()
                 : const LoginView(),
             crossFadeState: (userIdSource.userId != null)
                 ? CrossFadeState.showSecond

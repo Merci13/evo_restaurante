@@ -62,22 +62,26 @@ class ApiSource {
     _hasToken.add(HasToken(hasToken: (_token ?? '').isNotEmpty));
 
     print(
-        "ID: Remover despues, linea 68 en global/api_source.dart------------>>>>>>>>>>>>>> $_hasUserID \n Token: $_token");
+        "ID: Remover despues, linea 68 en global/api_source.dart------------>>>>>>>>>>>>>> ${_hasUserID.stream.first} \n Token: $_token");
     if (_token?.isNotEmpty ?? false) {
-      ResponseObject result = Future.value(ResponseObject(status: false))
-          as ResponseObject; //await getUserInformationByToken();
+      ResponseObject result = await Future.value(ResponseObject(status: false)); //await getUserInformationByToken();
+
       if (result.status ?? false) {
         User user = result.responseObject as User;
         _hasUserID.add(HasUserId(userId: "${user.id ?? ""}"));
       } else {
         _hasUserID.stream.drain();
         _hasUserID.add(HasUserId(userId: ""));
+        _sharedPreferences?.remove("token");
+        _hasToken.add(HasToken(hasToken: false));
         if (kDebugMode) {
           print(result.errorObject?.message);
         }
       }
     } else {
       _hasUserID.add(HasUserId(userId: ""));
+      _sharedPreferences?.remove("token");
+      _hasToken.add(HasToken(hasToken: false));
     }
   }
 

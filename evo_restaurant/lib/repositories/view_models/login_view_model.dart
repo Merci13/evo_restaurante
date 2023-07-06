@@ -14,6 +14,7 @@ class LoginViewModel extends BaseModel {
   late AuthenticationService _authenticationService;
   late UserService _userService;
   late BuildContext _context;
+  late User _user;
   FocusNode _userNameFocusNode = FocusNode();
   FocusNode _passwordFocusNode = FocusNode();
   FocusNode _scaffoldFocusNode = FocusNode();
@@ -58,6 +59,14 @@ class LoginViewModel extends BaseModel {
   String get selectedUser => _selectedUser;
 
   List<User> get listOfUser => _listOfUser;
+
+
+  User get user => _user;
+
+  set user(User value) {
+    _user = value;
+    notifyListeners();
+  }
 
   set listOfUser(List<User> value) {
     _listOfUser = value;
@@ -182,6 +191,17 @@ class LoginViewModel extends BaseModel {
       if (password == userValidation.pwd) {
         result = await authenticationService.login(
             true, rememberUserName, userValidation.name ?? "");
+        if(result.status ?? false){
+          user = User(
+            id: userValidation.id,
+            name: userValidation.name,
+            isLogged: true,
+            emp: userValidation.emp,
+            empDiv: userValidation.empDiv,
+            supDep: userValidation.supDep
+          );
+        }
+
       }
       setState(ViewState.IDLE);
       return result;

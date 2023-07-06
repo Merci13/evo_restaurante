@@ -63,5 +63,11 @@
   "cancelText": "Cancel",
   "@cancelText": {
     "description": "Cancel Text"
+  },
+
+  "evoRestaurantText": "Evo Restaurant",
+  "@evoRestaurantText": {
+    "description": "Evo Restaurant Text"
   }
+
 }

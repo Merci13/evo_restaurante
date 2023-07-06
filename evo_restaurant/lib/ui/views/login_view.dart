@@ -138,11 +138,9 @@ Widget __buttonEnterContainer(BuildContext context) {
                     contentText:
                         errorObject.errorCode == errorPasswordIsNotCorrect
                             ? AppLocalizations.of(context)
-                                    .passwordIsNotCorrectText ??
-                                ""
+                                    .passwordIsNotCorrectText
                             : AppLocalizations.of(context)
-                                    .somethingWentWrongText ??
-                                "",
+                                    .somethingWentWrongText,
                   ));
             }
           },

@@ -2,6 +2,7 @@ import 'package:evo_restaurant/repositories/enums/type_information_modal.dart';
 import 'package:evo_restaurant/repositories/view_models/base_widget_model.dart';
 import 'package:evo_restaurant/ui/views/widgets/base_widget.dart';
 import 'package:evo_restaurant/utils/share/app_colors.dart';
+import 'package:evo_restaurant/utils/share/ui_helpers.dart';
 import 'package:flutter/material.dart';
 import 'package:functional_widget_annotation/functional_widget_annotation.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -116,12 +117,15 @@ Widget __scaffoldOfInformation(BuildContext context,
                                   )),
                               Expanded(
                                 flex: 25,
-                                child: icon ??
-                                    Icon(
-                                      Icons.warning,
-                                      size: 25,
-                                      color: Colors.yellow[700],
-                                    ),
+                                child: Container(
+                                  alignment: Alignment.centerLeft,
+                                  child: icon ??
+                                      Icon(
+                                        Icons.warning,
+                                        size: 25,
+                                        color: Colors.yellow[700],
+                                      ),
+                                ),
                               )
                             ],
                           ),
@@ -134,49 +138,24 @@ Widget __scaffoldOfInformation(BuildContext context,
                       Expanded(
                         flex: 50,
                         child: Container(
-                          alignment: Alignment.centerLeft,
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                          width: double.infinity,
+                            alignment: Alignment.centerLeft,
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                            width: double.infinity,
                             child: Text(
-                          contentText ?? "",
-                          style: contentStyle(),
-                        )),
+                              contentText ?? "",
+                              style: contentStyle(),
+                            )),
                       ),
-                      Expanded(
-                        flex: 25,
-                        child: Row(
-                          children: [
-                            Expanded(
-                              flex:60,
-                              child: Container(
-                                color: Colors.red,
-                                child: TextButton(
-                                  onPressed: () {
-                                    acceptButton!() ?? () {};
-                                  },
-                                  child:
-                                      Text(AppLocalizations.of(context).acceptText),
-                                ),
-                              ),
-                            ),
-                            cancelButton == null
-                                ? Container()
-                                : Expanded(
-                              flex:60,
-                              child: Container(
-                                color: Colors.green,
-                                child: TextButton(
-                                  onPressed: () {
-                                    acceptButton!() ?? () {};
-                                  },
-                                  child:
-                                  Text(AppLocalizations.of(context).cancelText),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
+                      Row(
+                        children: [
+                          _AcceptButton(acceptButton ?? () {}),
+                          UIHelper.horizontalSpace(10),
+
+                          cancelButton == null
+                              ? Container()
+                              : _CancelButton(cancelButton),
+                        ],
+                      ),
                     ],
                   ),
                 ),
@@ -186,8 +165,60 @@ Widget __scaffoldOfInformation(BuildContext context,
   );
 }
 
+@swidget
+Widget __acceptButton(BuildContext context, Function acceptButton) {
+  return Expanded(
+    flex: 60,
+    child: Container(
+        decoration: BoxDecoration(
+            color: colorPrimary,
+            borderRadius: const BorderRadius.all(Radius.circular(7)),
+            border: Border.all(
+              color: Colors.black,
+              width: 1,
+            )),
+      child: TextButton(
+        onPressed: () {
+          acceptButton() ?? () {};
+        },
+        child: Text(AppLocalizations.of(context).acceptText, style: styleForButtons(),),
+      ),
+    ),
+  );
+}
+
+@swidget
+Widget __cancelButton(BuildContext context, Function cancelButton) {
+  return Expanded(
+    flex: 60,
+    child: Container(
+      decoration: BoxDecoration(
+          color: Colors.red[800],
+          borderRadius: const BorderRadius.all(Radius.circular(7)),
+          border: Border.all(
+            color: Colors.black,
+            width: 1,
+          )),
+      child: TextButton(
+        onPressed: () {
+          cancelButton() ?? () {};
+        },
+        child: Text(
+          AppLocalizations.of(context).cancelText,
+          style: styleForButtons(),
+        ),
+      ),
+    ),
+  );
+}
+
+TextStyle styleForButtons() {
+  return const TextStyle(
+      color: Colors.white, fontSize: 22, fontWeight: FontWeight.w600);
+}
+
 TextStyle contentStyle() {
-  return  TextStyle(
+  return TextStyle(
     fontSize: 22,
     color: Colors.grey[800],
     fontWeight: FontWeight.w600,

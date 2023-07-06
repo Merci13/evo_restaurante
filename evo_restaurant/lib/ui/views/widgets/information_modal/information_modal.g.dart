@@ -40,3 +40,33 @@ class _ScaffoldOfInformation extends StatelessWidget {
         icon: icon,
       );
 }
+
+class _AcceptButton extends StatelessWidget {
+  const _AcceptButton(
+    this.acceptButton, {
+    Key? key,
+  }) : super(key: key);
+
+  final Function acceptButton;
+
+  @override
+  Widget build(BuildContext _context) => __acceptButton(
+        _context,
+        acceptButton,
+      );
+}
+
+class _CancelButton extends StatelessWidget {
+  const _CancelButton(
+    this.cancelButton, {
+    Key? key,
+  }) : super(key: key);
+
+  final Function cancelButton;
+
+  @override
+  Widget build(BuildContext _context) => __cancelButton(
+        _context,
+        cancelButton,
+      );
+}
