@@ -190,18 +190,7 @@ class LoginViewModel extends BaseModel {
       ResponseObject result = ResponseObject();
       if (password == userValidation.pwd) {
         result = await authenticationService.login(
-            true, rememberUserName, userValidation.name ?? "");
-        if(result.status ?? false){
-          user = User(
-            id: userValidation.id,
-            name: userValidation.name,
-            isLogged: true,
-            emp: userValidation.emp,
-            empDiv: userValidation.empDiv,
-            supDep: userValidation.supDep
-          );
-        }
-
+            true, rememberUserName,userValidation);
       }
       setState(ViewState.IDLE);
       return result;

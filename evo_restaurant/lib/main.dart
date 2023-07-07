@@ -38,28 +38,8 @@ class MyApp extends StatelessWidget {
         Locale('en'), // English
         Locale('es'), // Spanish
       ],
-      theme: ThemeData(
-        primaryColor: const Color(0xFF250FF3),
-        hintColor: const Color(0xFF1C0BD6),
-        scaffoldBackgroundColor: Colors.white,
-        appBarTheme: const AppBarTheme(
-          color: Color(0xFF250FF3),
-        ),
-        cardColor: const Color(0xFF00007F),
-        useMaterial3: true,
-        colorScheme: ColorScheme(
-            brightness: Brightness.dark,
-            error: Colors.red[900] ?? Colors.red,
-            background: Colors.white,
-            primary: const Color(0xFF250FF3),
-            onPrimary: Color(0xFF250FF3),
-            secondary: Color(0xFF1C0BD6),
-            onSecondary: Color(0xFF1C0BD6),
-            onError: Colors.red[900] ?? Colors.red,
-            onBackground: Colors.white,
-            surface: Color(0xFF00007F),
-            onSurface: Color(0xFF00007F)),
-      ),
+      theme: _themeDataForMain(),
+
       routes: {
         /// 'initialRoute' is  not enogh
         /// the rout '/' will always be pushed. So '/' should handle displaying LoginView Internally
@@ -100,5 +80,30 @@ class MyApp extends StatelessWidget {
         ),
       ),
     ));
+  }
+
+  ThemeData _themeDataForMain() {
+    return ThemeData(
+      primaryColor: const Color(0xFF250FF3),
+      hintColor: const Color(0xFF1C0BD6),
+      scaffoldBackgroundColor: Colors.white,
+      appBarTheme: const AppBarTheme(
+        color: Color(0xFF250FF3),
+      ),
+      cardColor: const Color(0xFF00007F),
+      useMaterial3: true,
+      colorScheme: ColorScheme(
+          brightness: Brightness.dark,
+          error: Colors.red[900] ?? Colors.red,
+          background: Colors.white,
+          primary: const Color(0xFF250FF3),
+          onPrimary: Color(0xFF250FF3),
+          secondary: Color(0xFF1C0BD6),
+          onSecondary: Color(0xFF1C0BD6),
+          onError: Colors.red[900] ?? Colors.red,
+          onBackground: Colors.white,
+          surface: Color(0xFF00007F),
+          onSurface: Color(0xFF00007F)),
+    );
   }
 }

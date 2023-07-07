@@ -132,7 +132,7 @@ class ApiSource {
     return userNameRemember ?? "";
   }
 
-  Future<ResponseObject> login(bool valid, bool rememberUserName, String userName) async {
+  Future<ResponseObject> login(bool valid, bool rememberUserName, User userValidation) async {
     try {
       _sharedPreferences = await SharedPreferences.getInstance();
 
@@ -152,10 +152,10 @@ class ApiSource {
           bool containKey = _sharedPreferences!.containsKey("user-name");
           if (containKey) {
             if (await _sharedPreferences!.remove("user-name")) {
-              await _sharedPreferences!.setString("user-name", userName);
+              await _sharedPreferences!.setString("user-name", userValidation.name ?? "");
             }
           } else {
-            await _sharedPreferences!.setString("user-name", userName);
+            await _sharedPreferences!.setString("user-name", userValidation.name ?? "");
           }
         } else {
           await _sharedPreferences!.remove("user-name");
@@ -163,7 +163,7 @@ class ApiSource {
 
         String token = "isLogged";
 
-        await updateToken(token, userName);
+        await updateToken(token, userValidation.name ?? "");
 
         return ResponseObject(status: true, responseObject: token);
       }

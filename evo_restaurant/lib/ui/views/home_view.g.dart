@@ -13,6 +13,13 @@ class _ContainerOfDrawer extends StatelessWidget {
   Widget build(BuildContext _context) => __containerOfDrawer(_context);
 }
 
+class _ContainerOfIconAndNameApp extends StatelessWidget {
+  const _ContainerOfIconAndNameApp({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext _context) => __containerOfIconAndNameApp(_context);
+}
+
 class _Body extends StatelessWidget {
   const _Body({Key? key}) : super(key: key);
 

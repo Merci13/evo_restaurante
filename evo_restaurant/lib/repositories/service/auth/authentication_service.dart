@@ -28,10 +28,13 @@ class AuthenticationService {
     return _api.getRememberUserName();
   }
 
-  Future<ResponseObject> login(bool valid, bool rememberUserName, String userName) async {
+  Future<ResponseObject> login(bool valid,bool rememberUserName,User userValidation) async {
     ResponseObject result =
-        await _api.login(valid, rememberUserName, userName);
-
+        await _api.login(valid, rememberUserName,userValidation);
+      if(result.status ?? false){
+        userValidation.isLogged = true;
+        _userController.add(userValidation);
+      }
 
     return result;
   }

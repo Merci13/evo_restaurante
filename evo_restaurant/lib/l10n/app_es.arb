@@ -61,5 +61,10 @@
   "evoRestaurantText": "Evo Restaurante",
   "@evoRestaurantText": {
     "description": "Evo Restaurant Text"
+  },
+
+  "synchronizeText": "Sincronizar Base de Datos",
+  "@synchronizeText": {
+    "description": "Synchronize from data Base Text"
   }
 }
