@@ -7,8 +7,16 @@ part of 'own_app_bar.dart';
 // **************************************************************************
 
 class _AppBarBody extends StatelessWidget {
-  const _AppBarBody({Key? key}) : super(key: key);
+  const _AppBarBody(
+    this.isFromHome, {
+    Key? key,
+  }) : super(key: key);
+
+  final bool isFromHome;
 
   @override
-  Widget build(BuildContext _context) => __appBarBody(_context);
+  Widget build(BuildContext _context) => __appBarBody(
+        _context,
+        isFromHome,
+      );
 }

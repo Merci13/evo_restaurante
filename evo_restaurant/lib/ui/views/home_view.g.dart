@@ -26,3 +26,10 @@ class _Body extends StatelessWidget {
   @override
   Widget build(BuildContext _context) => __body(_context);
 }
+
+class _ContainerOfHalls extends StatelessWidget {
+  const _ContainerOfHalls({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext _context) => __containerOfHalls(_context);
+}

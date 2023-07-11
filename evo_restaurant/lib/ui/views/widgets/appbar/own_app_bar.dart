@@ -5,6 +5,7 @@ import 'package:evo_restaurant/utils/share/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/widgets.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:functional_widget_annotation/functional_widget_annotation.dart';
 import 'package:provider/provider.dart';
 
@@ -15,7 +16,10 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 part 'own_app_bar.g.dart';
 
 class OwnAppBar extends BaseWidget {
-  const OwnAppBar({super.key});
+  bool isFromHome = false;
+
+   OwnAppBar({super.key, required this.isFromHome});
+
 
   @override
   Widget getChild(BuildContext context, BaseWidgetModel baseWidgetModel) {
@@ -27,7 +31,7 @@ class OwnAppBar extends BaseWidget {
         ..init(),
       child: Consumer2<AppBarViewModel, BaseWidgetModel>(
         builder: (context, model, baseWidgetModel, _) {
-          return const _AppBarBody();
+          return  _AppBarBody(isFromHome);
         },
       ),
     );
@@ -35,7 +39,7 @@ class OwnAppBar extends BaseWidget {
 }
 
 @swidget
-Widget __appBarBody(BuildContext context) {
+Widget __appBarBody(BuildContext context, bool isFromHome) {
   return Consumer2<AppBarViewModel, BaseWidgetModel>(
       builder: (context, model, baseWidgetModel, _) {
     return AppBar(
@@ -48,6 +52,13 @@ Widget __appBarBody(BuildContext context) {
         fontWeight: FontWeight.w600,
         fontSize: 30
       ),
+      automaticallyImplyLeading: isFromHome,
+      leading: isFromHome ? IconButton(
+        icon:const Icon(FontAwesomeIcons.bars, size: 30,),
+        onPressed: () => Scaffold.of(context).openDrawer(),
+      ): null,
+
+
     );
   });
 }

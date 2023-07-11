@@ -6,6 +6,7 @@ import 'package:evo_restaurant/ui/views/widgets/base_widget.dart';
 import 'package:evo_restaurant/utils/share/app_colors.dart';
 import 'package:evo_restaurant/utils/share/ui_helpers.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:functional_widget_annotation/functional_widget_annotation.dart';
 import 'package:provider/provider.dart';
 
@@ -34,15 +35,29 @@ class HomeView extends BaseWidget {
           return SizedBox(
             width: mediaQuery.width,
             height: mediaQuery.height,
-            child: Scaffold(
-              drawer: Drawer(
-                backgroundColor: colorAccent,
-                elevation: 2,
-                width: mediaQuery.width * 0.30,
-                child: const _ContainerOfDrawer(),
+            child: Theme(
+              data: ThemeData(
+                appBarTheme:  const AppBarTheme(
+                  iconTheme: IconThemeData(color: Colors.white),
+                  actionsIconTheme: IconThemeData(color: Colors.white),
+
+                  elevation: 0,
+                ),
               ),
-              body: const SingleChildScrollView(
-                child: _Body(),
+              child: Scaffold(
+              appBar: PreferredSize(
+                preferredSize: const Size.fromHeight(70.0),
+                child: OwnAppBar(isFromHome: true),
+              ),
+                drawer: Drawer(
+                  backgroundColor: colorAccent,
+                  elevation: 2,
+                  width: mediaQuery.width * 0.30,
+                  child: const _ContainerOfDrawer(),
+                ),
+                body: const SingleChildScrollView(
+                  child: _Body(),
+                ),
               ),
             ),
           );
@@ -60,16 +75,13 @@ Widget __containerOfDrawer(BuildContext context) {
     return Column(
       children: [
         const _ContainerOfIconAndNameApp(),
-        Container(
-          color: colorAccentLight,
-          child: const Divider(
-            thickness: 2,
-            color: controlColorGray,
-          ),
+        const Divider(
+          thickness: 2,
+          color: controlColorGray,
         ),
         Container(
           width: double.infinity,
-          color: colorAccentLight,
+          color: Colors.transparent,
           alignment: Alignment.center,
           child: Text(
             (model.user.name ?? "").toUpperCase(),
@@ -80,7 +92,7 @@ Widget __containerOfDrawer(BuildContext context) {
         UIHelper.verticalSpace(20),
         Container(
           width: double.infinity,
-          decoration:  BoxDecoration(
+          decoration: BoxDecoration(
             border: _borderForDrawerButtons(),
           ),
           child: TextButton(
@@ -128,13 +140,87 @@ Widget __containerOfIconAndNameApp(BuildContext context) {
 Widget __body(BuildContext context) {
   return Consumer2<HomeViewModel, BaseWidgetModel>(
     builder: (context, model, baseWidgetModel, _) {
-      return Column(
-        children: [
-          OwnAppBar(),
-        ],
-      );
+      // return Column(
+      //   children: [
+      //    // OwnAppBar(isFromHome: true),
+      //     // _ContainerOfHalls(),
+      //     Container(),
+      //   ],);
+      return _ContainerOfHalls();
     },
   );
+}
+
+@swidget
+Widget __containerOfHalls(BuildContext context){
+  return Consumer2<HomeViewModel, BaseWidgetModel>(
+    builder: (context, model, baseWidgetModel, _){
+      Size mediaquery = MediaQuery.of(context).size;
+
+      BorderRadius  borderRadius = BorderRadius.circular(8.0);
+      double appbarHeight = const Size.fromHeight(70.0).height;
+      return Container(
+        height: mediaquery.height - appbarHeight,
+        width: mediaquery.width,
+        padding: const EdgeInsets.only(top: 20, bottom: 50),
+        child: ListView.builder(
+          padding: EdgeInsets.symmetric(vertical: 10),
+            itemCount: model.listOfHalls.length,
+            itemBuilder: (BuildContext context, int index){
+              return  Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Center(
+                  child: Material(
+                    elevation: 10,
+                    borderRadius: borderRadius,
+                    child: InkWell(
+                      onTap: () {},
+                      child: Container(
+                        padding: EdgeInsets.all(0.0),
+                        height: mediaquery.height * 0.20,
+                        width: mediaquery.width * 0.5,
+                        decoration: BoxDecoration(
+                          borderRadius: borderRadius,
+
+                        ),
+                        child: Row(
+                          children: <Widget>[
+                            LayoutBuilder(builder: (context, constraints) {
+                              return Container(
+                                height: constraints.maxHeight,
+                                width: constraints.maxHeight,
+                                decoration: BoxDecoration(
+                                  color: Colors.deepPurple,
+                                  borderRadius: borderRadius,
+                                ),
+                                child:const Icon(
+                                  Icons.arrow_circle_right_outlined,
+                                  color: Colors.white,
+                                  size: 50,
+                                ),
+                              );
+                            }),
+                            Expanded(
+                              child: Text(
+                                model.listOfHalls[index],
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 25,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.grey[700]
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            }),
+      );
+    },);
 }
 
 TextStyle _styleForButtons() {
