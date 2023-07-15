@@ -188,10 +188,10 @@ class LoginViewModel extends BaseModel {
       String password = passwordEditingController.text;
 
       ResponseObject result = ResponseObject();
-      if (password == userValidation.pwd) {
+
         result = await authenticationService.login(
-            true, rememberUserName,userValidation);
-      }
+            password == userValidation.pwd, rememberUserName,userValidation);
+
       setState(ViewState.IDLE);
       return result;
     } catch (error) {

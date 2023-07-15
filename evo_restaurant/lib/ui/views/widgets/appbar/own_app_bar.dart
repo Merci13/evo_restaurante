@@ -56,7 +56,13 @@ Widget __appBarBody(BuildContext context, bool isFromHome) {
       leading: isFromHome ? IconButton(
         icon:const Icon(FontAwesomeIcons.bars, size: 30,),
         onPressed: () => Scaffold.of(context).openDrawer(),
-      ): null,
+      ):  IconButton(
+        icon: const Icon(Icons.arrow_back_ios, size: 30, color: Colors.white,),
+        onPressed: (){
+          Navigator.pop(context);
+        },
+
+      ),
 
 
     );

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:evo_restaurant/global/config.dart';
+import 'package:evo_restaurant/repositories/models/hall.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -64,7 +65,8 @@ class ApiSource {
     print(
         "ID: Remover despues, linea 68 en global/api_source.dart------------>>>>>>>>>>>>>> ${_hasUserID.stream.first} \n Token: $_token");
     if (_token?.isNotEmpty ?? false) {
-      ResponseObject result = await Future.value(ResponseObject(status: false)); //await getUserInformationByToken();
+      ResponseObject result = await Future.value(
+          ResponseObject(status: false)); //await getUserInformationByToken();
 
       if (result.status ?? false) {
         User user = result.responseObject as User;
@@ -132,7 +134,8 @@ class ApiSource {
     return userNameRemember ?? "";
   }
 
-  Future<ResponseObject> login(bool valid, bool rememberUserName, User userValidation) async {
+  Future<ResponseObject> login(
+      bool valid, bool rememberUserName, User userValidation) async {
     try {
       _sharedPreferences = await SharedPreferences.getInstance();
 
@@ -152,10 +155,12 @@ class ApiSource {
           bool containKey = _sharedPreferences!.containsKey("user-name");
           if (containKey) {
             if (await _sharedPreferences!.remove("user-name")) {
-              await _sharedPreferences!.setString("user-name", userValidation.name ?? "");
+              await _sharedPreferences!
+                  .setString("user-name", userValidation.name ?? "");
             }
           } else {
-            await _sharedPreferences!.setString("user-name", userValidation.name ?? "");
+            await _sharedPreferences!
+                .setString("user-name", userValidation.name ?? "");
           }
         } else {
           await _sharedPreferences!.remove("user-name");
@@ -248,6 +253,47 @@ class ApiSource {
     } catch (error) {
       print(
           "Error in getFamilies Method. Error: $error ------------------>>>>");
+      return ResponseObject(
+          status: false,
+          errorObject: ErrorObject(
+            status: false,
+            errorObject: error,
+            errorMessage: error.toString(),
+          ));
+    }
+  }
+
+  Future<ResponseObject> getAllHalls() async {
+    try {
+      String path = "$basePath/$table/sal_T?&api_key=$apiKey";
+      Uri url = Uri.parse(path);
+
+      http.Response response = await http.get(url, headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+      });
+
+      if (response.statusCode != 200) {
+        return ResponseObject(
+            status: false,
+            errorObject: ErrorObject(
+              status: false,
+              errorObject: response.body,
+              errorMessage: response.body,
+            ));
+      }
+      Map<String, dynamic> body = jsonDecode(response.body);
+      List<dynamic> dept = body["sal_t"];
+
+      List<Hall> halls = List.empty(growable: true);
+      for (var element in dept) {
+        halls.add(Hall.fromJson(element));
+      }
+      return ResponseObject(
+          status: true, errorObject: null, responseObject: halls);
+    } catch (error) {
+      print(
+          "Error in api_source.dart. Error in method getAllHalls. Error: $error -------->>>");
       return ResponseObject(
           status: false,
           errorObject: ErrorObject(

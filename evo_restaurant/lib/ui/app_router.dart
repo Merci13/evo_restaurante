@@ -1,6 +1,9 @@
+import 'package:evo_restaurant/ui/views/hall_view.dart';
 import 'package:evo_restaurant/ui/views/login_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
+
+import '../repositories/models/hall.dart';
 
 class AppRouter {
   static Route<dynamic>? generateRouter(RouteSettings settings) {
@@ -11,6 +14,13 @@ class AppRouter {
                   value: settings.arguments,
                   child: const LoginView(),
                 ));
+      case '/hallView':
+        return CupertinoPageRoute(
+            builder: (_) => Provider.value(
+                  value: settings.arguments as Hall,
+                  child: const HallView(),
+                ));
+
       default:
         return null;
     }

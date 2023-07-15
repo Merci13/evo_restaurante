@@ -1,5 +1,6 @@
 import 'package:evo_restaurant/repositories/models/response_object.dart';
 import 'package:evo_restaurant/repositories/service/auth/user_service.dart';
+import 'package:evo_restaurant/repositories/service/hall/hall_service.dart';
 import 'package:evo_restaurant/repositories/view_models/base_widget_model.dart';
 import 'package:evo_restaurant/ui/views/widgets/appbar/own_app_bar.dart';
 import 'package:evo_restaurant/ui/views/widgets/base_widget.dart';
@@ -22,12 +23,15 @@ class HomeView extends BaseWidget {
 
   @override
   Widget getChild(BuildContext context, BaseWidgetModel baseWidgetModel) {
-    return ChangeNotifierProxyProvider2<User, UserService, HomeViewModel>(
+    return ChangeNotifierProxyProvider3<User, UserService, HallService,
+        HomeViewModel>(
       create: (_) => HomeViewModel(),
-      update: (_, user, userService, model) => (model ?? HomeViewModel())
-        ..user = user
-        ..userService = userService
-        ..init(),
+      update: (_, user, userService, hallService, model) =>
+          (model ?? HomeViewModel())
+            ..hallService = hallService
+            ..user = user
+            ..userService = userService
+            ..init(),
       child: Consumer2<HomeViewModel, BaseWidgetModel>(
         builder: (context, model, baseWidgetModel, _) {
           Size mediaQuery = MediaQuery.of(context).size;
@@ -37,18 +41,17 @@ class HomeView extends BaseWidget {
             height: mediaQuery.height,
             child: Theme(
               data: ThemeData(
-                appBarTheme:  const AppBarTheme(
+                appBarTheme: const AppBarTheme(
                   iconTheme: IconThemeData(color: Colors.white),
                   actionsIconTheme: IconThemeData(color: Colors.white),
-
                   elevation: 0,
                 ),
               ),
               child: Scaffold(
-              appBar: PreferredSize(
-                preferredSize: const Size.fromHeight(70.0),
-                child: OwnAppBar(isFromHome: true),
-              ),
+                appBar: PreferredSize(
+                  preferredSize: const Size.fromHeight(70.0),
+                  child: OwnAppBar(isFromHome: true),
+                ),
                 drawer: Drawer(
                   backgroundColor: colorAccent,
                   elevation: 2,
@@ -146,81 +149,88 @@ Widget __body(BuildContext context) {
       //     // _ContainerOfHalls(),
       //     Container(),
       //   ],);
-      return _ContainerOfHalls();
+      return const _ContainerOfHalls();
     },
   );
 }
 
 @swidget
-Widget __containerOfHalls(BuildContext context){
+Widget __containerOfHalls(BuildContext context) {
   return Consumer2<HomeViewModel, BaseWidgetModel>(
-    builder: (context, model, baseWidgetModel, _){
-      Size mediaquery = MediaQuery.of(context).size;
+    builder: (context, model, baseWidgetModel, _) {
+      Size mediaQuery = MediaQuery.of(context).size;
 
-      BorderRadius  borderRadius = BorderRadius.circular(8.0);
+      BorderRadius borderRadius = BorderRadius.circular(8.0);
       double appbarHeight = const Size.fromHeight(70.0).height;
       return Container(
-        height: mediaquery.height - appbarHeight,
-        width: mediaquery.width,
+        height: mediaQuery.height - appbarHeight,
+        width: mediaQuery.width,
         padding: const EdgeInsets.only(top: 20, bottom: 50),
-        child: ListView.builder(
-          padding: EdgeInsets.symmetric(vertical: 10),
-            itemCount: model.listOfHalls.length,
-            itemBuilder: (BuildContext context, int index){
-              return  Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Center(
-                  child: Material(
-                    elevation: 10,
-                    borderRadius: borderRadius,
-                    child: InkWell(
-                      onTap: () {},
-                      child: Container(
-                        padding: EdgeInsets.all(0.0),
-                        height: mediaquery.height * 0.20,
-                        width: mediaquery.width * 0.5,
-                        decoration: BoxDecoration(
-                          borderRadius: borderRadius,
-
-                        ),
-                        child: Row(
-                          children: <Widget>[
-                            LayoutBuilder(builder: (context, constraints) {
-                              return Container(
-                                height: constraints.maxHeight,
-                                width: constraints.maxHeight,
-                                decoration: BoxDecoration(
-                                  color: Colors.deepPurple,
-                                  borderRadius: borderRadius,
-                                ),
-                                child:const Icon(
-                                  Icons.arrow_circle_right_outlined,
-                                  color: Colors.white,
-                                  size: 50,
-                                ),
-                              );
-                            }),
-                            Expanded(
-                              child: Text(
-                                model.listOfHalls[index],
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 25,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.grey[700]
-                                ),
-                              ),
+        child: model.listOfHalls.isEmpty
+            ? const Center(
+                child: CircularProgressIndicator(),
+              )
+            : ListView.builder(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                itemCount: model.listOfHalls.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Center(
+                      child: Material(
+                        elevation: 10,
+                        borderRadius: borderRadius,
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.pushNamed(context, "/hallView",
+                                arguments: model.listOfHalls[index]);
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(0.0),
+                            height: mediaQuery.height * 0.20,
+                            width: mediaQuery.width * 0.5,
+                            decoration: BoxDecoration(
+                              borderRadius: borderRadius,
                             ),
-                          ],
+                            child: Row(
+                              children: <Widget>[
+                                LayoutBuilder(builder: (context, constraints) {
+                                  return Container(
+                                    height: constraints.maxHeight,
+                                    width: constraints.maxHeight,
+                                    decoration: BoxDecoration(
+                                      color: Colors.deepPurple,
+                                      borderRadius: borderRadius,
+                                    ),
+                                    child: const Icon(
+                                      Icons.arrow_circle_right_outlined,
+                                      color: Colors.white,
+                                      size: 50,
+                                    ),
+                                  );
+                                }),
+                                Expanded(
+                                  child: Text(
+                                    model.listOfHalls[index].name ?? "",
+
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        fontSize: 25,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.grey[700]),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ),
-              );
-            }),
+                  );
+                }),
       );
-    },);
+    },
+  );
 }
 
 TextStyle _styleForButtons() {

@@ -131,9 +131,6 @@ Widget __buttonEnterContainer(BuildContext context) {
                     acceptButton: () {
                       baseWidgetModel.showOverLayWidget(false, Container());
                     },
-                    cancelButton: () {
-                      baseWidgetModel.showOverLayWidget(false, Container());
-                    },
                     title: AppLocalizations.of(context).warningText,
                     contentText:
                         errorObject.errorCode == errorPasswordIsNotCorrect
