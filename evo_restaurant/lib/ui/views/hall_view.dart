@@ -82,10 +82,75 @@ class HallView extends BaseWidget {
 Widget __body(BuildContext context) {
   return Consumer2<HallViewModel, BaseWidgetModel>(
     builder: (context, model, baseWidgetModel, _) {
+      Size mediaQuery = MediaQuery.of(context).size;
+
+      BorderRadius borderRadius = BorderRadius.circular(8.0);
+      double appbarHeight = const Size.fromHeight(70.0).height;
       return Container(
-        child: Center(
-          child: Text(model.hall.name ?? ""),
-        ),
+        height: mediaQuery.height - appbarHeight,
+        width: mediaQuery.width,
+        padding: const EdgeInsets.only(top: 20, bottom: 50),
+        child: model.listOfTables.isEmpty
+            ? const Center(
+                child: CircularProgressIndicator(),
+              )
+            : ListView.builder(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                itemCount: model.listOfTables.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Center(
+                      child: Material(
+                        elevation: 10,
+                        borderRadius: borderRadius,
+                        child: InkWell(
+                          onTap: () {
+                            // Navigator.pushNamed(context, "/hallView",
+                            //     arguments: model.listOfTables[index]);
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(0.0),
+                            height: mediaQuery.height * 0.20,
+                            width: mediaQuery.width * 0.5,
+                            decoration: BoxDecoration(
+                              borderRadius: borderRadius,
+                            ),
+                            child: Row(
+                              children: <Widget>[
+                                LayoutBuilder(builder: (context, constraints) {
+                                  return Container(
+                                    height: constraints.maxHeight,
+                                    width: constraints.maxHeight,
+                                    decoration: BoxDecoration(
+                                      color: Colors.deepPurple,
+                                      borderRadius: borderRadius,
+                                    ),
+                                    child: const Icon(
+                                      Icons.arrow_circle_right_outlined,
+                                      color: Colors.white,
+                                      size: 50,
+                                    ),
+                                  );
+                                }),
+                                Expanded(
+                                  child: Text(
+                                    "${model.listOfTables[index].num ?? 0}",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        fontSize: 25,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.grey[700]),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                }),
       );
     },
   );

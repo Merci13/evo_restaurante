@@ -143,12 +143,6 @@ Widget __containerOfIconAndNameApp(BuildContext context) {
 Widget __body(BuildContext context) {
   return Consumer2<HomeViewModel, BaseWidgetModel>(
     builder: (context, model, baseWidgetModel, _) {
-      // return Column(
-      //   children: [
-      //    // OwnAppBar(isFromHome: true),
-      //     // _ContainerOfHalls(),
-      //     Container(),
-      //   ],);
       return const _ContainerOfHalls();
     },
   );

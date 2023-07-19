@@ -1,6 +1,7 @@
 
 
 import 'package:evo_restaurant/global/api_source.dart';
+import 'package:evo_restaurant/repositories/models/hall.dart';
 import 'package:evo_restaurant/repositories/models/response_object.dart';
 
 class HallService{
@@ -13,6 +14,12 @@ class HallService{
 
  Future<ResponseObject> getAllHalls()async {
     return await _api.getAllHalls();
+
+  }
+
+  Future<ResponseObject> getAllTables(Hall hall)async {
+    return await _api.getAllTablesFromHall(hall);
+
 
   }
 

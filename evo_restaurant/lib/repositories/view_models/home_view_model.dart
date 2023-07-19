@@ -1,3 +1,4 @@
+import 'package:evo_restaurant/repositories/enums/view_state.dart';
 import 'package:evo_restaurant/repositories/models/response_object.dart';
 import 'package:evo_restaurant/repositories/service/auth/user_service.dart';
 import 'package:evo_restaurant/repositories/service/hall/hall_service.dart';
@@ -15,6 +16,7 @@ class HomeViewModel extends BaseModel {
   List<Hall> _listOfHalls = List.empty(growable: true);
   late BuildContext _context;
   String _errorMessage = "";
+  bool _flag = true;
 
   UserService get userService => _userService;
 
@@ -22,14 +24,18 @@ class HomeViewModel extends BaseModel {
 
   List<Hall> get listOfHalls => _listOfHalls;
 
-
   HallService get hallService => _hallService;
-
 
   BuildContext get context => _context;
 
-
   String get errorMessage => _errorMessage;
+
+  bool get flag => _flag;
+
+  set flag(bool value) {
+    _flag = value;
+    notifyListeners();
+  }
 
   set errorMessage(String value) {
     _errorMessage = value;
@@ -59,18 +65,26 @@ class HomeViewModel extends BaseModel {
 
   init() async {
     try {
-      listOfHalls.clear();
-      ResponseObject responseHalls = await _hallService.getAllHalls();
-      bool res = responseHalls.status ?? false;
-      if(!res){
-        errorMessage = AppLocalizations.of(context).somethingWentWrongText;
+      if (flag) {
         listOfHalls.clear();
-        notifyListeners();
-      }else{
-        listOfHalls.addAll(responseHalls.responseObject as List<Hall>);
-        notifyListeners();
-      }
+        if(state == ViewState.IDLE){
+          setState(ViewState.BUSY);
+          ResponseObject responseHalls = await _hallService.getAllHalls();
+          bool res = responseHalls.status ?? false;
+          if (!res) {
+            errorMessage = AppLocalizations.of(context).somethingWentWrongText;
+            listOfHalls.clear();
+            notifyListeners();
+          } else {
+            listOfHalls.addAll(responseHalls.responseObject as List<Hall>);
+            notifyListeners();
+          }
+          setState(ViewState.IDLE);
+        }
 
+
+        flag = false;
+      }
     } catch (error) {
       print("Error in HomeViewModel. Error: $error -------->>>");
     }

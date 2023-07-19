@@ -14,6 +14,7 @@ import '../repositories/models/error_object.dart';
 import '../repositories/models/family.dart';
 import '../repositories/models/response_object.dart';
 import '../repositories/models/user.dart';
+import '../repositories/models/table.dart' as own_table;
 import 'error_codes.dart';
 
 class HasToken {
@@ -294,6 +295,48 @@ class ApiSource {
     } catch (error) {
       print(
           "Error in api_source.dart. Error in method getAllHalls. Error: $error -------->>>");
+      return ResponseObject(
+          status: false,
+          errorObject: ErrorObject(
+            status: false,
+            errorObject: error,
+            errorMessage: error.toString(),
+          ));
+    }
+  }
+
+  Future<ResponseObject> getAllTablesFromHall(Hall hall) async {
+    try {
+      String path =
+          "$basePath/$table/mes_t?filter[sal]=${hall.id}&api_key=$apiKey";
+      Uri url = Uri.parse(path);
+
+      http.Response response = await http.get(url, headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+      });
+
+      if (response.statusCode != 200) {
+        return ResponseObject(
+            status: false,
+            errorObject: ErrorObject(
+              status: false,
+              errorObject: response.body,
+              errorMessage: response.body,
+            ));
+      }
+      Map<String, dynamic> body = jsonDecode(response.body);
+      List<dynamic> dept = body["mes_t"];
+
+      List<own_table.Table> halls = List.empty(growable: true);
+      for (var element in dept) {
+        halls.add(own_table.Table.fromJson(element));
+      }
+      return ResponseObject(
+          status: true, errorObject: null, responseObject: halls);
+    } catch (error) {
+      print(
+          "Error in api_source.dart in method getAllTablesFromHall. Error: $error ------->>>>");
       return ResponseObject(
           status: false,
           errorObject: ErrorObject(
