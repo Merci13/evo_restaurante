@@ -66,5 +66,10 @@
   "synchronizeText": "Sincronizar Base de Datos",
   "@synchronizeText": {
     "description": "Synchronize from data Base Text"
+  },
+
+  "tableText": "Mesa",
+  "@tableText": {
+    "description": "Table Text"
   }
 }

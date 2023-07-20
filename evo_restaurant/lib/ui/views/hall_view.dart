@@ -6,6 +6,7 @@ import 'package:evo_restaurant/repositories/view_models/base_widget_model.dart';
 import 'package:evo_restaurant/ui/views/widgets/base_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:functional_widget_annotation/functional_widget_annotation.dart';
 import 'package:provider/provider.dart';
@@ -104,48 +105,87 @@ Widget __body(BuildContext context) {
                       child: Material(
                         elevation: 10,
                         borderRadius: borderRadius,
-                        child: InkWell(
-                          onTap: () {
-                            // Navigator.pushNamed(context, "/hallView",
-                            //     arguments: model.listOfTables[index]);
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.all(0.0),
-                            height: mediaQuery.height * 0.20,
-                            width: mediaQuery.width * 0.5,
-                            decoration: BoxDecoration(
-                              borderRadius: borderRadius,
-                            ),
-                            child: Row(
-                              children: <Widget>[
-                                LayoutBuilder(builder: (context, constraints) {
-                                  return Container(
+                        child: Container(
+                          padding: const EdgeInsets.all(0.0),
+                          height: mediaQuery.height * 0.20,
+                          width: mediaQuery.width * 0.5,
+                          decoration: BoxDecoration(
+                            borderRadius: borderRadius,
+                          ),
+                          child: index %2 == 0 ?  Row(
+                            children: <Widget>[
+                              LayoutBuilder(builder: (context, constraints) {
+                                return InkWell(
+                                  onTap: (){
+                                    print("Tap left");
+                                    HapticFeedback.mediumImpact();
+                                  },
+                                  child: Container(
                                     height: constraints.maxHeight,
                                     width: constraints.maxHeight,
                                     decoration: BoxDecoration(
-                                      color: Colors.deepPurple,
+                                      color: Colors.blue[900],
                                       borderRadius: borderRadius,
                                     ),
                                     child: const Icon(
-                                      Icons.arrow_circle_right_outlined,
+                                      Icons.table_bar_outlined,
                                       color: Colors.white,
                                       size: 50,
                                     ),
-                                  );
-                                }),
-                                Expanded(
-                                  child: Text(
-                                    "${model.listOfTables[index].num ?? 0}",
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                        fontSize: 25,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.grey[700]),
                                   ),
+                                );
+                              }),
+                              Expanded(
+                                child: Text(
+                                  "${AppLocalizations.of(context).tableText}: #"
+                                      "${model.listOfTables[index].num ?? 0}",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      fontSize: 25,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.grey[700]),
                                 ),
-                              ],
-                            ),
-                          ),
+                              ),
+                            ],
+                          ) :
+                          Row(
+                            children: <Widget>[
+
+                              Expanded(
+                                child: Text(
+                                  "${AppLocalizations.of(context).tableText}: #"
+                                      "${model.listOfTables[index].num ?? 0}",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      fontSize: 25,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.grey[700]),
+                                ),
+                              ),
+                              LayoutBuilder(builder: (context, constraints) {
+                                return InkWell(
+                                  onTap: (){
+                                    print("Tap Right");
+                                    HapticFeedback.mediumImpact();
+                                  },
+                                  child: Container(
+                                    height: constraints.maxHeight,
+                                    width: constraints.maxHeight,
+                                    decoration: BoxDecoration(
+                                      color: Colors.blue[700],
+                                      borderRadius: borderRadius,
+                                    ),
+                                    child: const Icon(
+                                      Icons.table_bar_outlined,
+                                      color: Colors.white,
+                                      size: 50,
+                                    ),
+                                  ),
+                                );
+                              }),
+                            ],
+                          )
+                          ,
                         ),
                       ),
                     ),

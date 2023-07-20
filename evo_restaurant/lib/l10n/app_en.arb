@@ -73,7 +73,13 @@
   "synchronizeText": "Synchronize Data Base",
   "@synchronizeText": {
     "description": "Synchronize from data Base Text"
+  },
+
+  "tableText": "Table",
+  "@tableText": {
+    "description": "Table Text"
   }
+
 
 
 }
