@@ -13,6 +13,8 @@ import 'package:http/http.dart' as http;
 import '../repositories/models/error_object.dart';
 import '../repositories/models/family.dart';
 import '../repositories/models/response_object.dart';
+import '../repositories/models/command_table.dart';
+import '../repositories/models/table_detail.dart';
 import '../repositories/models/user.dart';
 import '../repositories/models/table.dart' as own_table;
 import 'error_codes.dart';
@@ -320,11 +322,12 @@ class ApiSource {
         return ResponseObject(
             status: false,
             errorObject: ErrorObject(
-              status: false,
-              errorObject: response.body,
-              errorMessage: response.body,
-            ));
+                status: false,
+                errorObject: "Error", //response.body,
+                errorMessage: "Error" //response.body,
+                ));
       }
+
       Map<String, dynamic> body = jsonDecode(response.body);
       List<dynamic> dept = body["mes_t"];
 
@@ -337,6 +340,45 @@ class ApiSource {
     } catch (error) {
       print(
           "Error in api_source.dart in method getAllTablesFromHall. Error: $error ------->>>>");
+      return ResponseObject(
+          status: false,
+          errorObject: ErrorObject(
+            status: false,
+            errorObject: error,
+            errorMessage: error.toString(),
+          ));
+    }
+  }
+
+  Future<ResponseObject> getTable(own_table.Table tableGet) async {
+    try {
+      String path =
+          "$basePath/${this.table}/FAC_APA_LIN_T??filter[mes_t]=${tableGet.id}&api_key=$apiKey";
+      Uri url = Uri.parse(path);
+
+      http.Response response = await http.get(url, headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+      });
+
+      if (response.statusCode != 200) {
+        return ResponseObject(
+            status: false,
+            errorObject: ErrorObject(
+              status: false,
+              errorObject: response.body,
+              errorMessage: response.body,
+            ));
+      }
+      Map<String, dynamic> body = jsonDecode(response.body);
+      TableDetail tableDetail = TableDetail.fromJson(body);
+
+
+      return ResponseObject(
+          status: true, errorObject: null, responseObject: tableDetail);
+    } catch (error) {
+      print(
+          "Error in api_source.dart in method getTable. Error: $error ------->>>>");
       return ResponseObject(
           status: false,
           errorObject: ErrorObject(

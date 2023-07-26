@@ -87,4 +87,43 @@ class HallViewModel extends BaseModel {
     }
 
   }
+
+  Future<ResponseObject> getTable(own_table.Table table) async {
+    try{
+
+      if(state == ViewState.BUSY){
+        throw ErrorDescription("Finish the process to perform a new one");
+      }else{
+        setState(ViewState.BUSY);
+
+        ResponseObject responseObject = await hallService.getTable(table);
+        if(responseObject.status ?? false){
+          setState(ViewState.IDLE);
+          return responseObject;
+
+
+
+        }else{
+          setState(ViewState.IDLE);
+          return ResponseObject(
+            status: false,
+            errorObject: null
+          );
+        }
+
+      }
+
+    }catch(error){
+
+      print("Error in getTable method in hall_view_model.dart. Error: $error ------->>>>>");
+      setState(ViewState.IDLE);
+      return ResponseObject(
+        status: false,
+        responseObject: null
+      );
+
+    }
+
+
+  }
 }

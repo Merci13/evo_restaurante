@@ -1,13 +1,15 @@
 import 'dart:io' show Platform;
+import 'package:evo_restaurant/repositories/enums/type_information_modal.dart';
 import 'package:evo_restaurant/repositories/models/hall.dart';
+import 'package:evo_restaurant/repositories/models/response_object.dart';
+import 'package:evo_restaurant/repositories/models/table.dart';
 import 'package:evo_restaurant/repositories/service/auth/user_service.dart';
 import 'package:evo_restaurant/repositories/view_models/base_widget_model.dart';
 
 import 'package:evo_restaurant/ui/views/widgets/base_widget.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:evo_restaurant/ui/views/widgets/information_modal/information_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:functional_widget_annotation/functional_widget_annotation.dart';
 import 'package:provider/provider.dart';
 
@@ -112,80 +114,93 @@ Widget __body(BuildContext context) {
                           decoration: BoxDecoration(
                             borderRadius: borderRadius,
                           ),
-                          child: index %2 == 0 ?  Row(
-                            children: <Widget>[
-                              LayoutBuilder(builder: (context, constraints) {
-                                return InkWell(
-                                  onTap: (){
-                                    print("Tap left");
-                                    HapticFeedback.mediumImpact();
-                                  },
-                                  child: Container(
-                                    height: constraints.maxHeight,
-                                    width: constraints.maxHeight,
-                                    decoration: BoxDecoration(
-                                      color: Colors.blue[900],
-                                      borderRadius: borderRadius,
+                          child: index % 2 == 0
+                              ? Row(
+                                  children: <Widget>[
+                                    LayoutBuilder(
+                                        builder: (context, constraints) {
+                                      return InkWell(
+                                        onTap: () async {
+                                          HapticFeedback.mediumImpact();
+                                          baseWidgetModel.showOverLayWidget(true,const InformationModal.loading(typeInformationModal: TypeInformationModal.LOADING));
+                                          ResponseObject res = await model.getTable(
+                                              model.listOfTables[index]);
+                                          if(res.status ?? false){
+                                            baseWidgetModel.showOverLayWidget(false, Container());
+                                            print("Entro");
+                                          }
+                                        },
+                                        child: Container(
+                                          height: constraints.maxHeight,
+                                          width: constraints.maxHeight,
+                                          decoration: BoxDecoration(
+                                            color: Colors.blue[900],
+                                            borderRadius: borderRadius,
+                                          ),
+                                          child: const Icon(
+                                            Icons.table_bar_outlined,
+                                            color: Colors.white,
+                                            size: 50,
+                                          ),
+                                        ),
+                                      );
+                                    }),
+                                    Expanded(
+                                      child: Text(
+                                        "${AppLocalizations.of(context).tableText}: #"
+                                        "${model.listOfTables[index].num ?? 0}",
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            fontSize: 25,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.grey[700]),
+                                      ),
                                     ),
-                                    child: const Icon(
-                                      Icons.table_bar_outlined,
-                                      color: Colors.white,
-                                      size: 50,
+                                  ],
+                                )
+                              : Row(
+                                  children: <Widget>[
+                                    Expanded(
+                                      child: Text(
+                                        "${AppLocalizations.of(context).tableText}: #"
+                                        "${model.listOfTables[index].num ?? 0}",
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            fontSize: 25,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.grey[700]),
+                                      ),
                                     ),
-                                  ),
-                                );
-                              }),
-                              Expanded(
-                                child: Text(
-                                  "${AppLocalizations.of(context).tableText}: #"
-                                      "${model.listOfTables[index].num ?? 0}",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      fontSize: 25,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.grey[700]),
+                                    LayoutBuilder(
+                                        builder: (context, constraints) {
+                                      return InkWell(
+                                        onTap: () async{
+                                          HapticFeedback.mediumImpact();
+                                          baseWidgetModel.showOverLayWidget(true,const InformationModal.loading(typeInformationModal: TypeInformationModal.LOADING));
+                                          ResponseObject res = await model.getTable(
+                                              model.listOfTables[index]);
+                                          if(res.status ?? false){
+                                            baseWidgetModel.showOverLayWidget(false, Container());
+                                            print("Entro");
+                                          }
+                                        },
+                                        child: Container(
+                                          height: constraints.maxHeight,
+                                          width: constraints.maxHeight,
+                                          decoration: BoxDecoration(
+                                            color: Colors.blue[700],
+                                            borderRadius: borderRadius,
+                                          ),
+                                          child: const Icon(
+                                            Icons.table_bar_outlined,
+                                            color: Colors.white,
+                                            size: 50,
+                                          ),
+                                        ),
+                                      );
+                                    }),
+                                  ],
                                 ),
-                              ),
-                            ],
-                          ) :
-                          Row(
-                            children: <Widget>[
-
-                              Expanded(
-                                child: Text(
-                                  "${AppLocalizations.of(context).tableText}: #"
-                                      "${model.listOfTables[index].num ?? 0}",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      fontSize: 25,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.grey[700]),
-                                ),
-                              ),
-                              LayoutBuilder(builder: (context, constraints) {
-                                return InkWell(
-                                  onTap: (){
-                                    print("Tap Right");
-                                    HapticFeedback.mediumImpact();
-                                  },
-                                  child: Container(
-                                    height: constraints.maxHeight,
-                                    width: constraints.maxHeight,
-                                    decoration: BoxDecoration(
-                                      color: Colors.blue[700],
-                                      borderRadius: borderRadius,
-                                    ),
-                                    child: const Icon(
-                                      Icons.table_bar_outlined,
-                                      color: Colors.white,
-                                      size: 50,
-                                    ),
-                                  ),
-                                );
-                              }),
-                            ],
-                          )
-                          ,
                         ),
                       ),
                     ),

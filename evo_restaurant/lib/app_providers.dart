@@ -1,4 +1,5 @@
 import 'package:evo_restaurant/repositories/service/auth/user_service.dart';
+import 'package:evo_restaurant/repositories/service/command_table/command_table_service.dart';
 import 'package:evo_restaurant/repositories/service/hall/hall_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
@@ -29,6 +30,11 @@ class AppProviders {
           create: (_) => HallService(),
           update: (_, api, hallService) =>
               (hallService ?? HallService())..api = api,
+        ),
+        ProxyProvider<ApiSource, CommandTableService>(
+          create: (_) => CommandTableService(),
+          update: (_, api, tableDetailService) =>
+              (tableDetailService ?? CommandTableService())..apiSource = api,
         ),
         StreamProvider<HasToken>(
             initialData: HasToken(),
