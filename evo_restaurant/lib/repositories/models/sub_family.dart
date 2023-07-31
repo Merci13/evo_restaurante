@@ -1,31 +1,25 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 
-
-class Family {
+class SubFamily {
   String? id;
   String? name;
   String? img;
   Image? image;
 
-  Family({this.id, this.name, this.img, this.image});
+  SubFamily({this.id, this.name, this.img, this.image});
 
-  Family.initial()
-      : id = "-1",
+  SubFamily.initial()
+      : id = "",
         name = "",
         img = "",
-        image = null
-  ;
+        image = null;
 
-
-
-  factory Family.fromJson(Map<String, dynamic> json) {
-
+  factory SubFamily.fromJson(Map<String, dynamic> json) {
     String id = json["id"] ?? "";
     String name = json["name"] ?? "";
     String img = json["img"] ?? "";
 
-
-    return Family(id:id, name: name, img: img, image: null);
+    return SubFamily(id: id, name: name, img: img, image: null);
   }
 
   String toJson() {
@@ -38,6 +32,6 @@ class Family {
 
   @override
   String toString() {
-    return 'Family{id: $id, name: $name, img: $img}';
+    return 'SubFamily{id: $id, name: $name, img: $img}';
   }
 }

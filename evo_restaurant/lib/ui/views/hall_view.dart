@@ -1,8 +1,10 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:io' show Platform;
 import 'package:evo_restaurant/repositories/enums/type_information_modal.dart';
 import 'package:evo_restaurant/repositories/models/hall.dart';
 import 'package:evo_restaurant/repositories/models/response_object.dart';
-import 'package:evo_restaurant/repositories/models/table.dart';
+
 import 'package:evo_restaurant/repositories/service/auth/user_service.dart';
 import 'package:evo_restaurant/repositories/view_models/base_widget_model.dart';
 
@@ -66,12 +68,7 @@ class HallView extends BaseWidget {
                     fontWeight: FontWeight.w600,
                     fontSize: 30),
               ),
-              // PreferredSize(
-              //   preferredSize: const Size.fromHeight(70.0),
-              //   child: OwnAppBar(
-              //     isFromHome: false,
-              //   ),
-              // ),
+
               body: const _Body(),
             ),
           );
@@ -122,13 +119,54 @@ Widget __body(BuildContext context) {
                                       return InkWell(
                                         onTap: () async {
                                           HapticFeedback.mediumImpact();
-                                          baseWidgetModel.showOverLayWidget(true,const InformationModal.loading(typeInformationModal: TypeInformationModal.LOADING));
-                                          ResponseObject res = await model.getTable(
-                                              model.listOfTables[index]);
-                                          if(res.status ?? false){
-                                            baseWidgetModel.showOverLayWidget(false, Container());
-                                            print("Entro");
+                                          baseWidgetModel.showOverLayWidget(
+                                              true,
+                                              const InformationModal.loading(
+                                                  typeInformationModal:
+                                                      TypeInformationModal
+                                                          .LOADING));
+                                          ResponseObject res =
+                                              await model.getTable(
+                                                  model.listOfTables[index]);
+                                          if (res.status ?? false) {
+                                            baseWidgetModel.showOverLayWidget(
+                                                false, Container());
+                                            //move the user to table view
+                                            Navigator.pushNamed(
+                                                context, "/tableView",
+                                                arguments: {
+                                                  "table":
+                                                      model.listOfTables[index],
+                                                  "tableDetail":
+                                                      res.responseObject
+                                                });
+                                          }else{
+                                            baseWidgetModel.showOverLayWidget(
+                                                false, Container());
+                                            baseWidgetModel.showOverLayWidget(
+                                              true,
+                                              InformationModal(
+                                                typeInformationModal:
+                                                TypeInformationModal.WARNING,
+                                                title:
+                                                AppLocalizations.of(context)
+                                                    .warningText,
+                                                contentText:
+                                                AppLocalizations.of(context)
+                                                    .somethingWentWrongText,
+                                                acceptButton: () {
+                                                  baseWidgetModel
+                                                      .showOverLayWidget(
+                                                      false, Container());
+                                                },
+                                                icon: Icon(
+                                                  Icons.warning,
+                                                  color: Colors.yellow[700],
+                                                ),
+                                              ),
+                                            );
                                           }
+
                                         },
                                         child: Container(
                                           height: constraints.maxHeight,
@@ -174,15 +212,54 @@ Widget __body(BuildContext context) {
                                     LayoutBuilder(
                                         builder: (context, constraints) {
                                       return InkWell(
-                                        onTap: () async{
+                                        onTap: () async {
                                           HapticFeedback.mediumImpact();
-                                          baseWidgetModel.showOverLayWidget(true,const InformationModal.loading(typeInformationModal: TypeInformationModal.LOADING));
-                                          ResponseObject res = await model.getTable(
-                                              model.listOfTables[index]);
-                                          if(res.status ?? false){
-                                            baseWidgetModel.showOverLayWidget(false, Container());
-                                            print("Entro");
+                                          baseWidgetModel.showOverLayWidget(
+                                              true,
+                                              const InformationModal.loading(
+                                                  typeInformationModal:
+                                                      TypeInformationModal
+                                                          .LOADING));
+                                          ResponseObject res =
+                                              await model.getTable(
+                                                  model.listOfTables[index]);
+                                          if (res.status ?? false) {
+                                            baseWidgetModel.showOverLayWidget(
+                                                false, Container());
+                                            //move the user to table view
+                                            Navigator.pushNamed(
+                                                context, "/tableView",
+                                                arguments: {
+                                                  "table":
+                                                  model.listOfTables[index],
+                                                  "tableDetail":
+                                                  res.responseObject
+                                                });
                                           }
+                                          baseWidgetModel.showOverLayWidget(
+                                              false, Container());
+                                          baseWidgetModel.showOverLayWidget(
+                                            true,
+                                            InformationModal(
+                                              typeInformationModal:
+                                                  TypeInformationModal.WARNING,
+                                              title:
+                                                  AppLocalizations.of(context)
+                                                      .warningText,
+                                              contentText:
+                                                  AppLocalizations.of(context)
+                                                      .somethingWentWrongText,
+                                              acceptButton: () {
+                                                baseWidgetModel
+                                                    .showOverLayWidget(
+                                                        false, Container());
+                                              },
+                                              icon: Icon(
+                                                Icons.warning,
+                                                color: Colors.yellow[700],
+                                              ),
+                                            ),
+                                          );
                                         },
                                         child: Container(
                                           height: constraints.maxHeight,

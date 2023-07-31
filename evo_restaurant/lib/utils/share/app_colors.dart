@@ -10,3 +10,4 @@ const Color controlColorGray = Color(0xff9b9b9b); //
 const Color controlDeep = Color(0xffF3F3F4);
 const Color controlContent = Color(0xf0a0404);
 const Color colorAccentLight =Color(0xff4779c0);
+const Color colorSurface=Color(0x51669ae3);

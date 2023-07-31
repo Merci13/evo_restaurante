@@ -4,12 +4,14 @@ import 'dart:developer';
 
 import 'package:evo_restaurant/global/config.dart';
 import 'package:evo_restaurant/repositories/models/hall.dart';
+import 'package:evo_restaurant/repositories/models/sub_family.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
+import '../repositories/models/article.dart';
 import '../repositories/models/error_object.dart';
 import '../repositories/models/family.dart';
 import '../repositories/models/response_object.dart';
@@ -189,10 +191,11 @@ class ApiSource {
 
   Future<ResponseObject> getFamilies() async {
     try {
+      //http://209.145.58.91/Pruebas/vERP_2_dat_dat/v1/fam_m?[off]=0&api_key=mzZ58he3
       String path = "$basePath/$table/fam_m?[off]=0&api_key=$apiKey";
       Uri url = Uri.parse(path);
 
-      http.Response response = await http.post(url, headers: {
+      http.Response response = await http.get(url, headers: {
         "Content-Type": "application/json",
         "Accept": "application/json",
       });
@@ -206,11 +209,22 @@ class ApiSource {
               errorMessage: response.body,
             ));
       }
-      Map<String, dynamic> body = {};
+      Map<String, dynamic> body = jsonDecode(response.body);
+      List<Family> list = List.empty(growable: true);
+
+      body.forEach((key, value) {
+        if (key == "fam_m") {
+          for (var element in (value as List<dynamic>)) {
+            list.add(Family.fromJson(element));
+          }
+        }
+      });
+      for (var element in list) {
+        element.image = imageFromBase64String(element.img ?? "");
+      }
+
       return ResponseObject(
-          status: true,
-          errorObject: null,
-          responseObject: Family.fromJson(body));
+          status: true, errorObject: null, responseObject: list);
     } catch (err) {
       print("Error in getFamilies Method. Error: $err ------------------>>>>");
       return ResponseObject(
@@ -353,7 +367,7 @@ class ApiSource {
   Future<ResponseObject> getTable(own_table.Table tableGet) async {
     try {
       String path =
-          "$basePath/${this.table}/FAC_APA_LIN_T??filter[mes_t]=${tableGet.id}&api_key=$apiKey";
+          "$basePath/$table/FAC_APA_LIN_T??filter[mes_t]=${tableGet.id}&api_key=$apiKey";
       Uri url = Uri.parse(path);
 
       http.Response response = await http.get(url, headers: {
@@ -373,7 +387,6 @@ class ApiSource {
       Map<String, dynamic> body = jsonDecode(response.body);
       TableDetail tableDetail = TableDetail.fromJson(body);
 
-
       return ResponseObject(
           status: true, errorObject: null, responseObject: tableDetail);
     } catch (error) {
@@ -388,4 +401,129 @@ class ApiSource {
           ));
     }
   }
+
+  Future<ResponseObject> getSubfamily(Family family) async {
+    try {
+      //http://209.145.58.91/Pruebas/vERP_2_dat_dat/v1/_process/TPV_CAR_FAM_II_API?param[ID_FAM]=10&api_key=mzZ58he3
+      String path =
+          "$basePath/$table/_process/TPV_CAR_FAM_II_API?param[ID_FAM]=${family.id}&api_key=$apiKey";
+      Uri url = Uri.parse(path);
+
+      http.Response response = await http.get(url, headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+      });
+
+      if (response.statusCode != 200) {
+        return ResponseObject(
+            status: false,
+            errorObject: ErrorObject(
+              status: false,
+              errorObject: response.body,
+              errorMessage: response.body,
+            ));
+      }
+      Map<String, dynamic> body = jsonDecode(response.body);
+
+      List<SubFamily> temp = List.empty(growable: true);
+      for (var element in (body["fam_m"] as List)) {
+        temp.add(SubFamily.fromJson(element));
+      }
+      for (var element in temp) {
+        element.image = imageFromBase64String(element.img ?? '');
+      }
+
+      return ResponseObject(
+          status: true, errorObject: null, responseObject: temp);
+    } catch (error) {
+      print(
+          "Error in api_source.dart in method getSubFamily. Error: $error ------->>>>");
+      return ResponseObject(
+          status: false,
+          errorObject: ErrorObject(
+            status: false,
+            errorObject: error,
+            errorMessage: error.toString(),
+          ));
+    }
+  }
+
+  Future<ResponseObject> getArticlesOfSubfamily(
+      String id, String idFamily) async {
+    try {
+
+      String path =//ToDo change this endPoint because its only giving the family members not the articles
+          "$basePath/$table/_process/TPV_CAR_FAM_II_API?param[ID_FAM]=${idFamily}&api_key=$apiKey";
+      Uri url = Uri.parse(path);
+
+      http.Response response = await http.get(url, headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+      });
+
+      if (response.statusCode != 200) {
+        return ResponseObject(
+            status: false,
+            errorObject: ErrorObject(
+              status: false,
+              errorObject: response.body,
+              errorMessage: response.body,
+            ));
+      }
+      Map<String, dynamic> body = jsonDecode(response.body);
+      List<Article> list = List.empty(growable: true);
+
+      for(int i = 0; i < body.length; i++){
+        list.add(Article(
+          id: i,
+          name: "prueba #$i",
+          beb: i % 2 == 0,
+          pvp: 123123 * i,
+          regIvaVta: "G",
+          codBar: "${3534534534*i}",
+          fam: idFamily,
+          img: "",
+          image: null
+        ));
+
+      }
+
+      // body.forEach((key, value) {
+      //   if (key == "fam_m") {
+      //     for (var element in (value as List<dynamic>)) {
+      //       list.add(Family.fromJson(element));
+      //     }
+      //   }
+      // });
+
+      return ResponseObject(
+          status: true, errorObject: null, responseObject: list);
+    } catch (error) {
+      print(
+          "Error in api_source.dart in method getSubFamily. Error: $error ------->>>>");
+      return ResponseObject(
+          status: false,
+          errorObject: ErrorObject(
+            status: false,
+            errorObject: error,
+            errorMessage: error.toString(),
+          ));
+    }
+  }
+
+  //-------------------------------------------------------------//
+
+  Image imageFromBase64String(String base64String) {
+    return Image.memory(base64Decode(base64String));
+  }
+
+  Uint8List dataFromBase64String(String base64String) {
+    return base64Decode(base64String);
+  }
+
+  String base64String(Uint8List data) {
+    return base64Encode(data);
+  }
+
+//-------------------------------------------------------------//
 }

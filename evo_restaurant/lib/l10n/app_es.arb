@@ -71,5 +71,50 @@
   "tableText": "Mesa",
   "@tableText": {
     "description": "Table Text"
+  },
+
+  "articleText": "Artículo",
+  "@articleText": {
+    "description": "Article Text"
+  },
+
+  "priceText": "Precio",
+  "@priceText": {
+    "description": "Price Text"
+  },
+
+  "quantityText": "Cantidad",
+  "@quantityText": {
+    "description": "Quantity Text"
+  },
+
+  "dateText": "Fecha",
+  "@dateText": {
+    "description": "Date Text"
+  },
+
+  "attendedByText": "Atendido por",
+  "@attendedByText": {
+    "description": "Attended By Text"
+  },
+
+  "totalText": "Total",
+  "@totalText": {
+    "description": "Total Text"
+  },
+
+  "applyText": "Aplicar",
+  "@applyText": {
+    "description": "Apply Text"
+  },
+
+  "loadChargeFailText": "La carga de datos fallo",
+  "@loadChargeFailText": {
+    "description": "Load Charge Fail Text"
+  },
+
+  "errorText": "Error",
+  "@errorText": {
+    "description": "Error Text"
   }
 }

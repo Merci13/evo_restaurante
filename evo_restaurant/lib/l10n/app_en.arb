@@ -78,7 +78,59 @@
   "tableText": "Table",
   "@tableText": {
     "description": "Table Text"
+  },
+
+  "articleText": "Article",
+  "@articleText": {
+    "description": "Article Text"
+  },
+
+  "priceText": "Price",
+  "@priceText": {
+    "description": "Price Text"
+  },
+
+  "quantityText": "Quantity",
+  "@quantityText": {
+    "description": "Quantity Text"
+  },
+
+  "dateText": "Date",
+  "@dateText": {
+    "description": "Date Text"
+  },
+
+  "attendedByText": "Attended By",
+  "@attendedByText": {
+    "description": "Attended By Text"
+  },
+
+  "totalText": "Total",
+  "@totalText": {
+    "description": "Total Text"
+  },
+
+  "applyText": "Apply",
+  "@applyText": {
+    "description": "Apply Text"
+  },
+
+  "loadChargeFailText": "Data upload failed",
+  "@loadChargeFailText": {
+    "description": "Load Charge Fail Text"
+  },
+
+  "errorText": "Error",
+  "@errorText": {
+    "description": "Error Text"
   }
+
+
+
+
+
+
+
 
 
 

@@ -1,5 +1,6 @@
 import 'package:evo_restaurant/ui/views/hall_view.dart';
 import 'package:evo_restaurant/ui/views/login_view.dart';
+import 'package:evo_restaurant/ui/views/table_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 
@@ -20,6 +21,13 @@ class AppRouter {
                   value: settings.arguments as Hall,
                   child: const HallView(),
                 ));
+
+      case '/tableView':
+        return CupertinoPageRoute(
+            builder: (_) => Provider.value(
+              value: settings.arguments as Map<String, dynamic>,
+              child: const TableView(),
+            ));
 
       default:
         return null;

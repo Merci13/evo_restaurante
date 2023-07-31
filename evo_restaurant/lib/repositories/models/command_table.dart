@@ -92,4 +92,9 @@ class CommandTable {
       fec: fec,
     );
   }
+
+  @override
+  String toString() {
+    return 'CommandTable{id: $id, idLin: $idLin, idArt: $idArt, name: $name, can: $can, pre: $pre, porDto: $porDto, preNet: $preNet, imp: $imp, porIva: $porIva, mesT: $mesT, depT: $depT, cBar: $cBar, fec: $fec}';
+  }
 }

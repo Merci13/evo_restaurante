@@ -28,29 +28,29 @@ class Table {
         tot = 0,
         modTim = "";
 
-
   factory Table.fromJson(Map<String, dynamic> json) {
     int id = json["id"] ?? 0;
-    String name= json["name"] ?? "";
-    int num= json["num"] ?? 0;
-    bool est= json["est"] == 0 ? false : true;
-    int sal= json["sal"] ?? 0;
-    int dept= json["dep_t"] ?? 0;
-    int tot= json["tot"] ?? 0;
-    String modTim= json["mod_tim"] ?? "";
+    String name = json["name"] ?? "";
+    int num = json["num"] ?? 0;
+    bool est = json["est"] == 0 ? false : true;
+    int sal = json["sal"] ?? 0;
+    int dept = json["dep_t"] ?? 0;
+    int tot = json["tot"] ?? 0;
+    String modTim = json["mod_tim"] ?? "";
 
     return Table(
-        id : id,
-        name : name,
-        num : num,
-        est : est,
-        sal : sal,
-        dept : dept,
-        tot : tot,
-        modTim : modTim
-    );
+        id: id,
+        name: name,
+        num: num,
+        est: est,
+        sal: sal,
+        dept: dept,
+        tot: tot,
+        modTim: modTim);
   }
 
-
-
+  @override
+  String toString() {
+    return 'Table{id: $id, name: $name, num: $num, est: $est, sal: $sal, dept: $dept, tot: $tot, modTim: $modTim}';
+  }
 }
