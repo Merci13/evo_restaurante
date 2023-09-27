@@ -1,3 +1,5 @@
+import 'package:evo_restaurant/repositories/models/family.dart';
+import 'package:evo_restaurant/ui/views/family_view.dart';
 import 'package:evo_restaurant/ui/views/hall_view.dart';
 import 'package:evo_restaurant/ui/views/login_view.dart';
 import 'package:evo_restaurant/ui/views/table_view.dart';
@@ -28,6 +30,14 @@ class AppRouter {
               value: settings.arguments as Map<String, dynamic>,
               child: const TableView(),
             ));
+
+      case '/familyView':
+        return CupertinoPageRoute(
+            builder: (_) => Provider.value(
+              value: settings.arguments as Map,
+              child: const FamilyView(),
+            ));
+
 
       default:
         return null;

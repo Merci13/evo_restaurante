@@ -1,4 +1,5 @@
 import 'package:evo_restaurant/repositories/enums/type_information_modal.dart';
+import 'package:evo_restaurant/repositories/enums/view_state.dart';
 import 'package:evo_restaurant/repositories/models/error_object.dart';
 import 'package:evo_restaurant/repositories/service/auth/user_service.dart';
 import 'package:evo_restaurant/ui/views/widgets/base_widget.dart';
@@ -73,7 +74,7 @@ class LoginView extends BaseWidget {
                       UIHelper.verticalSpace(mediaQuery.height * 0.017),
                       const _FormContainer(),
                       UIHelper.verticalSpace(mediaQuery.height * 0.017),
-                      const _RememberUserCheckBoxContainer(),
+                     // const _RememberUserCheckBoxContainer(),
                       UIHelper.verticalSpace(mediaQuery.height * 0.10),
                       const _ButtonEnterContainer(),
                     ],
@@ -97,7 +98,9 @@ Widget __buttonEnterContainer(BuildContext context) {
         width: mediaQuery.width * 0.40,
         height: mediaQuery.height * 0.07,
         child: ElevatedButton(
+
           style: ElevatedButton.styleFrom(
+            enableFeedback: false,
             elevation: 3,
             alignment: Alignment.center,
             backgroundColor: Colors.blue[900],
@@ -207,9 +210,24 @@ Widget __formContainer(BuildContext context) {
 
 @swidget
 Widget __usersDropDown(BuildContext context) {
-  return Consumer<LoginViewModel>(
-    builder: (context, model, _) {
+  return Consumer2<LoginViewModel, BaseWidgetModel>(
+    builder: (context, model, baseWidgetModel,_) {
       Size mediaQuery = MediaQuery.of(context).size;
+      if(model.state == ViewState.IDLE){
+        if(model.errorMessage != ""){
+          baseWidgetModel.showOverLayWidget(true,
+          InformationModal(
+              typeInformationModal: TypeInformationModal.ERROR,
+              title: AppLocalizations.of(context).errorText,
+              contentText: model.errorMessage,
+              acceptButton: (){
+                model.errorMessage = "";
+                baseWidgetModel.showOverLayWidget(false, Container());
+              },
+              icon: Icon(Icons.error_outlined, color: Colors.red[800], size: 40,))
+          );
+        }
+      }
       return Container(
           padding: EdgeInsets.symmetric(horizontal: mediaQuery.width * 0.05),
           height: mediaQuery.height * 0.06,

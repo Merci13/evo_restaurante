@@ -178,6 +178,9 @@ Widget __acceptButton(BuildContext context, Function acceptButton) {
               width: 1,
             )),
       child: TextButton(
+        style: const ButtonStyle(
+          enableFeedback: false
+        ),
         onPressed: () {
           acceptButton() ?? () {};
         },
@@ -200,6 +203,9 @@ Widget __cancelButton(BuildContext context, Function cancelButton) {
             width: 1,
           )),
       child: TextButton(
+        style: const ButtonStyle(
+          enableFeedback: false
+        ),
         onPressed: () {
           cancelButton() ?? () {};
         },

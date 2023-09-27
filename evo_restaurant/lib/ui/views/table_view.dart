@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:io' show Platform;
 
 import 'package:evo_restaurant/repositories/enums/type_information_modal.dart';
@@ -8,16 +10,13 @@ import 'package:evo_restaurant/repositories/service/sub_family/sub_family_servic
 import 'package:evo_restaurant/repositories/view_models/base_widget_model.dart';
 import 'package:evo_restaurant/ui/views/widgets/base_widget.dart';
 import 'package:evo_restaurant/ui/views/widgets/information_modal/information_modal.dart';
-import 'package:evo_restaurant/ui/views/widgets/loading/login_loading.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:functional_widget_annotation/functional_widget_annotation.dart';
 import 'package:provider/provider.dart';
-
-import '../../repositories/enums/view_state.dart';
-import '../../repositories/models/family.dart';
+import '../../repositories/models/article.dart';
 import '../../repositories/models/user.dart';
 import '../../repositories/service/table/table_service.dart';
 import '../../repositories/view_models/table_view_model.dart';
@@ -61,6 +60,7 @@ class TableView extends BaseWidget {
               elevation: 0.5,
               backgroundColor: colorPrimary,
               leading: IconButton(
+                enableFeedback: false,
                 icon: Icon(
                   Platform.isIOS ? Icons.arrow_back_ios : Icons.arrow_back,
                   size: 30,
@@ -103,18 +103,91 @@ Widget __body(BuildContext context) {
 Widget __containerOfFamiliesAndSearch(BuildContext context) {
   return Consumer2<TableViewModel, BaseWidgetModel>(
       builder: (context, model, baseWidgetModel, _) {
+        Size mediaQuery = MediaQuery.of(context).size;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Expanded(flex: 90, child: _ContainerOfFamilies()),
-        Expanded(
-            flex: 10,
+        AnimatedSwitcher(
+          duration: const Duration(seconds: 1),
+          transitionBuilder: (Widget child, Animation<double> animation) =>
+              ScaleTransition(scale: animation, child: child),
+          child: SizedBox(
+              width: mediaQuery.width * 0.55,
+              child: model.isFamilySelected != -1
+                  ? _ContainerOfSubFamilyAndArticlesOfFamily(key: ValueKey(2),)
+                  : _ContainerOfFamilies(key: ValueKey(1),)),
+        ),
+        SizedBox(
+      width: mediaQuery.width * 0.10,
             child: Container(
               color: Colors.green,
             ))
       ],
     );
   });
+}
+@swidget
+Widget __containerOfSubFamilyAndArticlesOfFamily(BuildContext context){
+  return Consumer2<TableViewModel, BaseWidgetModel>(
+
+      builder: ( context, model, baseWidgetModel, _){
+        Size mediaQuery = MediaQuery.of(context).size;
+
+        return Container(
+          margin: EdgeInsets.all(10),
+          padding: EdgeInsets.all(10),
+          width:  mediaQuery.width * 0.55,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(7)),
+            border: Border.all(
+              color: Colors.black,width: 1
+            ),
+          ),
+          child: Container(
+
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(7)),
+              border: Border.all(
+                  color: Colors.black,width: 1
+              ),
+
+            ),
+            child: Column(
+              children: [
+                Container(
+                  width: double.infinity,
+                  height: mediaQuery.width * 0.05,
+                  color: colorPrimary,
+                  child: Row(
+                    children: [
+                      Expanded(
+                          flex: 10,
+                          child:
+                      IconButton(
+                        enableFeedback: false,
+                        icon: Icon(
+                          Platform.isIOS ? Icons.arrow_back_ios : Icons.arrow_back, color: Colors.white, size: 40,),
+                        onPressed: (){
+                          model.isFamilySelected = -1;
+                        },
+                      )
+                      ),
+                      Expanded(
+                        flex: 90,
+                        child: Center(
+                          child: Text(model.listOfFamilies[model.isFamilySelected].name ?? "",
+                            style: styleForTitleFamily(),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ),
+        );
+      });
 }
 
 @swidget
@@ -123,7 +196,7 @@ Widget __containerOfFamilies(BuildContext context) {
       builder: (context, model, baseWidgetModel, _) {
     Size mediaQuery = MediaQuery.of(context).size;
     return model.listOfFamilies.isEmpty
-        ? Center(
+        ? const Center(
             child: CircularProgressIndicator(),
           )
         : MediaQuery.removePadding(
@@ -136,46 +209,10 @@ Widget __containerOfFamilies(BuildContext context) {
                 itemCount: model.listOfFamilies.length,
                 itemBuilder: (BuildContext context, int index) {
                   return InkWell(
-                    onTap: () async {
-                      HapticFeedback.mediumImpact();
-                      baseWidgetModel.showOverLayWidget(
-                          true,
-                          InformationModal.loading(
-                              typeInformationModal:
-                                  TypeInformationModal.LOADING));
-                      bool res = await model
-                          .chargeSubfamily(model.listOfFamilies[index]);
-                      if (res) {
-                        double width = mediaQuery.width;
-                        double height = mediaQuery.height;
-                        Family family = model.listOfFamilies[index];
-                        baseWidgetModel.showOverLayWidget(false, Container());
-                        baseWidgetModel.showOverLayWidget(
-                            true,
-                            _SelectSubFamilyAndArticles(
-                                model.listOfFamilies[index],
-                                model,
-                                baseWidgetModel)
-                        );
-                      } else {
-                        baseWidgetModel.showOverLayWidget(false, Container());
-                        baseWidgetModel.showOverLayWidget(
-                            true,
-                            InformationModal(
-                                typeInformationModal:
-                                    TypeInformationModal.WARNING,
-                                title: AppLocalizations.of(context).warningText,
-                                contentText: AppLocalizations.of(context)
-                                    .loadChargeFailText,
-                                acceptButton: () {
-                                  baseWidgetModel.showOverLayWidget(
-                                      false, Container());
-                                },
-                                icon: Icon(
-                                  Icons.warning,
-                                  color: Colors.yellow[700],
-                                )));
-                      }
+                    enableFeedback: false,
+                    onTap: () {
+                      //deploy the family articles and sub-family
+                      model.isFamilySelected = index;
                     },
                     child: Card(
                         color: Colors.grey[400],
@@ -205,231 +242,7 @@ Widget __containerOfFamilies(BuildContext context) {
                   );
                 }),
           );
-
-    // ListView.builder(
-    //   itemCount: model.listOfFamilies.length,
-    //     itemBuilder: (BuildContext context, int index){
-    //     return Container(
-    //       decoration: const BoxDecoration(
-    //         color: Colors.red
-    //       ),
-    //       width: mediaQuery.width * 0.1,
-    //       height: mediaQuery.width * 0.1,
-    //       child:model.listOfFamilies[index].img != ""
-    //           ? model.listOfFamilies[index].image
-    //           : const Center(child: Text("N/A"),),
-    //     );
-    //
-    // })
-    ;
   });
-}
-
-@swidget
-Widget __selectSubFamilyAndArticles(BuildContext context, Family family,
-    TableViewModel model, BaseWidgetModel baseWidgetModel) {
-  Size mediaQuery = MediaQuery.of(context).size;
-  double height = mediaQuery.height * 0.8;
-  double width = mediaQuery.width * 0.8;
-  return Material(
-    color: Colors.black87,
-    child: Center(
-      child: Container(
-        width: width,
-        height: height,
-        decoration: const BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(7)),
-          color: Colors.white,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: double.infinity,
-              height: height * 0.10,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(7),
-                color: colorPrimary,
-              ),
-              child: Row(children: [
-                Expanded(
-                  flex: 90,
-                  child: Center(
-                    child: Text(
-                      family.name ?? "",
-                      style: styleForButton(),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  flex: 10,
-                  child: Center(
-                    child: IconButton(
-                        onPressed: () {
-                          model.clearListOfSubFamily();
-                          model.listOfArticlesBySubFamily.clear();
-                          baseWidgetModel.showOverLayWidget(false, Container());
-                        },
-                        icon: const Icon(
-                          Icons.cancel_outlined,
-                          color: Colors.white,
-                          size: 27,
-                        )),
-                  ),
-                )
-              ]),
-            ),
-            Expanded(
-              flex: 80,
-              child: Row(
-                children: [
-                  Expanded(
-                    flex: 20,
-                    child: SizedBox(
-                      width: width * 0.20,
-                      height: height - (height * 0.25),
-                      child: ListView.builder(
-                          itemCount: model.listOfSubFamilies.length,
-                          scrollDirection: Axis.vertical,
-                          shrinkWrap: true,
-                          itemBuilder: (BuildContext context, int index) {
-                            return InkWell(
-                              onTap: () async {
-                                model.listOfArticlesBySubFamily.clear();
-                                print("tap SubFamily");
-                                bool res =
-                                    await model.chargeArticlesOfSubFamily(
-                                        model.listOfSubFamilies[index].id ??
-                                            "0",
-                                        family.id ?? "0");
-                                if (!res) {
-                                  baseWidgetModel.showOverLayWidget(
-                                      true,
-                                      InformationModal(
-                                          typeInformationModal:
-                                              TypeInformationModal.ERROR,
-                                          title: AppLocalizations.of(context)
-                                              .errorText,
-                                          contentText:
-                                              AppLocalizations.of(context)
-                                                  .somethingWentWrongText,
-                                          acceptButton: () {
-                                            baseWidgetModel.showOverLayWidget(
-                                                false, Container());
-                                          },
-                                          icon: Icon(
-                                            Icons.error,
-                                            color: Colors.red[700],
-                                            size: 33,
-                                          )));
-                                }
-                              },
-                              child: Container(
-                                  padding: EdgeInsets.symmetric(
-                                    vertical: 10,
-                                  ),
-                                  margin: EdgeInsets.symmetric(vertical: 10),
-                                  decoration: BoxDecoration(
-                                    borderRadius: const BorderRadius.all(
-                                        Radius.circular(7)),
-                                    color: Colors.grey[600],
-                                  ),
-                                  child: Column(
-                                    children: [
-                                      model.listOfSubFamilies[index].img != ""
-                                          ? Image(
-                                              image: model
-                                                  .listOfSubFamilies[index]
-                                                  .image!
-                                                  .image)
-                                          : const Text("N/A"),
-                                      Center(
-                                        child: Text(model
-                                                .listOfSubFamilies[index]
-                                                .name ??
-                                            ""),
-                                      )
-                                    ],
-                                  )),
-                            );
-                          }),
-                    ),
-                  ),
-                  Expanded(
-                    flex: 80,
-                    child: model.listOfArticlesBySubFamily.isEmpty
-                        ? Container()
-                        : SizedBox(
-                            width: width * 0.80,
-                            height: height - (height * 0.17),
-                            child: GridView.builder(
-                                gridDelegate:
-                                    const SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 4,
-                                ),
-                                itemCount:
-                                    model.listOfArticlesBySubFamily.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  return InkWell(
-                                    onTap: () async {
-                                      HapticFeedback.mediumImpact();
-                                    },
-                                    child: Card(
-                                        color: Colors.grey[400],
-                                        child: Column(
-                                          children: [
-                                            Expanded(
-                                              flex: 80,
-                                              child: model
-                                                          .listOfArticlesBySubFamily[
-                                                              index]
-                                                          .img !=
-                                                      ""
-                                                  ? //model.listOfFamilies[index].image
-                                                  Image(
-                                                      image: model
-                                                          .listOfArticlesBySubFamily[
-                                                              index]
-                                                          .image!
-                                                          .image,
-                                                      fit: BoxFit.contain,
-                                                    )
-                                                  : const Center(
-                                                      child: Text("N/A"),
-                                                    ),
-                                            ),
-                                            Expanded(
-                                                flex: 20,
-                                                child: Text(
-                                                  model
-                                                          .listOfArticlesBySubFamily[
-                                                              index]
-                                                          .name ??
-                                                      "",
-                                                  style: styleForDetails(),
-                                                ))
-                                          ],
-                                        )),
-                                  );
-                                }),
-                          ),
-                  )
-                ],
-              ),
-            ),
-            Expanded(
-              flex: 10,
-              child: TextButton(
-                  onPressed: () {
-                    baseWidgetModel.showOverLayWidget(false, Container());
-                  },
-                  child: Text("OK")),
-            )
-          ],
-        ),
-      ),
-    ),
-  );
 }
 
 @swidget
@@ -500,6 +313,7 @@ Widget __containerOfApplyButton(BuildContext context) {
       builder: (context, model, baseWidgetModel, _) {
     Size mediaQuery = MediaQuery.of(context).size;
     final ButtonStyle raisedButtonStyle = ElevatedButton.styleFrom(
+      enableFeedback: false,
       foregroundColor: Colors.black87,
       backgroundColor: colorPrimaryLight,
       minimumSize: const Size(88, 36),
@@ -726,6 +540,8 @@ Widget __containerOfCommands(BuildContext context) {
   );
 }
 
+
+
 TextStyle styleForArticle() {
   return const TextStyle(
       fontWeight: FontWeight.w600, color: Colors.black, fontSize: 20);
@@ -744,4 +560,8 @@ TextStyle styleForDetails() {
 TextStyle styleForButton() {
   return const TextStyle(
       fontWeight: FontWeight.w700, color: Colors.white, fontSize: 23);
+}
+TextStyle styleForTitleFamily() {
+  return const TextStyle(
+      fontWeight: FontWeight.w700, color: Colors.white, fontSize: 20);
 }

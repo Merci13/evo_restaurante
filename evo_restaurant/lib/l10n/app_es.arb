@@ -116,5 +116,39 @@
   "errorText": "Error",
   "@errorText": {
     "description": "Error Text"
+  },
+
+  "hintSelectASubFamilyText": "Seleccione una Sub-Familia para mostrar los artículos",
+  "@hintSelectASubFamilyText": {
+    "description": "Hint Select A Sub-Family Text"
+  },
+
+  "nameOfArticle": "Nombre del Article",
+  "@name": {
+    "description": "Name of Article Text"
+  },
+
+  "priceOfArticle": "Precio del Article",
+  "@priceOfArticle": {
+    "description": "Price of Article Text"
+  },
+
+  "familyOfArticle": "Familia del Article",
+  "@familyOfArticle": {
+    "description": "Price of Article Text"
+  },
+
+  "hallsText": "Salones",
+  "@hallsText": {
+    "description": "Halls Text"
+  },
+
+  "unavailableToLoadData": "Indisponible la carga de Datos",
+  "@unavailableToLoadData": {
+    "description": "Halls Text"
+  },
+  "tablesText": "Mesas",
+  "@tablesText": {
+    "description": "Tables Text"
   }
 }

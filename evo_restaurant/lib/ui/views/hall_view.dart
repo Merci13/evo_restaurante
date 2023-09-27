@@ -53,6 +53,7 @@ class HallView extends BaseWidget {
                 elevation: 0.5,
                 backgroundColor: colorPrimary,
                 leading: IconButton(
+                  enableFeedback: false,
                   icon: Icon(
                     Platform.isIOS ? Icons.arrow_back_ios : Icons.arrow_back,
                     size: 30,
@@ -68,7 +69,6 @@ class HallView extends BaseWidget {
                     fontWeight: FontWeight.w600,
                     fontSize: 30),
               ),
-
               body: const _Body(),
             ),
           );
@@ -96,8 +96,21 @@ Widget __body(BuildContext context) {
               )
             : ListView.builder(
                 padding: const EdgeInsets.symmetric(vertical: 10),
-                itemCount: model.listOfTables.length,
+                itemCount: model.listOfTables.length + 1,
                 itemBuilder: (BuildContext context, int index) {
+                  if (index == 0) {
+                    return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Center(
+                            child: Text(
+                          AppLocalizations.of(context).tablesText,
+                          style: const TextStyle(
+                              fontSize: 25,
+                              fontWeight: FontWeight.w700,
+                              color: controlColorGray),
+                        )));
+                  }
+                  index = index -1;
                   return Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Center(
@@ -117,8 +130,8 @@ Widget __body(BuildContext context) {
                                     LayoutBuilder(
                                         builder: (context, constraints) {
                                       return InkWell(
+                                        enableFeedback: false,
                                         onTap: () async {
-                                          HapticFeedback.mediumImpact();
                                           baseWidgetModel.showOverLayWidget(
                                               true,
                                               const InformationModal.loading(
@@ -140,24 +153,25 @@ Widget __body(BuildContext context) {
                                                   "tableDetail":
                                                       res.responseObject
                                                 });
-                                          }else{
+                                          } else {
                                             baseWidgetModel.showOverLayWidget(
                                                 false, Container());
                                             baseWidgetModel.showOverLayWidget(
                                               true,
                                               InformationModal(
                                                 typeInformationModal:
-                                                TypeInformationModal.WARNING,
+                                                    TypeInformationModal
+                                                        .WARNING,
                                                 title:
-                                                AppLocalizations.of(context)
-                                                    .warningText,
+                                                    AppLocalizations.of(context)
+                                                        .warningText,
                                                 contentText:
-                                                AppLocalizations.of(context)
-                                                    .somethingWentWrongText,
+                                                    AppLocalizations.of(context)
+                                                        .somethingWentWrongText,
                                                 acceptButton: () {
                                                   baseWidgetModel
                                                       .showOverLayWidget(
-                                                      false, Container());
+                                                          false, Container());
                                                 },
                                                 icon: Icon(
                                                   Icons.warning,
@@ -166,7 +180,6 @@ Widget __body(BuildContext context) {
                                               ),
                                             );
                                           }
-
                                         },
                                         child: Container(
                                           height: constraints.maxHeight,
@@ -212,8 +225,8 @@ Widget __body(BuildContext context) {
                                     LayoutBuilder(
                                         builder: (context, constraints) {
                                       return InkWell(
+                                        enableFeedback: false,
                                         onTap: () async {
-                                          HapticFeedback.mediumImpact();
                                           baseWidgetModel.showOverLayWidget(
                                               true,
                                               const InformationModal.loading(
@@ -231,9 +244,9 @@ Widget __body(BuildContext context) {
                                                 context, "/tableView",
                                                 arguments: {
                                                   "table":
-                                                  model.listOfTables[index],
+                                                      model.listOfTables[index],
                                                   "tableDetail":
-                                                  res.responseObject
+                                                      res.responseObject
                                                 });
                                           }
                                           baseWidgetModel.showOverLayWidget(

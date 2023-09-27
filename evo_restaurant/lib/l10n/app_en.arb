@@ -123,14 +123,43 @@
   "errorText": "Error",
   "@errorText": {
     "description": "Error Text"
+  },
+
+  "hintSelectASubFamilyText": "Select a Sub-Family to show the Articles",
+  "@hintSelectASubFamilyText": {
+    "description": "Hint Select A Sub-Family Text"
+  },
+
+  "nameOfArticle": "Name of Article",
+  "@name": {
+    "description": "Name of Article Text"
+  },
+
+  "priceOfArticle": "Price of Article",
+  "@priceOfArticle": {
+    "description": "Price of Article Text"
+  },
+
+  "familyOfArticle": "Family of Article",
+  "@familyOfArticle": {
+    "description": "Price of Article Text"
+  },
+
+
+  "hallsText": "Halls",
+  "@hallsText": {
+    "description": "Halls Text"
+  },
+
+  "unavailableToLoadData": "Unavailable to Load Data",
+  "@unavailableToLoadData": {
+    "description": "Unavailable to Load Data Text"
+  },
+
+  "tablesText": "Tables",
+  "@tablesText": {
+    "description": "Tables Text"
   }
-
-
-
-
-
-
-
 
 
 

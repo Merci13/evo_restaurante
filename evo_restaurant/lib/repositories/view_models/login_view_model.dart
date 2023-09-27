@@ -9,6 +9,7 @@ import '../models/response_object.dart';
 import '../models/user.dart';
 import '../service/auth/authentication_service.dart';
 import 'base_model.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class LoginViewModel extends BaseModel {
   late AuthenticationService _authenticationService;
@@ -59,7 +60,6 @@ class LoginViewModel extends BaseModel {
   String get selectedUser => _selectedUser;
 
   List<User> get listOfUser => _listOfUser;
-
 
   User get user => _user;
 
@@ -142,23 +142,43 @@ class LoginViewModel extends BaseModel {
   }
 
   init(BuildContext context) async {
-    listOfUser.clear();
-    selectedUser = "";
-    String userNameRemember = await authenticationService.getRememberUserName();
-    if (userNameRemember != "") {
-      _rememberUserName = true;
-      _userNameEditingController.text = userNameRemember;
-    }
-    //charge list of users
+    if (state == ViewState.BUSY) {
+      throw ErrorDescription("Finish the process to perform a new one");
+    } else {
+      setState(ViewState.BUSY);
 
-    ResponseObject responseObject = await userService.loadUsers();
-    bool resultUsers = responseObject.status ?? false;
-    if (resultUsers) {
-      listOfUser = responseObject.responseObject as List<User>;
-    }
-    selectedUser = listOfUser.first.name ?? "";
+      listOfUser.clear();
+      selectedUser = "";
+      String userNameRemember =
+          await authenticationService.getRememberUserName();
+      if (userNameRemember != "") {
+        _rememberUserName = true;
+        _userNameEditingController.text = userNameRemember;
+      }
+      //charge list of users
 
-    notifyListeners();
+      ResponseObject responseObject = await userService.loadUsers();
+      bool resultUsers = responseObject.status ?? false;
+      if (resultUsers) {
+        listOfUser = responseObject.responseObject as List<User>;
+        selectedUser = listOfUser.first.name ?? "";
+        errorMessage = "";
+      } else {
+
+        switch (responseObject.errorObject?.errorCode) {
+          //503
+          case 503:
+            errorMessage = AppLocalizations.of(context).unavailableToLoadData;
+            break;
+
+          default:
+            errorMessage = AppLocalizations.of(context).somethingWentWrongText;
+        }
+      }
+
+      setState(ViewState.IDLE);
+      notifyListeners();
+    }
   }
 
   bool isUserNameFocused() {
@@ -189,8 +209,8 @@ class LoginViewModel extends BaseModel {
 
       ResponseObject result = ResponseObject();
 
-        result = await authenticationService.login(
-            password == userValidation.pwd, rememberUserName,userValidation);
+      result = await authenticationService.login(
+          password == userValidation.pwd, rememberUserName, userValidation);
 
       setState(ViewState.IDLE);
       return result;

@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:evo_restaurant/global/config.dart';
 import 'package:evo_restaurant/repositories/models/hall.dart';
@@ -117,7 +116,7 @@ class ApiSource {
         status: true,
       );
     } catch (error) {
-      log("Error in method updateToken in api_source. Error: $error --------------------->>>>>>>>>>");
+      print("Error in method updateToken in api_source. Error: $error --------------------->>>>>>>>>>");
       return ResponseObject(
         status: false,
         errorObject: ErrorObject(
@@ -255,6 +254,7 @@ class ApiSource {
               status: false,
               errorObject: response.body,
               errorMessage: response.body,
+              errorCode: response.statusCode
             ));
       }
 
@@ -473,10 +473,10 @@ class ApiSource {
       Map<String, dynamic> body = jsonDecode(response.body);
       List<Article> list = List.empty(growable: true);
 
-      for(int i = 0; i < body.length; i++){
+      for(int i = 0; i < body.length + 50; i++){
         list.add(Article(
           id: i,
-          name: "prueba #$i",
+          name: "$i$id",
           beb: i % 2 == 0,
           pvp: 123123 * i,
           regIvaVta: "G",
@@ -509,6 +509,60 @@ class ApiSource {
             errorMessage: error.toString(),
           ));
     }
+  }
+
+  Future<ResponseObject> getArticlesAsFamily(Family family) async{
+    // try {
+    //   //get all families that are articles by its self
+    //   String path =
+    //       "$basePath/$table/";
+    //   Uri url = Uri.parse(path);
+    //
+    //   http.Response response = await http.get(url, headers: {
+    //     "Content-Type": "application/json",
+    //     "Accept": "application/json",
+    //   });
+    //
+    //   if (response.statusCode != 200) {
+    //     return ResponseObject(
+    //         status: false,
+    //         errorObject: ErrorObject(
+    //           status: false,
+    //           errorObject: response.body,
+    //           errorMessage: response.body,
+    //         ));
+    //   }
+    //   Map<String, dynamic> body = jsonDecode(response.body);
+    //   List<Article> list = List.empty(growable: true);
+    //
+    //   for(int i = 0; i < body.length + 50; i++){
+    //     list.add(Article(
+    //         //replace with the article
+    //     ));
+    //
+    //   }
+    //
+    //   return ResponseObject(
+    //       status: true, errorObject: null, responseObject: list);
+    // } catch (error) {
+    //   print(
+    //       "Error in api_source.dart in method getSubFamily. Error: $error ------->>>>");
+    //   return ResponseObject(
+    //       status: false,
+    //       errorObject: ErrorObject(
+    //         status: false,
+    //         errorObject: error,
+    //         errorMessage: error.toString(),
+    //       ));
+    // }
+      return ResponseObject(
+          status: false,
+          errorObject: ErrorObject(
+            status: false,
+            errorObject: "error",
+            errorMessage: "",
+          ));
+
   }
 
   //-------------------------------------------------------------//

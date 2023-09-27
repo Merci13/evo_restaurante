@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:evo_restaurant/repositories/enums/view_state.dart';
 import 'package:evo_restaurant/repositories/models/article.dart';
 import 'package:evo_restaurant/repositories/models/response_object.dart';
@@ -8,6 +10,7 @@ import 'package:evo_restaurant/repositories/service/family/family_service.dart';
 import 'package:evo_restaurant/repositories/service/sub_family/sub_family_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:rxdart/rxdart.dart';
 
 import '../models/family.dart';
 import '../models/sub_family.dart';
@@ -29,7 +32,12 @@ class TableViewModel extends BaseModel {
   List<Family> _listOfFamilies = List.empty(growable: true);
   List<SubFamily> _listOfSubFamilies = List.empty(growable: true);
   List<Article> _listOfArticlesBySubFamily = List.empty(growable: true);
+  int _isFamilySelected = -1;
+
+  String _subfamilySelected = "";
+
   String _errorMessage = "";
+  bool _flagControl = true;
 
   own_table.Table get table => _table;
 
@@ -57,6 +65,25 @@ class TableViewModel extends BaseModel {
 
 
   List<Article> get listOfArticlesBySubFamily => _listOfArticlesBySubFamily;
+
+
+
+
+  String get subfamilySelected => _subfamilySelected;
+
+
+  int get isFamilySelected => _isFamilySelected;
+
+  set isFamilySelected(int value) {
+    _isFamilySelected = value;
+    notifyListeners();
+  }
+
+  set subfamilySelected(String value) {
+    _subfamilySelected = value;
+    notifyListeners();
+  }
+
 
   set listOfArticlesBySubFamily(List<Article> value) {
     _listOfArticlesBySubFamily = value;
@@ -120,7 +147,6 @@ class TableViewModel extends BaseModel {
     } else {
       setState(ViewState.BUSY);
       listOfFamilies.clear();
-
       ResponseObject resFamilies = await familyService.getFamilies();
       bool res = resFamilies.status ?? false;
       if (!res) {
@@ -142,14 +168,10 @@ class TableViewModel extends BaseModel {
     return "$val";
   }
 
-  void clearListOfSubFamily() {
-    listOfSubFamilies.clear();
-    notifyListeners();
-  }
+
 
   Future<bool> chargeSubfamily(Family family) async {
     try {
-      clearListOfSubFamily();
       ResponseObject responseObject =
           await subFamilyService.getSubfamily(family);
       bool res = responseObject.status ?? false;
@@ -167,23 +189,35 @@ class TableViewModel extends BaseModel {
     }
   }
 
-  Future<bool> chargeArticlesOfSubFamily(String id, String idFamily) async {
-    try {
-      listOfArticlesBySubFamily.clear();
-      ResponseObject responseObject =
-      await subFamilyService.getArticlesOfSubfamily(id, idFamily);
-      bool res = responseObject.status ?? false;
-      if (res) {
-       listOfArticlesBySubFamily.addAll( responseObject.responseObject as List<Article>);
-        return true;
-      } else {
-        throw ErrorDescription("Error trying load subfamilies");
+
+
+
+  Future<bool> addArticleToCommand(Article data)  async {
+
+    try{
+      if(state == ViewState.BUSY){
+        throw ErrorDescription("Finish the process to perform a new one");
       }
-    } catch (error) {
-      print(
-          "Error in chargeSubFamily method in table_view_model.dart. Error $error ----------->>>");
+      setState(ViewState.BUSY);
+
+        return Future.value(true);
+
+      setState(ViewState.IDLE);
+
+    }catch(error){
+      print( "Error in addArticleToCommand method in table_view_model.dart. Error $error ----------->>>");
       return Future.value(false);
     }
 
+
+
   }
+
+  void addToCounter(Article article) {}
+
+  String getCounterOfArticle(Article article) {
+    return "0";
+  }
+
+  void restToCounter(Article article) {}
 }

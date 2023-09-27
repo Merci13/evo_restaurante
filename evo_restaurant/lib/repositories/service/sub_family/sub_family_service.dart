@@ -9,6 +9,7 @@ import 'package:evo_restaurant/repositories/models/response_object.dart';
 class SubFamilyService {
   late ApiSource _apiSource;
 
+
   set apiSource(ApiSource value) {
     _apiSource = value;
   }
@@ -23,6 +24,11 @@ class SubFamilyService {
     return await _apiSource.getArticlesOfSubfamily(id, idFamily);
 
 
+  }
+
+  Future<ResponseObject> getArticlesAsFamily(Family family)async {
+
+    return await _apiSource.getArticlesAsFamily(family);
   }
 
 

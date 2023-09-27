@@ -1,3 +1,5 @@
+
+
 import 'package:flutter/material.dart';
 
 class Article {
@@ -58,4 +60,6 @@ class Article {
   String toString() {
     return 'Article{id: $id, name: $name, img: $img, fam: $fam, codBar: $codBar, regIvaVta: $regIvaVta, pvp: $pvp, beb: $beb, image: $image}';
   }
+
+
 }

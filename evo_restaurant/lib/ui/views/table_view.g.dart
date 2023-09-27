@@ -21,34 +21,19 @@ class _ContainerOfFamiliesAndSearch extends StatelessWidget {
       __containerOfFamiliesAndSearch(_context);
 }
 
+class _ContainerOfSubFamilyAndArticlesOfFamily extends StatelessWidget {
+  const _ContainerOfSubFamilyAndArticlesOfFamily({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext _context) =>
+      __containerOfSubFamilyAndArticlesOfFamily(_context);
+}
+
 class _ContainerOfFamilies extends StatelessWidget {
   const _ContainerOfFamilies({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext _context) => __containerOfFamilies(_context);
-}
-
-class _SelectSubFamilyAndArticles extends StatelessWidget {
-  const _SelectSubFamilyAndArticles(
-    this.family,
-    this.model,
-    this.baseWidgetModel, {
-    Key? key,
-  }) : super(key: key);
-
-  final Family family;
-
-  final TableViewModel model;
-
-  final BaseWidgetModel baseWidgetModel;
-
-  @override
-  Widget build(BuildContext _context) => __selectSubFamilyAndArticles(
-        _context,
-        family,
-        model,
-        baseWidgetModel,
-      );
 }
 
 class _ContainerOfCommandAndDetails extends StatelessWidget {
