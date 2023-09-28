@@ -511,57 +511,54 @@ class ApiSource {
     }
   }
 
-  Future<ResponseObject> getArticlesAsFamily(Family family) async{
-    // try {
-    //   //get all families that are articles by its self
-    //   String path =
-    //       "$basePath/$table/";
-    //   Uri url = Uri.parse(path);
-    //
-    //   http.Response response = await http.get(url, headers: {
-    //     "Content-Type": "application/json",
-    //     "Accept": "application/json",
-    //   });
-    //
-    //   if (response.statusCode != 200) {
-    //     return ResponseObject(
-    //         status: false,
-    //         errorObject: ErrorObject(
-    //           status: false,
-    //           errorObject: response.body,
-    //           errorMessage: response.body,
-    //         ));
-    //   }
-    //   Map<String, dynamic> body = jsonDecode(response.body);
-    //   List<Article> list = List.empty(growable: true);
-    //
-    //   for(int i = 0; i < body.length + 50; i++){
-    //     list.add(Article(
-    //         //replace with the article
-    //     ));
-    //
-    //   }
-    //
-    //   return ResponseObject(
-    //       status: true, errorObject: null, responseObject: list);
-    // } catch (error) {
-    //   print(
-    //       "Error in api_source.dart in method getSubFamily. Error: $error ------->>>>");
-    //   return ResponseObject(
-    //       status: false,
-    //       errorObject: ErrorObject(
-    //         status: false,
-    //         errorObject: error,
-    //         errorMessage: error.toString(),
-    //       ));
-    // }
-      return ResponseObject(
-          status: false,
-          errorObject: ErrorObject(
-            status: false,
-            errorObject: "error",
-            errorMessage: "",
-          ));
+  Future<ResponseObject> getArticlesOfFamily(Family family) async{
+        try{
+          String path =//http://209.145.58.91/Pruebas/vERP_2_dat_dat/v1/art_m?filter[fam]=10&api_key=mzZ58he3
+              "$basePath/$table/art_m?filter[fam]=${family.id}&api_key=$apiKey";
+          Uri url = Uri.parse(path);
+
+          http.Response response = await http.get(url, headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+          });
+
+          if (response.statusCode != 200) {
+            return ResponseObject(
+                status: false,
+                errorObject: ErrorObject(
+                  status: false,
+                  errorObject: response.body,
+                  errorMessage: response.body,
+                ));
+          }
+          Map<String, dynamic> body = jsonDecode(response.body);
+          List<Article> list = List.empty(growable: true);
+
+          for (var element in (body["art_m"] as List)) {
+            list.add(Article.fromJson(element));
+          }
+          for (var element in list) {
+            element.image = imageFromBase64String(element.img ?? '');
+          }
+
+          return ResponseObject(
+            status: true,
+            responseObject: list,
+            errorObject: null
+          );
+
+
+
+        }catch(error){
+          return ResponseObject(
+              status: false,
+              errorObject: ErrorObject(
+                status: false,
+                errorObject: "error",
+                errorMessage: "",
+              ));
+        }
+
 
   }
 

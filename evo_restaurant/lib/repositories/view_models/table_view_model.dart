@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_getters_setters
+
 import 'dart:async';
 
 import 'package:evo_restaurant/repositories/enums/view_state.dart';
@@ -32,6 +34,7 @@ class TableViewModel extends BaseModel {
   List<Family> _listOfFamilies = List.empty(growable: true);
   List<SubFamily> _listOfSubFamilies = List.empty(growable: true);
   List<Article> _listOfArticlesBySubFamily = List.empty(growable: true);
+  List<Article> _listOfArticlesByFamily = List.empty(growable: true);
   int _isFamilySelected = -1;
 
   String _subfamilySelected = "";
@@ -63,16 +66,18 @@ class TableViewModel extends BaseModel {
 
   SubFamilyService get subFamilyService => _subFamilyService;
 
-
   List<Article> get listOfArticlesBySubFamily => _listOfArticlesBySubFamily;
-
-
-
 
   String get subfamilySelected => _subfamilySelected;
 
-
   int get isFamilySelected => _isFamilySelected;
+
+  List<Article> get listOfArticlesByFamily => _listOfArticlesByFamily;
+
+  set listOfArticlesByFamily(List<Article> value) {
+    _listOfArticlesByFamily = value;
+    notifyListeners();
+  }
 
   set isFamilySelected(int value) {
     _isFamilySelected = value;
@@ -83,7 +88,6 @@ class TableViewModel extends BaseModel {
     _subfamilySelected = value;
     notifyListeners();
   }
-
 
   set listOfArticlesBySubFamily(List<Article> value) {
     _listOfArticlesBySubFamily = value;
@@ -168,8 +172,6 @@ class TableViewModel extends BaseModel {
     return "$val";
   }
 
-
-
   Future<bool> chargeSubfamily(Family family) async {
     try {
       ResponseObject responseObject =
@@ -189,28 +191,21 @@ class TableViewModel extends BaseModel {
     }
   }
 
-
-
-
-  Future<bool> addArticleToCommand(Article data)  async {
-
-    try{
-      if(state == ViewState.BUSY){
+  Future<bool> addArticleToCommand(Article data) async {
+    try {
+      if (state == ViewState.BUSY) {
         throw ErrorDescription("Finish the process to perform a new one");
       }
       setState(ViewState.BUSY);
 
-        return Future.value(true);
+      return Future.value(true);
 
       setState(ViewState.IDLE);
-
-    }catch(error){
-      print( "Error in addArticleToCommand method in table_view_model.dart. Error $error ----------->>>");
+    } catch (error) {
+      print(
+          "Error in addArticleToCommand method in table_view_model.dart. Error $error ----------->>>");
       return Future.value(false);
     }
-
-
-
   }
 
   void addToCounter(Article article) {}
@@ -220,4 +215,21 @@ class TableViewModel extends BaseModel {
   }
 
   void restToCounter(Article article) {}
+
+  Future<bool> loadArticlesOfFamilyAndSubfamilies(int value) async {
+    int val = value;
+    if (val != -1) {
+      //load Articles that are children of family
+      ResponseObject responseObject =
+          await familyService.getArticlesOfFamily(listOfFamilies[val]);
+      bool res = responseObject.status ?? false;
+      if (res) {
+        listOfArticlesByFamily = responseObject.responseObject as List<Article>;
+        return true;
+      }
+      listOfArticlesByFamily.clear();
+      return false;
+    }
+    return false;
+  }
 }
