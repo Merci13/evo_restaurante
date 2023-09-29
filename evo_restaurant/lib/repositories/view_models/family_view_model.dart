@@ -122,7 +122,7 @@ class FamilyViewModel extends BaseModel {
       }
 
       ResponseObject responseObject =
-      await subFamilyService.getArticlesOfSubfamily(id, idFamily);
+      await subFamilyService.getArticlesOfSubfamily(id);
       bool res = responseObject.status ?? false;
       if (res) {
         controllerArticles.sink;

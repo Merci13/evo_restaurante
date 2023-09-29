@@ -150,5 +150,10 @@
   "tablesText": "Mesas",
   "@tablesText": {
     "description": "Tables Text"
+  },
+  "subFamiliesText": "Sub Familias",
+  "@subFamiliesText": {
+    "description": "Sub Families Text"
   }
+
 }

@@ -159,8 +159,12 @@
   "tablesText": "Tables",
   "@tablesText": {
     "description": "Tables Text"
-  }
+  },
 
+  "subFamiliesText": "Sub Families",
+  "@subFamiliesText": {
+    "description": "Sub Families Text"
+  }
 
 
 }

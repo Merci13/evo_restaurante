@@ -4,6 +4,7 @@ import 'dart:io' show Platform;
 
 import 'package:evo_restaurant/repositories/enums/type_information_modal.dart';
 import 'package:evo_restaurant/repositories/models/family.dart';
+import 'package:evo_restaurant/repositories/models/sub_family.dart';
 import 'package:evo_restaurant/repositories/service/auth/user_service.dart';
 import 'package:evo_restaurant/repositories/service/command_table/command_table_service.dart';
 import 'package:evo_restaurant/repositories/service/family/family_service.dart';
@@ -140,96 +141,230 @@ Widget __containerOfSubFamilyAndArticlesOfFamily(BuildContext context) {
     Size mediaQuery = MediaQuery.of(context).size;
     bool hasArticlesOfFamily = model.listOfArticlesByFamily.isNotEmpty;
     return Container(
-      margin: EdgeInsets.all(10),
-      padding: EdgeInsets.all(10),
+      margin: const EdgeInsets.all(10),
+      padding: const EdgeInsets.all(10),
       width: mediaQuery.width * 0.55,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(7)),
+        borderRadius: const BorderRadius.all(Radius.circular(7)),
         border: Border.all(color: Colors.black, width: 1),
       ),
       child: Container(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(7)),
+          borderRadius: const BorderRadius.all(Radius.circular(7)),
           border: Border.all(color: Colors.black, width: 1),
         ),
-        child: Column(
+        child: ListView(
           children: [
-            Expanded(
-              flex: 10,
-              child: Container(
-                color: colorPrimary,
-                child: Row(
-                  children: [
-                    Expanded(
-                        flex: 10,
-                        child: IconButton(
-                          enableFeedback: false,
-                          icon: const Icon(
-                            Icons.arrow_drop_up,
-                            color: Colors.white,
-                            size: 40,
-                          ),
-                          onPressed: () {
-                            model.isFamilySelected = -1;
-                          },
-                        )),
-                    Expanded(
-                      flex: 90,
-                      child: Center(
-                        child: Text(
-                          model.listOfFamilies[model.isFamilySelected].name ?? "",
-                          style: styleForTitleFamily(),
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            ),
+            _ContainerOfNameOfFamily(
+                model.listOfFamilies[model.isFamilySelected].name ?? ""),
             //Articles that are directly ancestors of the family
             hasArticlesOfFamily
-                ? Expanded(
-              flex: 45,
-              child: Column(
-                children: [
-                  Expanded(
-                    flex: 10,
-                    child: Container(
-                      color: colorAccent,
-                      child: Center(
-                        child: Text(AppLocalizations.of(context).articleText),
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    flex: 90,
-                    child: GridView.builder(
-                      scrollDirection: Axis.horizontal,
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 4,
-                      ),
-                        itemCount: model.listOfArticlesByFamily.length,
-                        itemBuilder: (BuildContext context, int index) {
-                        Article article = model.listOfArticlesByFamily[index];
-                          return Container(
-                            width: double.infinity,
-                            height: double.infinity,
-                            color: index%2 == 0? Colors.green : Colors.purple,
-                            child: Text(article.name ?? "N/A"),
-                          );
-                        },
-                    ),
-                  ),
-                ],
-              ),
-            )
+                ? const _ContainerOfArticlesOfFamily()
                 : Container(),
 
+            AnimatedSwitcher(
+              duration: const Duration(seconds: 1),
+              transitionBuilder: (Widget child, Animation<double> animation) {
+                return ScaleTransition(scale: animation, child: child);
+              },
+              child: SizedBox(
+                width: mediaQuery.width * 0.55,
+                child: model.subfamilySelected != -1
+                    ? const _ContainerOfArticlesOfSubFamily(
+                        key: ValueKey(4),
+                      )
+                    : _ContainerOfSubFamilies(
+                        key: const ValueKey(3), hasArticlesOfFamily),
+              ),
+            ),
           ],
         ),
       ),
     );
   });
+}
+
+@swidget
+Widget __containerOfArticlesOfSubFamily(BuildContext context) {
+  return Consumer2<TableViewModel, BaseWidgetModel>(
+      builder: (context, model, baseWidgetModel, _) {
+    Size mediaQuery = MediaQuery.of(context).size;
+
+    return GridView.builder(
+      scrollDirection: Axis.vertical,
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 4,
+        ),
+        itemBuilder: (BuildContext context, int index) {
+          return Container(
+            margin: const EdgeInsets.all(5),
+            color: index % 2 == 0 ? Colors.green : Colors.red,
+            child: Text(model.listOfArticlesBySubFamily[index].name ?? ""),
+          );
+        });
+  });
+}
+
+@swidget
+Widget __containerOfSubFamilies(
+    BuildContext context, bool hasArticlesOfFamily) {
+  return Consumer2<TableViewModel, BaseWidgetModel>(
+      builder: (context, model, baseWidgetModel, _) {
+    Size mediaQuery = MediaQuery.of(context).size;
+    return SizedBox(
+      height: hasArticlesOfFamily
+          ? mediaQuery.height * 0.50
+          : mediaQuery.height * 0.80,
+      child: Column(
+        children: [
+          Expanded(
+            flex: 10,
+            child: Container(
+              color: colorAccent,
+              child: Center(
+                child: Text(model.subfamilySelected != -1
+                    ? AppLocalizations.of(context).subFamiliesText
+                    : model.listOfSubFamilies[model.subfamilySelected].name ??
+                        ""),
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 90,
+            child: GridView.builder(
+              scrollDirection: Axis.vertical,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 4,
+              ),
+              itemCount: model.listOfSubFamilies.length,
+              itemBuilder: (BuildContext context, int index) {
+                SubFamily subFamily = model.listOfSubFamilies[index];
+
+                return TextButton(
+                  onPressed: () async {
+                    //load the articles of the sub-family
+                    bool res = await model.loadArticlesOfSubfamily(index);
+                    if (res) {
+                      model.subfamilySelected = index;
+                    } else {
+                      baseWidgetModel.showOverLayWidget(
+                          true,
+                          InformationModal(
+                              typeInformationModal: TypeInformationModal.ERROR,
+                              title: AppLocalizations.of(context)
+                                  .unavailableToLoadData,
+                              contentText: AppLocalizations.of(context)
+                                  .somethingWentWrongText,
+                              acceptButton: () {
+                                baseWidgetModel.showOverLayWidget(
+                                    false, Container());
+                              },
+                              icon: Icon(
+                                Icons.error,
+                                color: Colors.red[800],
+                                size: 40,
+                              )));
+                    }
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    height: double.infinity,
+                    color: index % 2 == 0 ? Colors.red : Colors.orange,
+                    child: Text(subFamily.name??""),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  });
+}
+
+@swidget
+Widget __containerOfArticlesOfFamily(BuildContext context) {
+  return Consumer2<TableViewModel, BaseWidgetModel>(
+      builder: (context, model, baseWidgetModel, _) {
+    Size mediaQuery = MediaQuery.of(context).size;
+    return SizedBox(
+      height: mediaQuery.height * 0.50,
+      child: Column(
+        children: [
+          Expanded(
+            flex: 10,
+            child: Container(
+              color: colorAccent,
+              child: Center(
+                child: Text(AppLocalizations.of(context).articleText),
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 90,
+            child: GridView.builder(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.all(6),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+              ),
+              itemCount: model.listOfArticlesByFamily.length,
+              itemBuilder: (BuildContext context, int index) {
+                Article article = model.listOfArticlesByFamily[index];
+                return Container(
+                  margin: const EdgeInsets.all(5),
+                  width: double.infinity,
+                  height: double.infinity,
+                  color: index % 2 == 0 ? Colors.green : Colors.purple,
+                  child: Text(article.name ?? "N/A"),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  });
+}
+
+@swidget
+Widget __containerOfNameOfFamily(BuildContext context, String name) {
+  return Consumer2<TableViewModel, BaseWidgetModel>(
+    builder: (context, model, baseWidgetModel, _) {
+      Size mediaQuery = MediaQuery.of(context).size;
+      return Container(
+        width: double.infinity,
+        height: mediaQuery.height * 0.05,
+        color: colorPrimary,
+        child: Row(
+          children: [
+            Expanded(
+                flex: 10,
+                child: IconButton(
+                  enableFeedback: false,
+                  icon: const Icon(
+                    Icons.arrow_drop_up,
+                    color: Colors.white,
+                    size: 40,
+                  ),
+                  onPressed: () {
+                    model.isFamilySelected = -1;
+                  },
+                )),
+            Expanded(
+              flex: 90,
+              child: Center(
+                child: Text(
+                  name,
+                  style: styleForTitleFamily(),
+                ),
+              ),
+            )
+          ],
+        ),
+      );
+    },
+  );
 }
 
 @swidget
@@ -255,11 +390,19 @@ Widget __containerOfFamilies(BuildContext context) {
                     enableFeedback: false,
                     onTap: () async {
                       //deploy the family articles and sub-family
+                      baseWidgetModel.showOverLayWidget(
+                          true,
+                          const InformationModal.loading(
+                              typeInformationModal:
+                                  TypeInformationModal.LOADING));
                       bool res =
                           await model.loadArticlesOfFamilyAndSubfamilies(index);
                       if (res) {
+                        baseWidgetModel.showOverLayWidget(false, Container());
                         model.isFamilySelected = index;
                       } else {
+                        baseWidgetModel.showOverLayWidget(false, Container());
+
                         baseWidgetModel.showOverLayWidget(
                           true,
                           InformationModal(

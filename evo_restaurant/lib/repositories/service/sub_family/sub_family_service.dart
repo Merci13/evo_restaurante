@@ -19,9 +19,9 @@ class SubFamilyService {
 
   }
 
-  Future<ResponseObject> getArticlesOfSubfamily(String id, String idFamily) async {
+  Future<ResponseObject> getArticlesOfSubfamily(String id,) async {
 
-    return await _apiSource.getArticlesOfSubfamily(id, idFamily);
+    return await _apiSource.getArticlesOfSubfamily(id);
 
 
   }

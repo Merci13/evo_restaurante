@@ -116,7 +116,8 @@ class ApiSource {
         status: true,
       );
     } catch (error) {
-      print("Error in method updateToken in api_source. Error: $error --------------------->>>>>>>>>>");
+      print(
+          "Error in method updateToken in api_source. Error: $error --------------------->>>>>>>>>>");
       return ResponseObject(
         status: false,
         errorObject: ErrorObject(
@@ -251,11 +252,10 @@ class ApiSource {
         return ResponseObject(
             status: false,
             errorObject: ErrorObject(
-              status: false,
-              errorObject: response.body,
-              errorMessage: response.body,
-              errorCode: response.statusCode
-            ));
+                status: false,
+                errorObject: response.body,
+                errorMessage: response.body,
+                errorCode: response.statusCode));
       }
 
       Map<String, dynamic> body = jsonDecode(response.body);
@@ -449,11 +449,12 @@ class ApiSource {
   }
 
   Future<ResponseObject> getArticlesOfSubfamily(
-      String id, String idFamily) async {
+    String idSubFamily,
+  ) async {
     try {
-
-      String path =//ToDo change this endPoint because its only giving the family members not the articles
-          "$basePath/$table/_process/TPV_CAR_FAM_II_API?param[ID_FAM]=${idFamily}&api_key=$apiKey";
+      String
+          path = //http://209.145.58.91/Pruebas/vERP_2_dat_dat/v1/art_m?filter[fam]=10&api_key=mzZ58he3
+          "$basePath/$table/art_m?filter[fam]=$idSubFamily&api_key=$apiKey";
       Uri url = Uri.parse(path);
 
       http.Response response = await http.get(url, headers: {
@@ -473,34 +474,18 @@ class ApiSource {
       Map<String, dynamic> body = jsonDecode(response.body);
       List<Article> list = List.empty(growable: true);
 
-      for(int i = 0; i < body.length + 50; i++){
-        list.add(Article(
-          id: i,
-          name: "$i$id",
-          beb: i % 2 == 0,
-          pvp: 123123 * i,
-          regIvaVta: "G",
-          codBar: "${3534534534*i}",
-          fam: idFamily,
-          img: "",
-          image: null
-        ));
-
+      for (var element in (body["art_m"] as List)) {
+        list.add(Article.fromJson(element));
       }
-
-      // body.forEach((key, value) {
-      //   if (key == "fam_m") {
-      //     for (var element in (value as List<dynamic>)) {
-      //       list.add(Family.fromJson(element));
-      //     }
-      //   }
-      // });
+      for (var element in list) {
+        element.image = imageFromBase64String(element.img ?? '');
+      }
 
       return ResponseObject(
           status: true, errorObject: null, responseObject: list);
     } catch (error) {
       print(
-          "Error in api_source.dart in method getSubFamily. Error: $error ------->>>>");
+          "Error in api_source.dart in method getArticlesOfSubfamily. Error: $error ------->>>>");
       return ResponseObject(
           status: false,
           errorObject: ErrorObject(
@@ -511,55 +496,48 @@ class ApiSource {
     }
   }
 
-  Future<ResponseObject> getArticlesOfFamily(Family family) async{
-        try{
-          String path =//http://209.145.58.91/Pruebas/vERP_2_dat_dat/v1/art_m?filter[fam]=10&api_key=mzZ58he3
-              "$basePath/$table/art_m?filter[fam]=${family.id}&api_key=$apiKey";
-          Uri url = Uri.parse(path);
+  Future<ResponseObject> getArticlesOfFamily(Family family) async {
+    try {
+      String
+          path = //http://209.145.58.91/Pruebas/vERP_2_dat_dat/v1/art_m?filter[fam]=10&api_key=mzZ58he3
+          "$basePath/$table/art_m?filter[fam]=${family.id}&api_key=$apiKey";
+      Uri url = Uri.parse(path);
 
-          http.Response response = await http.get(url, headers: {
-            "Content-Type": "application/json",
-            "Accept": "application/json",
-          });
+      http.Response response = await http.get(url, headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+      });
 
-          if (response.statusCode != 200) {
-            return ResponseObject(
-                status: false,
-                errorObject: ErrorObject(
-                  status: false,
-                  errorObject: response.body,
-                  errorMessage: response.body,
-                ));
-          }
-          Map<String, dynamic> body = jsonDecode(response.body);
-          List<Article> list = List.empty(growable: true);
-
-          for (var element in (body["art_m"] as List)) {
-            list.add(Article.fromJson(element));
-          }
-          for (var element in list) {
-            element.image = imageFromBase64String(element.img ?? '');
-          }
-
-          return ResponseObject(
-            status: true,
-            responseObject: list,
-            errorObject: null
-          );
-
-
-
-        }catch(error){
-          return ResponseObject(
+      if (response.statusCode != 200) {
+        return ResponseObject(
+            status: false,
+            errorObject: ErrorObject(
               status: false,
-              errorObject: ErrorObject(
-                status: false,
-                errorObject: "error",
-                errorMessage: "",
-              ));
-        }
+              errorObject: response.body,
+              errorMessage: response.body,
+            ));
+      }
+      Map<String, dynamic> body = jsonDecode(response.body);
+      List<Article> list = List.empty(growable: true);
 
+      for (var element in (body["art_m"] as List)) {
+        list.add(Article.fromJson(element));
+      }
+      for (var element in list) {
+        element.image = imageFromBase64String(element.img ?? '');
+      }
 
+      return ResponseObject(
+          status: true, responseObject: list, errorObject: null);
+    } catch (error) {
+      return ResponseObject(
+          status: false,
+          errorObject: ErrorObject(
+            status: false,
+            errorObject: "error",
+            errorMessage: "",
+          ));
+    }
   }
 
   //-------------------------------------------------------------//

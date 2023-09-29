@@ -37,7 +37,7 @@ class TableViewModel extends BaseModel {
   List<Article> _listOfArticlesByFamily = List.empty(growable: true);
   int _isFamilySelected = -1;
 
-  String _subfamilySelected = "";
+  int _subfamilySelected = -1;
 
   String _errorMessage = "";
   bool _flagControl = true;
@@ -68,7 +68,7 @@ class TableViewModel extends BaseModel {
 
   List<Article> get listOfArticlesBySubFamily => _listOfArticlesBySubFamily;
 
-  String get subfamilySelected => _subfamilySelected;
+   int get subfamilySelected => _subfamilySelected;
 
   int get isFamilySelected => _isFamilySelected;
 
@@ -84,7 +84,7 @@ class TableViewModel extends BaseModel {
     notifyListeners();
   }
 
-  set subfamilySelected(String value) {
+  set subfamilySelected(int value) {
     _subfamilySelected = value;
     notifyListeners();
   }
@@ -217,19 +217,45 @@ class TableViewModel extends BaseModel {
   void restToCounter(Article article) {}
 
   Future<bool> loadArticlesOfFamilyAndSubfamilies(int value) async {
-    int val = value;
-    if (val != -1) {
-      //load Articles that are children of family
-      ResponseObject responseObject =
-          await familyService.getArticlesOfFamily(listOfFamilies[val]);
-      bool res = responseObject.status ?? false;
-      if (res) {
-        listOfArticlesByFamily = responseObject.responseObject as List<Article>;
-        return true;
+    try{
+      int val = value;
+      if (val != -1) {
+        //load Articles that are children of family
+        ResponseObject responseObject =
+        await familyService.getArticlesOfFamily(listOfFamilies[val]);
+        bool res = responseObject.status ?? false;
+        if (res) {
+          listOfArticlesByFamily = responseObject.responseObject as List<Article>;
+          return true;
+        }
+        listOfArticlesByFamily.clear();
+        return false;
       }
-      listOfArticlesByFamily.clear();
+      return false;
+
+    }catch(error){
+      print(error);
       return false;
     }
-    return false;
+
+  }
+
+  Future<bool> loadArticlesOfSubfamily(int index)async {
+    try{
+      listOfArticlesBySubFamily.clear();
+      ResponseObject responseObject = await subFamilyService.getArticlesOfSubfamily("$index");
+      bool res = responseObject.status ?? false;
+      if(res){
+        listOfArticlesBySubFamily = responseObject.responseObject as List<Article>;
+        return true;
+      }
+      return false;
+    }catch(error){
+      print(error);
+      return false;
+    }
+
+
+
   }
 }
