@@ -174,6 +174,7 @@ class TableViewModel extends BaseModel {
 
   Future<bool> chargeSubfamily(Family family) async {
     try {
+      listOfSubFamilies.clear();
       ResponseObject responseObject =
           await subFamilyService.getSubfamily(family);
       bool res = responseObject.status ?? false;
@@ -225,8 +226,11 @@ class TableViewModel extends BaseModel {
         await familyService.getArticlesOfFamily(listOfFamilies[val]);
         bool res = responseObject.status ?? false;
         if (res) {
+          listOfArticlesByFamily.clear();
           listOfArticlesByFamily = responseObject.responseObject as List<Article>;
-          return true;
+          bool resSub = await chargeSubfamily(listOfFamilies[value]);
+
+          return resSub;
         }
         listOfArticlesByFamily.clear();
         return false;

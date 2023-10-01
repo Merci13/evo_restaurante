@@ -154,6 +154,16 @@
   "subFamiliesText": "Sub Familias",
   "@subFamiliesText": {
     "description": "Sub Families Text"
+  },
+
+  "noArticlesText": "No tiene artículos",
+  "@noArticlesText": {
+    "description": "No Articles Text"
+  },
+
+  "noSubFamiliesText": "No tiene sub-familias",
+  "@noSubFamiliesText": {
+    "description": "No Sub Families Text"
   }
 
 }

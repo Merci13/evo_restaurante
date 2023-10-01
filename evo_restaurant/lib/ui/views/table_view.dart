@@ -110,7 +110,7 @@ Widget __containerOfFamiliesAndSearch(BuildContext context) {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         AnimatedSwitcher(
-          duration: const Duration(seconds: 1),
+          duration: const Duration(seconds: 2),
           transitionBuilder: (Widget child, Animation<double> animation) {
             return ScaleTransition(scale: animation, child: child);
           },
@@ -170,8 +170,9 @@ Widget __containerOfSubFamilyAndArticlesOfFamily(BuildContext context) {
               child: SizedBox(
                 width: mediaQuery.width * 0.55,
                 child: model.subfamilySelected != -1
-                    ? const _ContainerOfArticlesOfSubFamily(
-                        key: ValueKey(4),
+                    ?  _ContainerOfArticlesOfSubFamily(
+                    hasArticlesOfFamily,
+                        key: const ValueKey(4),
                       )
                     : _ContainerOfSubFamilies(
                         key: const ValueKey(3), hasArticlesOfFamily),
@@ -185,24 +186,85 @@ Widget __containerOfSubFamilyAndArticlesOfFamily(BuildContext context) {
 }
 
 @swidget
-Widget __containerOfArticlesOfSubFamily(BuildContext context) {
+Widget __containerOfArticlesOfSubFamily(BuildContext context, bool hasArticlesOfFamily) {
   return Consumer2<TableViewModel, BaseWidgetModel>(
       builder: (context, model, baseWidgetModel, _) {
     Size mediaQuery = MediaQuery.of(context).size;
 
-    return GridView.builder(
-      scrollDirection: Axis.vertical,
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 4,
+    return Column(
+      children: [
+        _ContainerOfSubFamilyName(model.listOfSubFamilies[model.subfamilySelected].name ?? ""),
+        SizedBox(
+           width: mediaQuery.width * 0.55,
+          height: hasArticlesOfFamily
+              ? mediaQuery.height * 0.50
+              : mediaQuery.height * 0.80,
+          child: model.listOfArticlesBySubFamily.isNotEmpty ?
+
+          GridView.builder(
+          scrollDirection: Axis.vertical,
+            itemCount: model.listOfArticlesBySubFamily.length,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 4,
+            ),
+            itemBuilder: (BuildContext context, int index) {
+
+              return Container(
+                margin: const EdgeInsets.all(5),
+                color: index % 2 == 0 ? Colors.green : Colors.red,
+                child: Text(model.listOfArticlesBySubFamily[index].name ?? ""),
+              );
+            })
+          : Center(
+            child: Text(
+              AppLocalizations.of(context).noArticlesText
+            ),
+          )
+
+          ,
         ),
-        itemBuilder: (BuildContext context, int index) {
-          return Container(
-            margin: const EdgeInsets.all(5),
-            color: index % 2 == 0 ? Colors.green : Colors.red,
-            child: Text(model.listOfArticlesBySubFamily[index].name ?? ""),
-          );
-        });
+      ],
+    );
   });
+}
+@swidget
+Widget __containerOfSubFamilyName(BuildContext context, String name) {
+  return Consumer2<TableViewModel, BaseWidgetModel>(
+      builder: (context, model, baseWidgetModel, _) {
+        Size mediaQuery = MediaQuery.of(context).size;
+        return Container(
+          width: double.infinity,
+          height: mediaQuery.height * 0.05,
+          color: colorPrimary,
+          child: Row(
+            children: [
+              Expanded(
+                  flex: 10,
+                  child: IconButton(
+                    enableFeedback: false,
+                    icon: const Icon(
+                      Icons.arrow_drop_up,
+                      color: Colors.white,
+                      size: 40,
+                    ),
+                    onPressed: () {
+                      model.subfamilySelected = -1;
+
+                    },
+                  )),
+              Expanded(
+                flex: 90,
+                child: Center(
+                  child: Text(
+                    name,
+                    style: styleForTitleFamily(),
+                  ),
+                ),
+              )
+            ],
+          ),
+        );
+      });
 }
 
 @swidget
@@ -222,7 +284,7 @@ Widget __containerOfSubFamilies(
             child: Container(
               color: colorAccent,
               child: Center(
-                child: Text(model.subfamilySelected != -1
+                child: Text(model.subfamilySelected == -1
                     ? AppLocalizations.of(context).subFamiliesText
                     : model.listOfSubFamilies[model.subfamilySelected].name ??
                         ""),
@@ -231,7 +293,9 @@ Widget __containerOfSubFamilies(
           ),
           Expanded(
             flex: 90,
-            child: GridView.builder(
+            child: model.listOfSubFamilies.isEmpty ?
+                Center(child: Text(AppLocalizations.of(context).noSubFamiliesText),)
+                : GridView.builder(
               scrollDirection: Axis.vertical,
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 4,
@@ -269,7 +333,7 @@ Widget __containerOfSubFamilies(
                   child: Container(
                     width: double.infinity,
                     height: double.infinity,
-                    color: index % 2 == 0 ? Colors.red : Colors.orange,
+                    color: index % 2 == 0 ? Colors.purple : Colors.blue,
                     child: Text(subFamily.name??""),
                   ),
                 );
@@ -348,6 +412,7 @@ Widget __containerOfNameOfFamily(BuildContext context, String name) {
                     size: 40,
                   ),
                   onPressed: () {
+                    model.subfamilySelected = -1;
                     model.isFamilySelected = -1;
                   },
                 )),

@@ -30,11 +30,33 @@ class _ContainerOfSubFamilyAndArticlesOfFamily extends StatelessWidget {
 }
 
 class _ContainerOfArticlesOfSubFamily extends StatelessWidget {
-  const _ContainerOfArticlesOfSubFamily({Key? key}) : super(key: key);
+  const _ContainerOfArticlesOfSubFamily(
+    this.hasArticlesOfFamily, {
+    Key? key,
+  }) : super(key: key);
+
+  final bool hasArticlesOfFamily;
 
   @override
-  Widget build(BuildContext _context) =>
-      __containerOfArticlesOfSubFamily(_context);
+  Widget build(BuildContext _context) => __containerOfArticlesOfSubFamily(
+        _context,
+        hasArticlesOfFamily,
+      );
+}
+
+class _ContainerOfSubFamilyName extends StatelessWidget {
+  const _ContainerOfSubFamilyName(
+    this.name, {
+    Key? key,
+  }) : super(key: key);
+
+  final String name;
+
+  @override
+  Widget build(BuildContext _context) => __containerOfSubFamilyName(
+        _context,
+        name,
+      );
 }
 
 class _ContainerOfSubFamilies extends StatelessWidget {
