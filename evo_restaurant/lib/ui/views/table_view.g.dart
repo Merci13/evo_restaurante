@@ -74,12 +74,46 @@ class _ContainerOfSubFamilies extends StatelessWidget {
       );
 }
 
+class _ContainerOfSubFamilyComponent extends StatelessWidget {
+  const _ContainerOfSubFamilyComponent(
+    this.subFamily,
+    this.index, {
+    Key? key,
+  }) : super(key: key);
+
+  final SubFamily subFamily;
+
+  final int index;
+
+  @override
+  Widget build(BuildContext _context) => __containerOfSubFamilyComponent(
+        _context,
+        subFamily,
+        index,
+      );
+}
+
 class _ContainerOfArticlesOfFamily extends StatelessWidget {
   const _ContainerOfArticlesOfFamily({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext _context) =>
       __containerOfArticlesOfFamily(_context);
+}
+
+class _ContainerOfArticleComponent extends StatelessWidget {
+  const _ContainerOfArticleComponent(
+    this.article, {
+    Key? key,
+  }) : super(key: key);
+
+  final Article article;
+
+  @override
+  Widget build(BuildContext _context) => __containerOfArticleComponent(
+        _context,
+        article,
+      );
 }
 
 class _ContainerOfNameOfFamily extends StatelessWidget {

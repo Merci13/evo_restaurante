@@ -12,6 +12,7 @@ import 'package:evo_restaurant/repositories/service/sub_family/sub_family_servic
 import 'package:evo_restaurant/repositories/view_models/base_widget_model.dart';
 import 'package:evo_restaurant/ui/views/widgets/base_widget.dart';
 import 'package:evo_restaurant/ui/views/widgets/information_modal/information_modal.dart';
+import 'package:evo_restaurant/ui/views/widgets/loading/login_loading.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -170,8 +171,8 @@ Widget __containerOfSubFamilyAndArticlesOfFamily(BuildContext context) {
               child: SizedBox(
                 width: mediaQuery.width * 0.55,
                 child: model.subfamilySelected != -1
-                    ?  _ContainerOfArticlesOfSubFamily(
-                    hasArticlesOfFamily,
+                    ? _ContainerOfArticlesOfSubFamily(
+                        hasArticlesOfFamily,
                         key: const ValueKey(4),
                       )
                     : _ContainerOfSubFamilies(
@@ -186,85 +187,78 @@ Widget __containerOfSubFamilyAndArticlesOfFamily(BuildContext context) {
 }
 
 @swidget
-Widget __containerOfArticlesOfSubFamily(BuildContext context, bool hasArticlesOfFamily) {
+Widget __containerOfArticlesOfSubFamily(
+    BuildContext context, bool hasArticlesOfFamily) {
   return Consumer2<TableViewModel, BaseWidgetModel>(
       builder: (context, model, baseWidgetModel, _) {
     Size mediaQuery = MediaQuery.of(context).size;
 
     return Column(
       children: [
-        _ContainerOfSubFamilyName(model.listOfSubFamilies[model.subfamilySelected].name ?? ""),
+        _ContainerOfSubFamilyName(
+            model.listOfSubFamilies[model.subfamilySelected].name ?? ""),
         SizedBox(
-           width: mediaQuery.width * 0.55,
+          width: mediaQuery.width * 0.55,
           height: hasArticlesOfFamily
               ? mediaQuery.height * 0.50
               : mediaQuery.height * 0.80,
-          child: model.listOfArticlesBySubFamily.isNotEmpty ?
-
-          GridView.builder(
-          scrollDirection: Axis.vertical,
-            itemCount: model.listOfArticlesBySubFamily.length,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 4,
-            ),
-            itemBuilder: (BuildContext context, int index) {
-
-              return Container(
-                margin: const EdgeInsets.all(5),
-                color: index % 2 == 0 ? Colors.green : Colors.red,
-                child: Text(model.listOfArticlesBySubFamily[index].name ?? ""),
-              );
-            })
-          : Center(
-            child: Text(
-              AppLocalizations.of(context).noArticlesText
-            ),
-          )
-
-          ,
+          child: model.listOfArticlesBySubFamily.isNotEmpty
+              ? GridView.builder(
+                  scrollDirection: Axis.vertical,
+                  itemCount: model.listOfArticlesBySubFamily.length,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 4,
+                  ),
+                  itemBuilder: (BuildContext context, int index) {
+                    return _ContainerOfArticleComponent(
+                        model.listOfArticlesBySubFamily[index]);
+                  })
+              : Center(
+                  child: Text(AppLocalizations.of(context).noArticlesText),
+                ),
         ),
       ],
     );
   });
 }
+
 @swidget
 Widget __containerOfSubFamilyName(BuildContext context, String name) {
   return Consumer2<TableViewModel, BaseWidgetModel>(
       builder: (context, model, baseWidgetModel, _) {
-        Size mediaQuery = MediaQuery.of(context).size;
-        return Container(
-          width: double.infinity,
-          height: mediaQuery.height * 0.05,
-          color: colorPrimary,
-          child: Row(
-            children: [
-              Expanded(
-                  flex: 10,
-                  child: IconButton(
-                    enableFeedback: false,
-                    icon: const Icon(
-                      Icons.arrow_drop_up,
-                      color: Colors.white,
-                      size: 40,
-                    ),
-                    onPressed: () {
-                      model.subfamilySelected = -1;
-
-                    },
-                  )),
-              Expanded(
-                flex: 90,
-                child: Center(
-                  child: Text(
-                    name,
-                    style: styleForTitleFamily(),
-                  ),
+    Size mediaQuery = MediaQuery.of(context).size;
+    return Container(
+      width: double.infinity,
+      height: mediaQuery.height * 0.05,
+      color: colorPrimary,
+      child: Row(
+        children: [
+          Expanded(
+              flex: 10,
+              child: IconButton(
+                enableFeedback: false,
+                icon: const Icon(
+                  Icons.arrow_drop_up,
+                  color: Colors.white,
+                  size: 40,
                 ),
-              )
-            ],
-          ),
-        );
-      });
+                onPressed: () {
+                  model.subfamilySelected = -1;
+                },
+              )),
+          Expanded(
+            flex: 90,
+            child: Center(
+              child: Text(
+                name,
+                style: styleForTitleFamily(),
+              ),
+            ),
+          )
+        ],
+      ),
+    );
+  });
 }
 
 @swidget
@@ -284,63 +278,122 @@ Widget __containerOfSubFamilies(
             child: Container(
               color: colorAccent,
               child: Center(
-                child: Text(model.subfamilySelected == -1
-                    ? AppLocalizations.of(context).subFamiliesText
-                    : model.listOfSubFamilies[model.subfamilySelected].name ??
-                        ""),
+                child: Text(
+                  model.subfamilySelected == -1
+                      ? AppLocalizations.of(context).subFamiliesText
+                      : model.listOfSubFamilies[model.subfamilySelected].name ??
+                          "",
+                  style: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                      fontSize: 15),
+                ),
               ),
             ),
           ),
           Expanded(
             flex: 90,
-            child: model.listOfSubFamilies.isEmpty ?
-                Center(child: Text(AppLocalizations.of(context).noSubFamiliesText),)
+            child: model.listOfSubFamilies.isEmpty
+                ? Center(
+                    child: Text(AppLocalizations.of(context).noSubFamiliesText),
+                  )
                 : GridView.builder(
-              scrollDirection: Axis.vertical,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 4,
-              ),
-              itemCount: model.listOfSubFamilies.length,
-              itemBuilder: (BuildContext context, int index) {
-                SubFamily subFamily = model.listOfSubFamilies[index];
+                    scrollDirection: Axis.vertical,
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 4,
+                    ),
+                    itemCount: model.listOfSubFamilies.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      SubFamily subFamily = model.listOfSubFamilies[index];
 
-                return TextButton(
-                  onPressed: () async {
-                    //load the articles of the sub-family
-                    bool res = await model.loadArticlesOfSubfamily(index);
-                    if (res) {
-                      model.subfamilySelected = index;
-                    } else {
-                      baseWidgetModel.showOverLayWidget(
-                          true,
-                          InformationModal(
-                              typeInformationModal: TypeInformationModal.ERROR,
-                              title: AppLocalizations.of(context)
-                                  .unavailableToLoadData,
-                              contentText: AppLocalizations.of(context)
-                                  .somethingWentWrongText,
-                              acceptButton: () {
-                                baseWidgetModel.showOverLayWidget(
-                                    false, Container());
-                              },
-                              icon: Icon(
-                                Icons.error,
-                                color: Colors.red[800],
-                                size: 40,
-                              )));
-                    }
-                  },
-                  child: Container(
-                    width: double.infinity,
-                    height: double.infinity,
-                    color: index % 2 == 0 ? Colors.purple : Colors.blue,
-                    child: Text(subFamily.name??""),
+                      return _ContainerOfSubFamilyComponent(subFamily, index);
+                    },
                   ),
-                );
-              },
-            ),
           ),
         ],
+      ),
+    );
+  });
+}
+
+@swidget
+Widget __containerOfSubFamilyComponent(
+    BuildContext context, SubFamily subFamily, int index) {
+  return Consumer2<TableViewModel, BaseWidgetModel>(
+      builder: (context, model, baseWidgetModel, _) {
+    Size mediaQuery = MediaQuery.of(context).size;
+    bool hasImage = subFamily.img != "";
+
+    return TextButton(
+      onPressed: () async {
+        //load the articles of the sub-family
+        bool res = await model.loadArticlesOfSubfamily(index);
+        if (res) {
+          model.subfamilySelected = index;
+        } else {
+          baseWidgetModel.showOverLayWidget(
+              true,
+              InformationModal(
+                  typeInformationModal: TypeInformationModal.ERROR,
+                  title: AppLocalizations.of(context).unavailableToLoadData,
+                  contentText:
+                      AppLocalizations.of(context).somethingWentWrongText,
+                  acceptButton: () {
+                    baseWidgetModel.showOverLayWidget(false, Container());
+                  },
+                  icon: Icon(
+                    Icons.error,
+                    color: Colors.red[800],
+                    size: 40,
+                  )));
+        }
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: const BorderRadius.all(Radius.circular(7)),
+          border: Border.all(width: 1, color: Colors.black),
+        ),
+        child: Column(
+          children: [
+            Expanded(
+              flex: 25,
+              child: Container(
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(7),
+                    topRight: Radius.circular(7),
+                  ),
+                  color: colorPrimary,
+                ),
+                child: Center(
+                  child: Text(
+                    subFamily.name ?? "",
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                        fontSize: 15,
+                        overflow: TextOverflow.ellipsis),
+                  ),
+                ),
+              ),
+            ),
+            Expanded(
+              flex: 75,
+              child: hasImage
+                  ? Image(image: subFamily.image!.image)
+                  : const Center(
+                      child: Text(
+                        "N/A",
+                        style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.black,
+                            fontWeight: FontWeight.w600),
+                      ),
+                    ),
+            )
+          ],
+        ),
       ),
     );
   });
@@ -359,8 +412,14 @@ Widget __containerOfArticlesOfFamily(BuildContext context) {
             flex: 10,
             child: Container(
               color: colorAccent,
-              child: Center(
-                child: Text(AppLocalizations.of(context).articleText),
+              alignment: Alignment.centerLeft,
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Text(
+                AppLocalizations.of(context).articleText,
+                style: const TextStyle(
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                    fontSize: 15),
               ),
             ),
           ),
@@ -368,24 +427,75 @@ Widget __containerOfArticlesOfFamily(BuildContext context) {
             flex: 90,
             child: GridView.builder(
               scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.all(6),
+              padding: const EdgeInsets.all(10),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
               ),
               itemCount: model.listOfArticlesByFamily.length,
               itemBuilder: (BuildContext context, int index) {
                 Article article = model.listOfArticlesByFamily[index];
-                return Container(
-                  margin: const EdgeInsets.all(5),
-                  width: double.infinity,
-                  height: double.infinity,
-                  color: index % 2 == 0 ? Colors.green : Colors.purple,
-                  child: Text(article.name ?? "N/A"),
-                );
+
+                return _ContainerOfArticleComponent(article);
               },
             ),
           ),
         ],
+      ),
+    );
+  });
+}
+
+@swidget
+Widget __containerOfArticleComponent(BuildContext context, Article article) {
+  return Consumer2<TableViewModel, BaseWidgetModel>(
+      builder: (context, model, baseWidgetModel, _) {
+    Size mediaQuery = MediaQuery.of(context).size;
+    bool hasImage = article.img != "";
+    return Padding(
+      padding: const EdgeInsets.all(5.0),
+      child: InkWell(
+        enableFeedback: false,
+        onTap: () {
+          model.addArticleToCommand(article);
+        },
+        child: Container(
+          decoration: BoxDecoration(
+              borderRadius: const BorderRadius.all(Radius.circular(7)),
+              border: Border.all(width: 1, color: Colors.black)),
+          child: Column(
+            children: [
+              Expanded(
+                flex: 25,
+                child: Container(
+                  decoration: BoxDecoration(
+                      borderRadius: const BorderRadius.only(
+                          topRight: Radius.circular(7),
+                          topLeft: Radius.circular(7)),
+                      border: Border.all(width: 1, color: Colors.black),
+                      color: colorPrimary),
+                  child: Center(
+                    child: Text(
+                      article.name ?? "",
+                      style: const TextStyle(
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                          fontSize: 15,
+                          overflow: TextOverflow.ellipsis),
+                    ),
+                  ),
+                ),
+              ),
+              Expanded(
+                flex: 75,
+                child: hasImage
+                    ? Image(
+                        image: article.image!.image,
+                      )
+                    : Container(),
+              )
+            ],
+          ),
+        ),
       ),
     );
   });
@@ -526,11 +636,11 @@ Widget __containerOfCommandAndDetails(BuildContext context) {
       return Container(
         width: double.infinity,
         height: double.infinity,
-        padding: EdgeInsets.all(5),
+        padding: const EdgeInsets.all(5),
         child: Container(
-          padding: EdgeInsets.all(5),
+          padding: const EdgeInsets.all(5),
           decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(7)),
+              borderRadius: const BorderRadius.all(Radius.circular(7)),
               border: Border.all(
                 color: Colors.black,
                 width: 1,
@@ -675,7 +785,7 @@ Widget __containerOfCommands(BuildContext context) {
   return Consumer2<TableViewModel, BaseWidgetModel>(
     builder: (context, model, baseWidgetModel, _) {
       return ListView.builder(
-        itemCount: model.tableDetail.commandTable?.length,
+        itemCount: model.listOfCommand.length,
         shrinkWrap: true,
         physics: const BouncingScrollPhysics(),
         scrollDirection: Axis.vertical,

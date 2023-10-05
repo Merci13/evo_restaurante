@@ -4,6 +4,7 @@ import 'dart:async';
 
 import 'package:evo_restaurant/repositories/enums/view_state.dart';
 import 'package:evo_restaurant/repositories/models/article.dart';
+import 'package:evo_restaurant/repositories/models/command_table.dart';
 import 'package:evo_restaurant/repositories/models/response_object.dart';
 import 'package:evo_restaurant/repositories/models/table_detail.dart';
 import 'package:evo_restaurant/repositories/service/auth/user_service.dart';
@@ -31,16 +32,17 @@ class TableViewModel extends BaseModel {
   late FamilyService _familyService;
   late BuildContext _context;
   late SubFamilyService _subFamilyService;
+  late List<CommandTable> _listOfCommand = List.empty(growable: true);
+  late List<CommandTable> _listOfCommandImmutable = List.empty(growable: true);
+
   List<Family> _listOfFamilies = List.empty(growable: true);
   List<SubFamily> _listOfSubFamilies = List.empty(growable: true);
   List<Article> _listOfArticlesBySubFamily = List.empty(growable: true);
   List<Article> _listOfArticlesByFamily = List.empty(growable: true);
   int _isFamilySelected = -1;
-
   int _subfamilySelected = -1;
-
   String _errorMessage = "";
-  bool _flagControl = true;
+
 
   own_table.Table get table => _table;
 
@@ -73,6 +75,13 @@ class TableViewModel extends BaseModel {
   int get isFamilySelected => _isFamilySelected;
 
   List<Article> get listOfArticlesByFamily => _listOfArticlesByFamily;
+
+
+  List<CommandTable> get listOfCommand => _listOfCommand;
+
+  set listOfCommand(List<CommandTable> value) {
+    _listOfCommand = value;
+  }
 
   set listOfArticlesByFamily(List<Article> value) {
     _listOfArticlesByFamily = value;
@@ -159,6 +168,15 @@ class TableViewModel extends BaseModel {
         listOfFamilies.addAll(resFamilies.responseObject as List<Family>);
       }
 
+
+
+        //add the articles that are in the command to the list to show
+        //and create a immutable copy to check changes later
+        listOfCommand.addAll(tableDetail.commandTable ?? List.empty(growable: true));
+        _listOfCommandImmutable.addAll(tableDetail.commandTable ??List.empty());
+
+
+
       setState(ViewState.IDLE);
     }
     notifyListeners();
@@ -166,7 +184,7 @@ class TableViewModel extends BaseModel {
 
   String getTotalOfCommand() {
     int val = 0;
-    tableDetail.commandTable?.forEach((element) {
+    listOfCommand.forEach((element) {
       val = val + ((element.can ?? 0) * (element.pre ?? 0));
     });
     return "$val";
@@ -198,10 +216,15 @@ class TableViewModel extends BaseModel {
         throw ErrorDescription("Finish the process to perform a new one");
       }
       setState(ViewState.BUSY);
+      //verify if the article already exist in the command
 
+
+      //if already exist, plus 1 the article in the command
+      //if it's not exist in the command, add to the command
+      setState(ViewState.IDLE);
       return Future.value(true);
 
-      setState(ViewState.IDLE);
+
     } catch (error) {
       print(
           "Error in addArticleToCommand method in table_view_model.dart. Error $error ----------->>>");
