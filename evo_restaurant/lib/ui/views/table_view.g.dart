@@ -188,3 +188,10 @@ class _ContainerOfCommands extends StatelessWidget {
   @override
   Widget build(BuildContext _context) => __containerOfCommands(_context);
 }
+
+class _ContainerOfTitleOfCommand extends StatelessWidget {
+  const _ContainerOfTitleOfCommand({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext _context) => __containerOfTitleOfCommand(_context);
+}

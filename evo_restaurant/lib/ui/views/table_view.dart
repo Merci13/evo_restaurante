@@ -3,6 +3,7 @@
 import 'dart:io' show Platform;
 
 import 'package:evo_restaurant/repositories/enums/type_information_modal.dart';
+import 'package:evo_restaurant/repositories/enums/view_state.dart';
 import 'package:evo_restaurant/repositories/models/family.dart';
 import 'package:evo_restaurant/repositories/models/sub_family.dart';
 import 'package:evo_restaurant/repositories/service/auth/user_service.dart';
@@ -13,6 +14,7 @@ import 'package:evo_restaurant/repositories/view_models/base_widget_model.dart';
 import 'package:evo_restaurant/ui/views/widgets/base_widget.dart';
 import 'package:evo_restaurant/ui/views/widgets/information_modal/information_modal.dart';
 import 'package:evo_restaurant/ui/views/widgets/loading/login_loading.dart';
+import 'package:evo_restaurant/utils/share/ui_helpers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -784,144 +786,67 @@ Widget __containerOfDate(BuildContext context) {
 Widget __containerOfCommands(BuildContext context) {
   return Consumer2<TableViewModel, BaseWidgetModel>(
     builder: (context, model, baseWidgetModel, _) {
-      return ListView.builder(
-        itemCount: model.listOfCommand.length,
-        shrinkWrap: true,
-        physics: const BouncingScrollPhysics(),
-        scrollDirection: Axis.vertical,
-        itemBuilder: (BuildContext context, int index) {
-          if (index == 0) {
-            return Column(
-              children: [
-                Row(children: [
-                  Expanded(
-                    flex: 40,
-                    child: Column(
-                      children: [
-                        Text(
-                          AppLocalizations.of(context).articleText,
-                          textAlign: TextAlign.center,
-                          style: styleForTitle(),
-                        ),
-                        const Divider(
-                          color: Colors.black,
-                        ),
-                        Container(
-                          alignment: Alignment.center,
-                          width: double.infinity,
-                          decoration: const BoxDecoration(
-                            border: Border(
-                              bottom: BorderSide(width: 1, color: Colors.black),
-                            ),
-                          ),
-                          child: Text(
-                            model.tableDetail.commandTable?[index].name ?? "",
-                            style: styleForArticle(),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Expanded(
-                    flex: 25,
-                    child: Column(
-                      children: [
-                        Text(
-                          AppLocalizations.of(context).quantityText,
-                          textAlign: TextAlign.center,
-                          style: styleForTitle(),
-                        ),
-                        const Divider(
-                          color: Colors.black,
-                        ),
-                        Container(
-                          alignment: Alignment.center,
-                          width: double.infinity,
-                          decoration: const BoxDecoration(
-                            border: Border(
-                              bottom: BorderSide(width: 1, color: Colors.black),
-                            ),
-                          ),
-                          child: Text(
-                            "x ${model.tableDetail.commandTable?[index].can ?? 0}",
-                            style: styleForArticle(),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Expanded(
-                      flex: 35,
-                      child: Column(
-                        children: [
-                          Text(
-                            AppLocalizations.of(context).priceText,
-                            textAlign: TextAlign.center,
-                            style: styleForTitle(),
-                          ),
-                          const Divider(
-                            color: Colors.black,
-                          ),
-                          Container(
-                            alignment: Alignment.center,
-                            width: double.infinity,
-                            decoration: const BoxDecoration(
-                              border: Border(
-                                bottom:
-                                    BorderSide(width: 1, color: Colors.black),
-                              ),
-                            ),
-                            child: Text(
-                              "${(model.tableDetail.commandTable?[index].pre ?? 0) * (model.tableDetail.commandTable?[index].can ?? 0)}",
-                              style: styleForArticle(),
-                            ),
-                          ),
-                        ],
-                      ))
-                ]),
-              ],
-            );
-          }
-          return Container(
-            alignment: Alignment.center,
-            decoration: const BoxDecoration(
-              border: Border(
-                bottom: BorderSide(width: 1, color: Colors.black),
-              ),
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  flex: 40,
-                  child: Text(
-                    model.tableDetail.commandTable?[index].name ?? "",
-                    textAlign: TextAlign.center,
-                    style: styleForArticle(),
-                  ),
-                ),
-                Expanded(
-                  flex: 25,
-                  child: Text(
-                    "x ${model.tableDetail.commandTable?[index].can ?? 0}",
-                    textAlign: TextAlign.center,
-                    style: styleForArticle(),
-                  ),
-                ),
-                Expanded(
-                  flex: 35,
-                  child: Text(
-                    "${(model.tableDetail.commandTable?[index].pre ?? 0) * (model.tableDetail.commandTable?[index].can ?? 0)}",
-                    textAlign: TextAlign.center,
-                    style: styleForArticle(),
-                  ),
+      Size mediaQuery = MediaQuery.of(context).size;
+
+      return Column(
+        children: [
+          const _ContainerOfTitleOfCommand(),
+          UIHelper.verticalSpace(10),
+          model.listOfCommand.length > 0
+              ? ListView.builder(
+                  itemCount: model.listOfCommand.length,
+                  shrinkWrap: true,
+                  physics: const BouncingScrollPhysics(),
+                  scrollDirection: Axis.vertical,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Container();
+                  },
                 )
-              ],
-            ),
-          );
-        },
+              : Container(
+                  width: double.infinity,
+                  height: mediaQuery.height * 0.1,
+                  decoration: BoxDecoration(
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.5),
+                        spreadRadius: 2,
+                        blurRadius: 3,
+                        offset: Offset(0, 1), // changes position of shadow
+                      ),
+                    ],
+                  ),
+                  child: Center(
+                    child: Text(
+                      AppLocalizations.of(context).noArticlesText,
+                      style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 17,
+                          color: Colors.black),
+                    ),
+                  ),
+                ),
+        ],
       );
     },
   );
+}
+
+@swidget
+Widget __containerOfTitleOfCommand(BuildContext context) {
+  return Container(
+      height: MediaQuery.of(context).size.height * 0.05,
+      width: double.infinity,
+      alignment: Alignment.centerLeft,
+      padding: const EdgeInsets.only(left: 10),
+      decoration: const BoxDecoration(
+          borderRadius: BorderRadius.only(
+              topRight: Radius.circular(7), topLeft: Radius.circular(7)),
+          color: colorPrimary),
+      child: Text(
+        AppLocalizations.of(context).articlesText,
+        style: const TextStyle(
+            fontSize: 17, fontWeight: FontWeight.w600, color: Colors.white),
+      ));
 }
 
 TextStyle styleForArticle() {

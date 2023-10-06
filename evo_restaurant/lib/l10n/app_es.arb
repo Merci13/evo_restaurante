@@ -128,7 +128,7 @@
     "description": "Name of Article Text"
   },
 
-  "priceOfArticle": "Precio del Article",
+  "priceOfArticle": "Precio del Articulo",
   "@priceOfArticle": {
     "description": "Price of Article Text"
   },
@@ -164,6 +164,16 @@
   "noSubFamiliesText": "No tiene sub-familias",
   "@noSubFamiliesText": {
     "description": "No Sub Families Text"
+  },
+
+  "nameText": "Nombre",
+  "@nameText": {
+    "description": "Name Text"
+  },
+
+  "articlesText": "Articulos",
+  "@articlesText": {
+    "description": "Articles Text"
   }
 
 }

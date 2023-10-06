@@ -248,31 +248,33 @@ Widget __body(BuildContext context) {
                                                   "tableDetail":
                                                       res.responseObject
                                                 });
-                                          }
-                                          baseWidgetModel.showOverLayWidget(
-                                              false, Container());
-                                          baseWidgetModel.showOverLayWidget(
-                                            true,
-                                            InformationModal(
-                                              typeInformationModal:
-                                                  TypeInformationModal.WARNING,
-                                              title:
-                                                  AppLocalizations.of(context)
-                                                      .warningText,
-                                              contentText:
-                                                  AppLocalizations.of(context)
-                                                      .somethingWentWrongText,
-                                              acceptButton: () {
-                                                baseWidgetModel
-                                                    .showOverLayWidget(
-                                                        false, Container());
-                                              },
-                                              icon: Icon(
-                                                Icons.warning,
-                                                color: Colors.yellow[700],
+                                          } else {
+                                            baseWidgetModel.showOverLayWidget(
+                                                false, Container());
+                                            baseWidgetModel.showOverLayWidget(
+                                              true,
+                                              InformationModal(
+                                                typeInformationModal:
+                                                TypeInformationModal.WARNING,
+                                                title:
+                                                AppLocalizations.of(context)
+                                                    .warningText,
+                                                contentText:
+                                                AppLocalizations.of(context)
+                                                    .somethingWentWrongText,
+                                                acceptButton: () {
+                                                  baseWidgetModel
+                                                      .showOverLayWidget(
+                                                      false, Container());
+                                                },
+                                                icon: Icon(
+                                                  Icons.warning,
+                                                  color: Colors.yellow[700],
+                                                ),
                                               ),
-                                            ),
-                                          );
+                                            );
+                                          }
+
                                         },
                                         child: Container(
                                           height: constraints.maxHeight,

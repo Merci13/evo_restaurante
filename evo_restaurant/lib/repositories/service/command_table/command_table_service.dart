@@ -11,10 +11,7 @@ class CommandTableService{
     _apiSource = value;
   }
 
-  Future<ResponseObject> getCommand() async{
-    return await _apiSource.getTable(tableGet)
 
-  }
 
 
 }

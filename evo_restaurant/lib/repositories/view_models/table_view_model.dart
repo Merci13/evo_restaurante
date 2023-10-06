@@ -167,19 +167,13 @@ class TableViewModel extends BaseModel {
       } else {
         listOfFamilies.addAll(resFamilies.responseObject as List<Family>);
       }
-
-
-
         //add the articles that are in the command to the list to show
         //and create a immutable copy to check changes later
         listOfCommand.addAll(tableDetail.commandTable ?? List.empty(growable: true));
         _listOfCommandImmutable.addAll(tableDetail.commandTable ??List.empty());
-
-
-
       setState(ViewState.IDLE);
+      notifyListeners();
     }
-    notifyListeners();
   }
 
   String getTotalOfCommand() {
@@ -284,5 +278,9 @@ class TableViewModel extends BaseModel {
 
 
 
+  }
+  @override
+  void dispose() {
+    super.dispose();
   }
 }
