@@ -184,7 +184,7 @@ Widget __acceptButton(BuildContext context, Function acceptButton) {
         onPressed: () {
           acceptButton() ?? () {};
         },
-        child: Text(AppLocalizations.of(context).acceptText, style: styleForButtons(),),
+        child: Text(AppLocalizations.of(context)?.acceptText??"", style: styleForButtons(),),
       ),
     ),
   );
@@ -210,7 +210,7 @@ Widget __cancelButton(BuildContext context, Function cancelButton) {
           cancelButton() ?? () {};
         },
         child: Text(
-          AppLocalizations.of(context).cancelText,
+          AppLocalizations.of(context)?.cancelText ?? "",
           style: styleForButtons(),
         ),
       ),

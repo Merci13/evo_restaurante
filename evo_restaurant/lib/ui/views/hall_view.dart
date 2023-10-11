@@ -49,7 +49,7 @@ class HallView extends BaseWidget {
             height: mediaQuery.height,
             child: Scaffold(
               appBar: AppBar(
-                title: Text(AppLocalizations.of(context).evoRestaurantText),
+                title: Text(AppLocalizations.of(context)?.evoRestaurantText ?? ""),
                 elevation: 0.5,
                 backgroundColor: colorPrimary,
                 leading: IconButton(
@@ -103,7 +103,7 @@ Widget __body(BuildContext context) {
                         padding: const EdgeInsets.all(8.0),
                         child: Center(
                             child: Text(
-                          AppLocalizations.of(context).tablesText,
+                          AppLocalizations.of(context)?.tablesText ?? "",
                           style: const TextStyle(
                               fontSize: 25,
                               fontWeight: FontWeight.w700,
@@ -163,11 +163,9 @@ Widget __body(BuildContext context) {
                                                     TypeInformationModal
                                                         .WARNING,
                                                 title:
-                                                    AppLocalizations.of(context)
-                                                        .warningText,
+                                                    AppLocalizations.of(context)?.warningText ?? "",
                                                 contentText:
-                                                    AppLocalizations.of(context)
-                                                        .somethingWentWrongText,
+                                                    AppLocalizations.of(context)?.somethingWentWrongText ?? "",
                                                 acceptButton: () {
                                                   baseWidgetModel
                                                       .showOverLayWidget(
@@ -198,7 +196,7 @@ Widget __body(BuildContext context) {
                                     }),
                                     Expanded(
                                       child: Text(
-                                        "${AppLocalizations.of(context).tableText}: #"
+                                        "${AppLocalizations.of(context)?.tableText ?? ""}: #"
                                         "${model.listOfTables[index].num ?? 0}",
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
@@ -213,7 +211,7 @@ Widget __body(BuildContext context) {
                                   children: <Widget>[
                                     Expanded(
                                       child: Text(
-                                        "${AppLocalizations.of(context).tableText}: #"
+                                        "${AppLocalizations.of(context)?.tableText ?? ""}: #"
                                         "${model.listOfTables[index].num ?? 0}",
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
@@ -257,11 +255,9 @@ Widget __body(BuildContext context) {
                                                 typeInformationModal:
                                                 TypeInformationModal.WARNING,
                                                 title:
-                                                AppLocalizations.of(context)
-                                                    .warningText,
+                                                AppLocalizations.of(context)?.warningText ?? "",
                                                 contentText:
-                                                AppLocalizations.of(context)
-                                                    .somethingWentWrongText,
+                                                AppLocalizations.of(context)?.somethingWentWrongText ?? "",
                                                 acceptButton: () {
                                                   baseWidgetModel
                                                       .showOverLayWidget(

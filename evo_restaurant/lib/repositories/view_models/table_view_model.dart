@@ -1,6 +1,7 @@
 // ignore_for_file: unnecessary_getters_setters
 
 import 'dart:async';
+import 'dart:ffi';
 
 import 'package:evo_restaurant/repositories/enums/view_state.dart';
 import 'package:evo_restaurant/repositories/models/article.dart';
@@ -43,7 +44,6 @@ class TableViewModel extends BaseModel {
   int _subfamilySelected = -1;
   String _errorMessage = "";
 
-
   own_table.Table get table => _table;
 
   UserService get userService => _userService;
@@ -70,12 +70,11 @@ class TableViewModel extends BaseModel {
 
   List<Article> get listOfArticlesBySubFamily => _listOfArticlesBySubFamily;
 
-   int get subfamilySelected => _subfamilySelected;
+  int get subfamilySelected => _subfamilySelected;
 
   int get isFamilySelected => _isFamilySelected;
 
   List<Article> get listOfArticlesByFamily => _listOfArticlesByFamily;
-
 
   List<CommandTable> get listOfCommand => _listOfCommand;
 
@@ -163,14 +162,15 @@ class TableViewModel extends BaseModel {
       ResponseObject resFamilies = await familyService.getFamilies();
       bool res = resFamilies.status ?? false;
       if (!res) {
-        errorMessage = AppLocalizations.of(context).somethingWentWrongText;
+        errorMessage = AppLocalizations.of(context)?.somethingWentWrongText ?? "";
       } else {
         listOfFamilies.addAll(resFamilies.responseObject as List<Family>);
       }
-        //add the articles that are in the command to the list to show
-        //and create a immutable copy to check changes later
-        listOfCommand.addAll(tableDetail.commandTable ?? List.empty(growable: true));
-        _listOfCommandImmutable.addAll(tableDetail.commandTable ??List.empty());
+      //add the articles that are in the command to the list to show
+      //and create a immutable copy to check changes later
+      listOfCommand
+          .addAll(tableDetail.commandTable ?? List.empty(growable: true));
+      _listOfCommandImmutable.addAll(tableDetail.commandTable ?? List.empty());
       setState(ViewState.IDLE);
       notifyListeners();
     }
@@ -211,14 +211,70 @@ class TableViewModel extends BaseModel {
       }
       setState(ViewState.BUSY);
       //verify if the article already exist in the command
+      bool itsThere = false;
+      CommandTable commandLine = CommandTable();
+      for (var element in listOfCommand) {
+        if (element.idArt == data.id) {
+          itsThere = true;
+          commandLine = element;
+        }
+      }
 
+      if (itsThere) {
+        //add to the current amount  of the article
+        int index = listOfCommand.indexOf(commandLine);
+        listOfCommand[index].can = listOfCommand[index].can! + 1;
+      } else {
+        //check if there are more lines in the command
+        int line = 0;
+        if (listOfCommand.length > 0) {
+          line = listOfCommand.length + 1;
+        }
+        //add to the command
+        int iva = 0;
+        switch (data.regIvaVta ?? "0") {
+          case "G":
+            iva = 13;
+            break;
+          case "R":
+            iva = 2;
+            break;
+          case "S":
+            iva = 1;
+            break;
+          case "E":
+            iva = 4;
+            break;
+          case "X":
+            iva = 0;
+            break;
+          default:
+            iva = 0;
+            break;
+        }
+        listOfCommand.add(CommandTable(
+          name: data.name,
+          //id: ,
+          can: 1,
+          cBar: int.tryParse(data.codBar ?? "0"),
+          depT: user.id,
+          fec: DateTime.now().toIso8601String(),
+          idArt: data.id,
+          idLin: line,
+          imp: data.pvp,
+          //total of the line
+          mesT: table.num,
+          porDto: 0,
+          porIva: iva,
+          pre: data.pvp,
+          preNet: 0,
+        ));
+      }
 
       //if already exist, plus 1 the article in the command
       //if it's not exist in the command, add to the command
       setState(ViewState.IDLE);
       return Future.value(true);
-
-
     } catch (error) {
       print(
           "Error in addArticleToCommand method in table_view_model.dart. Error $error ----------->>>");
@@ -226,25 +282,20 @@ class TableViewModel extends BaseModel {
     }
   }
 
-  void addToCounter(Article article) {}
 
-  String getCounterOfArticle(Article article) {
-    return "0";
-  }
-
-  void restToCounter(Article article) {}
 
   Future<bool> loadArticlesOfFamilyAndSubfamilies(int value) async {
-    try{
+    try {
       int val = value;
       if (val != -1) {
         //load Articles that are children of family
         ResponseObject responseObject =
-        await familyService.getArticlesOfFamily(listOfFamilies[val]);
+            await familyService.getArticlesOfFamily(listOfFamilies[val]);
         bool res = responseObject.status ?? false;
         if (res) {
           listOfArticlesByFamily.clear();
-          listOfArticlesByFamily = responseObject.responseObject as List<Article>;
+          listOfArticlesByFamily =
+              responseObject.responseObject as List<Article>;
           bool resSub = await chargeSubfamily(listOfFamilies[value]);
 
           return resSub;
@@ -253,34 +304,69 @@ class TableViewModel extends BaseModel {
         return false;
       }
       return false;
-
-    }catch(error){
+    } catch (error) {
       print(error);
       return false;
     }
-
   }
 
-  Future<bool> loadArticlesOfSubfamily(int index)async {
-    try{
+  Future<bool> loadArticlesOfSubfamily(int index) async {
+    try {
       listOfArticlesBySubFamily.clear();
-      ResponseObject responseObject = await subFamilyService.getArticlesOfSubfamily("$index");
+      ResponseObject responseObject =
+          await subFamilyService.getArticlesOfSubfamily("$index");
       bool res = responseObject.status ?? false;
-      if(res){
-        listOfArticlesBySubFamily = responseObject.responseObject as List<Article>;
+      if (res) {
+        listOfArticlesBySubFamily =
+            responseObject.responseObject as List<Article>;
         return true;
       }
       return false;
-    }catch(error){
+    } catch (error) {
       print(error);
       return false;
     }
-
-
-
   }
+
   @override
   void dispose() {
     super.dispose();
+  }
+
+  bool restArticle(int index)  {
+    //check the original amount in the command
+    int cant = listOfCommand[index].can ?? 0;
+   //check if it exist in the original command
+    bool resOfCheck = false;
+    _listOfCommandImmutable.forEach((element) {
+      if(element.id == listOfCommand[index].id){
+        //if Exist check if resting 1 is not below to the original cant
+        if((listOfCommand[index].can! - 1) < (element.can??0)){
+          resOfCheck = false;
+        }else{
+          listOfCommand[index].can = listOfCommand[index].can! - 1;
+          resOfCheck = true;
+        }
+
+      }
+    });
+    //if not existing in the original command rest 1 or eliminate the command line
+    if((listOfCommand[index].can! - 1) < 1){
+      listOfCommand.remove(listOfCommand[index]);
+      resOfCheck = true;
+    }else{
+      listOfCommand[index].can = listOfCommand[index].can! - 1;
+      resOfCheck = true;
+    }
+
+    notifyListeners();
+    return resOfCheck;
+
+
+  }
+
+  void add(int index) {
+  listOfCommand[index].can = ((listOfCommand[index].can ?? 0) + 1);
+    notifyListeners();
   }
 }

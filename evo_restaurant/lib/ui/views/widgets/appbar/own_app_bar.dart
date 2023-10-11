@@ -15,6 +15,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 part 'own_app_bar.g.dart';
 
+// ignore: must_be_immutable
 class OwnAppBar extends BaseWidget {
   bool isFromHome = false;
 
@@ -43,7 +44,7 @@ Widget __appBarBody(BuildContext context, bool isFromHome) {
   return Consumer2<AppBarViewModel, BaseWidgetModel>(
       builder: (context, model, baseWidgetModel, _) {
     return AppBar(
-      title: Text(AppLocalizations.of(context).evoRestaurantText ),
+      title: Text(AppLocalizations.of(context)?.evoRestaurantText ?? ""),
       elevation: 0.5,
       backgroundColor: colorPrimary,
       centerTitle: true,

@@ -63,7 +63,7 @@ class LoginView extends BaseWidget {
                       Container(
                         alignment: Alignment.center,
                         child: Text(
-                          AppLocalizations.of(context).loginText,
+                          AppLocalizations.of(context)?.loginText ?? "",
                           style: TextStyle(
                               // fontFamily: commonFamily,
                               fontWeight: FontWeight.w500,
@@ -106,7 +106,7 @@ Widget __buttonEnterContainer(BuildContext context) {
             backgroundColor: Colors.blue[900],
           ),
           child: Text(
-            AppLocalizations.of(context).loginText,
+            AppLocalizations.of(context)?.loginText?? "",
             style: const TextStyle(
                 fontSize: 17, fontWeight: FontWeight.w700, color: Colors.white),
           ),
@@ -134,13 +134,11 @@ Widget __buttonEnterContainer(BuildContext context) {
                     acceptButton: () {
                       baseWidgetModel.showOverLayWidget(false, Container());
                     },
-                    title: AppLocalizations.of(context).warningText,
+                    title: AppLocalizations.of(context)?.warningText?? "",
                     contentText:
                         errorObject.errorCode == errorPasswordIsNotCorrect
-                            ? AppLocalizations.of(context)
-                                    .passwordIsNotCorrectText
-                            : AppLocalizations.of(context)
-                                    .somethingWentWrongText,
+                            ? AppLocalizations.of(context)?.passwordIsNotCorrectText ?? ""
+                            : AppLocalizations.of(context)?.somethingWentWrongText ??"",
                   ));
             }
           },
@@ -175,7 +173,7 @@ Widget __rememberUserCheckBoxContainer(BuildContext context) {
             Expanded(
                 flex: 70,
                 child: Text(
-                  AppLocalizations.of(context).rememberUserNameText,
+                  AppLocalizations.of(context)?.rememberUserNameText ?? "",
                   style: const TextStyle(
                     fontWeight: FontWeight.w500,
                     fontSize: 15,
@@ -218,7 +216,7 @@ Widget __usersDropDown(BuildContext context) {
           baseWidgetModel.showOverLayWidget(true,
           InformationModal(
               typeInformationModal: TypeInformationModal.ERROR,
-              title: AppLocalizations.of(context).errorText,
+              title: AppLocalizations.of(context)?.errorText ?? "",
               contentText: model.errorMessage,
               acceptButton: (){
                 model.errorMessage = "";
@@ -292,7 +290,7 @@ Widget __passwordTextFormField(BuildContext context) {
             }
           },
           decoration: InputDecoration(
-              labelText: AppLocalizations.of(context).passwordText,
+              labelText: AppLocalizations.of(context)?.passwordText ?? "",
               labelStyle: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
@@ -324,7 +322,7 @@ Widget __passwordTextFormField(BuildContext context) {
                           model.showPassword = !model.showPassword;
                         }),
               ),
-              hintText: AppLocalizations.of(context).enterPasswordHintText,
+              hintText: AppLocalizations.of(context)?.enterPasswordHintText ?? "",
               focusedBorder: OutlineInputBorder(
                 borderSide: BorderSide(
                     width: 2, color: Colors.blue[900] ?? Colors.blue),
@@ -342,7 +340,7 @@ Widget __passwordTextFormField(BuildContext context) {
               fillColor: Colors.white),
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return AppLocalizations.of(context).enterACorrectUserNameText;
+              return AppLocalizations.of(context)?.enterACorrectUserNameText ?? "";
             }
             return null;
           },

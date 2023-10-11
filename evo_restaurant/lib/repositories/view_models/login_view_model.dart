@@ -168,11 +168,11 @@ class LoginViewModel extends BaseModel {
         switch (responseObject.errorObject?.errorCode) {
           //503
           case 503:
-            errorMessage = AppLocalizations.of(context).unavailableToLoadData;
+            errorMessage = AppLocalizations.of(context)?.unavailableToLoadData ?? "";
             break;
 
           default:
-            errorMessage = AppLocalizations.of(context).somethingWentWrongText;
+            errorMessage = AppLocalizations.of(context)?.somethingWentWrongText??"";
         }
       }
 

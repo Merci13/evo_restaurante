@@ -104,7 +104,7 @@ Widget __containerOfDrawer(BuildContext context) {
               //request password of manager
             },
             child: Text(
-              AppLocalizations.of(context).synchronizeText,
+              AppLocalizations.of(context)?.synchronizeText ?? "",
               style: _styleForButtons(),
             ),
           ),
@@ -131,7 +131,7 @@ Widget __containerOfIconAndNameApp(BuildContext context) {
           ),
           UIHelper.verticalSpace(10),
           Text(
-            AppLocalizations.of(context).evoRestaurantText,
+            AppLocalizations.of(context)?.evoRestaurantText ?? "",
             style: const TextStyle(
                 fontSize: 25, fontWeight: FontWeight.w600, color: Colors.white),
           ),
@@ -168,7 +168,7 @@ Widget __containerOfHalls(BuildContext context) {
                   padding: const EdgeInsets.all(8.0),
                   child: Center(
                       child: Text(
-                    AppLocalizations.of(context).hallsText,
+                    AppLocalizations.of(context)?.hallsText ?? "",
                     style: const TextStyle(
                         fontSize: 25,
                         fontWeight: FontWeight.w700,

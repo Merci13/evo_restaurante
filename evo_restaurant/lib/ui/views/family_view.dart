@@ -49,7 +49,7 @@ class FamilyView extends BaseWidget {
               child: SingleChildScrollView(
                 child: Scaffold(
                   appBar: AppBar(
-                    title: Text(AppLocalizations.of(context).evoRestaurantText),
+                    title: Text(AppLocalizations.of(context)?.evoRestaurantText ?? ""),
                     elevation: 0.5,
                     backgroundColor: colorPrimary,
                     leading: IconButton(

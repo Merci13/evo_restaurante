@@ -4,6 +4,7 @@ import 'dart:io' show Platform;
 
 import 'package:evo_restaurant/repositories/enums/type_information_modal.dart';
 import 'package:evo_restaurant/repositories/enums/view_state.dart';
+import 'package:evo_restaurant/repositories/models/command_table.dart';
 import 'package:evo_restaurant/repositories/models/family.dart';
 import 'package:evo_restaurant/repositories/models/sub_family.dart';
 import 'package:evo_restaurant/repositories/service/auth/user_service.dart';
@@ -61,7 +62,8 @@ class TableView extends BaseWidget {
           height: mediaQuery.height,
           child: Scaffold(
             appBar: AppBar(
-              title: Text(AppLocalizations.of(context).evoRestaurantText),
+              title:
+                  Text(AppLocalizations.of(context)?.evoRestaurantText ?? ""),
               elevation: 0.5,
               backgroundColor: colorPrimary,
               leading: IconButton(
@@ -216,7 +218,8 @@ Widget __containerOfArticlesOfSubFamily(
                         model.listOfArticlesBySubFamily[index]);
                   })
               : Center(
-                  child: Text(AppLocalizations.of(context).noArticlesText),
+                  child:
+                      Text(AppLocalizations.of(context)?.noArticlesText ?? ""),
                 ),
         ),
       ],
@@ -282,7 +285,7 @@ Widget __containerOfSubFamilies(
               child: Center(
                 child: Text(
                   model.subfamilySelected == -1
-                      ? AppLocalizations.of(context).subFamiliesText
+                      ? AppLocalizations.of(context)?.subFamiliesText ?? ""
                       : model.listOfSubFamilies[model.subfamilySelected].name ??
                           "",
                   style: const TextStyle(
@@ -297,7 +300,8 @@ Widget __containerOfSubFamilies(
             flex: 90,
             child: model.listOfSubFamilies.isEmpty
                 ? Center(
-                    child: Text(AppLocalizations.of(context).noSubFamiliesText),
+                    child: Text(
+                        AppLocalizations.of(context)?.noSubFamiliesText ?? ""),
                   )
                 : GridView.builder(
                     scrollDirection: Axis.vertical,
@@ -338,9 +342,11 @@ Widget __containerOfSubFamilyComponent(
               true,
               InformationModal(
                   typeInformationModal: TypeInformationModal.ERROR,
-                  title: AppLocalizations.of(context).unavailableToLoadData,
+                  title:
+                      AppLocalizations.of(context)?.unavailableToLoadData ?? "",
                   contentText:
-                      AppLocalizations.of(context).somethingWentWrongText,
+                      AppLocalizations.of(context)?.somethingWentWrongText ??
+                          "",
                   acceptButton: () {
                     baseWidgetModel.showOverLayWidget(false, Container());
                   },
@@ -417,7 +423,7 @@ Widget __containerOfArticlesOfFamily(BuildContext context) {
               alignment: Alignment.centerLeft,
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Text(
-                AppLocalizations.of(context).articleText,
+                AppLocalizations.of(context)?.articleText ?? "",
                 style: const TextStyle(
                     fontWeight: FontWeight.w600,
                     color: Colors.white,
@@ -493,7 +499,15 @@ Widget __containerOfArticleComponent(BuildContext context, Article article) {
                     ? Image(
                         image: article.image!.image,
                       )
-                    : Container(),
+                    : const Center(
+                        child: Text(
+                          "N/A",
+                          style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w500,
+                              color: colorPrimary),
+                        ),
+                      ),
               )
             ],
           ),
@@ -585,9 +599,11 @@ Widget __containerOfFamilies(BuildContext context) {
                           InformationModal(
                             typeInformationModal: TypeInformationModal.ERROR,
                             title: AppLocalizations.of(context)
-                                .somethingWentWrongText,
+                                    ?.somethingWentWrongText ??
+                                "",
                             contentText: AppLocalizations.of(context)
-                                .unavailableToLoadData,
+                                    ?.unavailableToLoadData ??
+                                "",
                             acceptButton: () {
                               baseWidgetModel.showOverLayWidget(
                                   false, Container());
@@ -714,7 +730,7 @@ Widget __containerOfApplyButton(BuildContext context) {
         style: raisedButtonStyle,
         onPressed: () {},
         child: Text(
-          AppLocalizations.of(context).applyText,
+          AppLocalizations.of(context)?.applyText ?? "",
           style: styleForButton(),
         ),
       ),
@@ -730,7 +746,7 @@ Widget __containerOfTotal(BuildContext context) {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          AppLocalizations.of(context).totalText,
+          AppLocalizations.of(context)?.totalText ?? "",
           style: styleForDetails(),
         ),
         Text(
@@ -752,7 +768,7 @@ Widget __containerOfUser(BuildContext context) {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              "${AppLocalizations.of(context).attendedByText}:",
+              "${AppLocalizations.of(context)?.attendedByText}:" ?? "",
               style: styleForDetails(),
             ),
             Text(
@@ -771,7 +787,7 @@ Widget __containerOfDate(BuildContext context) {
   return Container(
     alignment: Alignment.centerLeft,
     child: Text(
-      "${AppLocalizations.of(context).dateText}:"
+      "${AppLocalizations.of(context)?.dateText}:??"
       " ${DateTime.now().day}-"
       "${DateTime.now().month}-"
       "${DateTime.now().year}"
@@ -793,15 +809,125 @@ Widget __containerOfCommands(BuildContext context) {
           const _ContainerOfTitleOfCommand(),
           UIHelper.verticalSpace(10),
           model.listOfCommand.length > 0
-              ? ListView.builder(
-                  itemCount: model.listOfCommand.length,
-                  shrinkWrap: true,
-                  physics: const BouncingScrollPhysics(),
-                  scrollDirection: Axis.vertical,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Container();
-                  },
-                )
+              ? Flexible(
+            fit: FlexFit.loose,
+                child: ListView.builder(
+                    itemCount: model.listOfCommand.length,
+                    shrinkWrap: true,
+                    physics: const BouncingScrollPhysics(),
+                    scrollDirection: Axis.vertical,
+                    itemBuilder: (BuildContext context, int index) {
+                      CommandTable command = model.listOfCommand[index];
+                      return Container(
+                        decoration: const BoxDecoration(
+                            border: Border(
+                              bottom: BorderSide(
+                                width: 1,
+                                color: Colors.grey,
+                              ),
+                            ),
+                            color: Colors.white70),
+                        child: SizedBox(
+                          width: double.infinity,
+                          height: mediaQuery.height * 0.08,
+                          child: Column(
+                            children: [
+                              Expanded(
+                                flex: 50,
+                                child: Text(
+                                  command.name ?? "",
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  textAlign: TextAlign.left,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    color: controlColorGray,
+                                    fontSize: 15,
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                flex: 50,
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      flex: 50,
+                                      child: Container(
+                                        child: Text(
+                                            "${AppLocalizations.of(context)?.priceText ?? ""}:"
+                                                " ${command.pre}",
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 1,
+                                        style:const TextStyle(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w600,
+                                          color: controlColorGray
+                                        ),
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 50,
+                                      child: Container(
+                                        child: Row(
+                                          children: [
+                                            Expanded(
+                                              flex: 30,
+                                              child: Container(
+                                                color: Colors.green,
+                                                child: InkWell(
+                                                  enableFeedback: false,
+                                                  onTap: () async{
+                                                    bool res =  model.restArticle(index);
+                                                    /*
+                                                    *
+                                                    * if res is false
+                                                    * means that is resting amount
+                                                    * articles that the original command that are provide from the API
+                                                    * ask for administrator password
+                                                    * */
+                                                    if(!res){
+
+                                                    }
+                                                  },
+                                                ),
+                                              ),
+                                            ),
+                                            Expanded(
+                                              flex: 40,
+                                              child: Container(
+                                              alignment: Alignment.center,
+                                                child: Text(
+                                                  "${command.can ?? "0"}"
+                                                ),
+                                              ),
+                                            ),
+                                            Expanded(
+                                              flex: 30,
+                                              child: Container(
+
+                                                color: Colors.orange,
+                                                child: InkWell(
+                                                  onTap: (){
+                                                  model.add(index);
+                                                  },
+                                                ),
+                                              ),
+                                            )
+                                          ],
+                                        )
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+              )
               : Container(
                   width: double.infinity,
                   height: mediaQuery.height * 0.1,
@@ -817,7 +943,7 @@ Widget __containerOfCommands(BuildContext context) {
                   ),
                   child: Center(
                     child: Text(
-                      AppLocalizations.of(context).noArticlesText,
+                      AppLocalizations.of(context)?.noArticlesText ?? "",
                       style: TextStyle(
                           fontWeight: FontWeight.w500,
                           fontSize: 17,
@@ -843,7 +969,7 @@ Widget __containerOfTitleOfCommand(BuildContext context) {
               topRight: Radius.circular(7), topLeft: Radius.circular(7)),
           color: colorPrimary),
       child: Text(
-        AppLocalizations.of(context).articlesText,
+        AppLocalizations.of(context)?.articlesText ?? "",
         style: const TextStyle(
             fontSize: 17, fontWeight: FontWeight.w600, color: Colors.white),
       ));

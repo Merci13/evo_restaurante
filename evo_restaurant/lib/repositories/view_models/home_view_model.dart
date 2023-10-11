@@ -72,7 +72,7 @@ class HomeViewModel extends BaseModel {
           ResponseObject responseHalls = await _hallService.getAllHalls();
           bool res = responseHalls.status ?? false;
           if (!res) {
-            errorMessage = AppLocalizations.of(context).somethingWentWrongText;
+            errorMessage = AppLocalizations.of(context)?.somethingWentWrongText ?? "";
             listOfHalls.clear();
             notifyListeners();
           } else {

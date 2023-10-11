@@ -184,7 +184,14 @@
   "articlesText": "Articles",
   "@articlesText": {
     "description": "Articles Text"
+  },
+
+  "amountText": "Amount",
+  "@amountText": {
+    "description": "Amount Text"
   }
+
+
 
 
 
