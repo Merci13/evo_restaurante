@@ -189,7 +189,13 @@
   "amountText": "Amount",
   "@amountText": {
     "description": "Amount Text"
+  },
+
+  "tryAgainText": "Try again",
+  "@tryAgainText": {
+    "description": "Try Again Text"
   }
+
 
 
 

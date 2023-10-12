@@ -787,7 +787,7 @@ Widget __containerOfDate(BuildContext context) {
   return Container(
     alignment: Alignment.centerLeft,
     child: Text(
-      "${AppLocalizations.of(context)?.dateText}:??"
+      "${AppLocalizations.of(context)?.dateText ?? ""}: "
       " ${DateTime.now().day}-"
       "${DateTime.now().month}-"
       "${DateTime.now().year}"
@@ -818,6 +818,7 @@ Widget __containerOfCommands(BuildContext context) {
                     scrollDirection: Axis.vertical,
                     itemBuilder: (BuildContext context, int index) {
                       CommandTable command = model.listOfCommand[index];
+                   const  double sizeButton = 30.0;
                       return Container(
                         decoration: const BoxDecoration(
                             border: Border(
@@ -829,7 +830,7 @@ Widget __containerOfCommands(BuildContext context) {
                             color: Colors.white70),
                         child: SizedBox(
                           width: double.infinity,
-                          height: mediaQuery.height * 0.08,
+                          height: mediaQuery.height * 0.09,
                           child: Column(
                             children: [
                               Expanded(
@@ -852,18 +853,16 @@ Widget __containerOfCommands(BuildContext context) {
                                   children: [
                                     Expanded(
                                       flex: 50,
-                                      child: Container(
-                                        child: Text(
-                                            "${AppLocalizations.of(context)?.priceText ?? ""}:"
-                                                " ${command.pre}",
-                                        overflow: TextOverflow.ellipsis,
-                                        maxLines: 1,
-                                        style:const TextStyle(
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.w600,
-                                          color: controlColorGray
-                                        ),
-                                        ),
+                                      child: Text(
+                                          "${AppLocalizations.of(context)?.priceText ?? ""}:"
+                                              " ${command.pre}",
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                      style:const TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w600,
+                                        color: controlColorGray
+                                      ),
                                       ),
                                     ),
                                     Expanded(
@@ -873,11 +872,15 @@ Widget __containerOfCommands(BuildContext context) {
                                           children: [
                                             Expanded(
                                               flex: 30,
-                                              child: Container(
-                                                color: Colors.green,
-                                                child: InkWell(
-                                                  enableFeedback: false,
-                                                  onTap: () async{
+                                              child: Align(
+                                                alignment: Alignment.centerRight,
+                                                child: IconButton(
+                                                  icon: const Icon(Icons.do_not_disturb_on_outlined,
+                                                  color: colorPrimary,
+                                                    size: sizeButton,
+                                                  ),
+
+                                                  onPressed: () async{
                                                     bool res =  model.restArticle(index);
                                                     /*
                                                     *
@@ -904,11 +907,14 @@ Widget __containerOfCommands(BuildContext context) {
                                             ),
                                             Expanded(
                                               flex: 30,
-                                              child: Container(
-
-                                                color: Colors.orange,
-                                                child: InkWell(
-                                                  onTap: (){
+                                              child: Align(
+                                                alignment: Alignment.centerLeft,
+                                                child: IconButton(
+                                                  icon: const Icon(Icons.add_circle,
+                                                    color: colorPrimary,
+                                                    size: sizeButton,
+                                                  ),
+                                                  onPressed: (){
                                                   model.add(index);
                                                   },
                                                 ),

@@ -179,6 +179,11 @@
   "amountText": "Cantidad",
   "@amountText": {
     "description": "Amount Text"
+  },
+
+  "tryAgainText": "Volver a intentar",
+  "@tryAgainText": {
+    "description": "Try Again Text"
   }
 
 }

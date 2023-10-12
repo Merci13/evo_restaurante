@@ -31,7 +31,7 @@ class HomeView extends BaseWidget {
             ..hallService = hallService
             ..user = user
             ..userService = userService
-            ..init(),
+            ..init(AppLocalizations.of(context)),
       child: Consumer2<HomeViewModel, BaseWidgetModel>(
         builder: (context, model, baseWidgetModel, _) {
           Size mediaQuery = MediaQuery.of(context).size;
@@ -162,88 +162,156 @@ Widget __containerOfHalls(BuildContext context) {
         padding: const EdgeInsets.only(top: 20, bottom: 50),
         child: Column(
           children: [
-            Expanded(
-              flex: 10,
-              child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Center(
-                      child: Text(
-                    AppLocalizations.of(context)?.hallsText ?? "",
-                    style: const TextStyle(
-                        fontSize: 25,
-                        fontWeight: FontWeight.w700,
-                        color: controlColorGray),
-                  ))),
-            ),
-            model.listOfHalls.isEmpty
-                ? const Expanded(
-                    flex: 90,
-                    child: Center(
-                      child: CircularProgressIndicator(),
-                    ),
+            model.errorMessage.isEmpty
+                ? Expanded(
+                    flex: 10,
+                    child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Center(
+                            child: Text(
+                          AppLocalizations.of(context)?.hallsText ?? "",
+                          style: const TextStyle(
+                              fontSize: 25,
+                              fontWeight: FontWeight.w700,
+                              color: controlColorGray),
+                        ))),
                   )
-                : Expanded(
-                    flex: 90,
-                    child: ListView.builder(
-                        padding: const EdgeInsets.symmetric(vertical: 10),
-                        itemCount: model.listOfHalls.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Center(
-                              child: Material(
-                                elevation: 10,
-                                borderRadius: borderRadius,
-                                child: InkWell(
-                                  enableFeedback: false,
-                                  onTap: () {
-                                    Navigator.pushNamed(context, "/hallView",
-                                        arguments: model.listOfHalls[index]);
-                                  },
-                                  child: Container(
-                                    padding: const EdgeInsets.all(0.0),
-                                    height: mediaQuery.height * 0.20,
-                                    width: mediaQuery.width * 0.5,
-                                    decoration: BoxDecoration(
-                                      borderRadius: borderRadius,
+                : Container(),
+            model.errorMessage.isNotEmpty
+                ? Container(
+                    padding: const EdgeInsets.all(10),
+                    margin: EdgeInsets.symmetric(
+                        horizontal: mediaQuery.width * 0.1,
+                        vertical: mediaQuery.height * 0.1),
+                    width: mediaQuery.width * 0.5,
+                    height: mediaQuery.height * 0.6,
+                    decoration: BoxDecoration(
+                      borderRadius: const BorderRadius.all(Radius.circular(7)),
+                      border: Border.all(color: Colors.black, width: 1),
+                    ),
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      width: mediaQuery.width * 0.5,
+                      height: mediaQuery.height * 0.4,
+                      decoration: BoxDecoration(
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(7)),
+                        border: Border.all(color: Colors.black, width: 1),
+                      ),
+                      child: Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              model.errorMessage,
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 17,
+                                  color: colorPrimary),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                model.flag = true;
+                                model.errorMessage = "";
+                                model.init(AppLocalizations.of(context));
+                              },
+                              child:  Column(
+                                children: [
+                                const  Icon(
+                                    Icons.replay,
+                                    color: controlColorGray,
+                                    size: 25,
+                                  ),
+                                  Text(
+                                    AppLocalizations.of(context)?.tryAgainText ?? "",
+                                    style:const TextStyle(
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.w600,
+                                        color: colorPrimary
                                     ),
-                                    child: Row(
-                                      children: <Widget>[
-                                        LayoutBuilder(
-                                            builder: (context, constraints) {
-                                          return Container(
-                                            height: constraints.maxHeight,
-                                            width: constraints.maxHeight,
-                                            decoration: BoxDecoration(
-                                              color: Colors.deepPurple,
-                                              borderRadius: borderRadius,
-                                            ),
-                                            child: const Icon(
-                                              Icons.arrow_circle_right_outlined,
-                                              color: Colors.white,
-                                              size: 50,
-                                            ),
-                                          );
-                                        }),
-                                        Expanded(
-                                          child: Text(
-                                            model.listOfHalls[index].name ?? "",
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                                fontSize: 25,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.grey[700]),
-                                          ),
+                                  )
+                                ],
+                              ),
+
+                            ),
+
+                          ],
+                        ),
+                      ),
+                    ))
+                : model.listOfHalls.isEmpty
+                    ? const Expanded(
+                        flex: 90,
+                        child: Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      )
+                    : Expanded(
+                        flex: 90,
+                        child: ListView.builder(
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            itemCount: model.listOfHalls.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Center(
+                                  child: Material(
+                                    elevation: 10,
+                                    borderRadius: borderRadius,
+                                    child: InkWell(
+                                      enableFeedback: false,
+                                      onTap: () {
+                                        Navigator.pushNamed(
+                                            context, "/hallView",
+                                            arguments:
+                                                model.listOfHalls[index]);
+                                      },
+                                      child: Container(
+                                        padding: const EdgeInsets.all(0.0),
+                                        height: mediaQuery.height * 0.20,
+                                        width: mediaQuery.width * 0.5,
+                                        decoration: BoxDecoration(
+                                          borderRadius: borderRadius,
                                         ),
-                                      ],
+                                        child: Row(
+                                          children: <Widget>[
+                                            LayoutBuilder(builder:
+                                                (context, constraints) {
+                                              return Container(
+                                                height: constraints.maxHeight,
+                                                width: constraints.maxHeight,
+                                                decoration: BoxDecoration(
+                                                  color: Colors.deepPurple,
+                                                  borderRadius: borderRadius,
+                                                ),
+                                                child: const Icon(
+                                                  Icons
+                                                      .arrow_circle_right_outlined,
+                                                  color: Colors.white,
+                                                  size: 50,
+                                                ),
+                                              );
+                                            }),
+                                            Expanded(
+                                              child: Text(
+                                                model.listOfHalls[index].name ??
+                                                    "",
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                    fontSize: 25,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.grey[700]),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            ),
-                          );
-                        }),
-                  ),
+                              );
+                            }),
+                      ),
           ],
         ),
       );

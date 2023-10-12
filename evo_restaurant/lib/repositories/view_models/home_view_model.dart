@@ -63,25 +63,23 @@ class HomeViewModel extends BaseModel {
     _userService = value;
   }
 
-  init() async {
+  init(AppLocalizations? appLocalizations) async {
     try {
       if (flag) {
         listOfHalls.clear();
-        if(state == ViewState.IDLE){
+        if (state == ViewState.IDLE) {
           setState(ViewState.BUSY);
           ResponseObject responseHalls = await _hallService.getAllHalls();
           bool res = responseHalls.status ?? false;
           if (!res) {
-            errorMessage = AppLocalizations.of(context)?.somethingWentWrongText ?? "";
+            errorMessage = appLocalizations?.somethingWentWrongText ?? "";
             listOfHalls.clear();
-            notifyListeners();
           } else {
             listOfHalls.addAll(responseHalls.responseObject as List<Hall>);
-            notifyListeners();
           }
           setState(ViewState.IDLE);
+          notifyListeners();
         }
-
 
         flag = false;
       }
