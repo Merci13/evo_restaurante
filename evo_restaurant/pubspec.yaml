@@ -49,6 +49,8 @@ dependencies:
   image_picker: ^0.8.7+5
   functional_widget: ^0.10.1
   analyzer: ^5.13.0
+  sqflite: ^2.3.0
+  path: ^1.8.3
   #connectivity_plus: ^4.0.1
 
 

@@ -1,25 +1,23 @@
 
 
-
-
 import 'package:evo_restaurant/global/api_source.dart';
 import 'package:evo_restaurant/repositories/models/family.dart';
 import 'package:evo_restaurant/repositories/models/response_object.dart';
+import 'package:path/path.dart';
+import 'package:sqflite/sqflite.dart';
 
-class FamilyService{
+class FamilyService {
   late ApiSource _api;
 
   set api(ApiSource value) {
     _api = value;
   }
 
-  Future<ResponseObject> getFamilies() async{
+  Future<ResponseObject> getFamilies() async {
     return await _api.getFamilies();
   }
 
-  Future<ResponseObject> getArticlesOfFamily(Family family) async{
+  Future<ResponseObject> getArticlesOfFamily(Family family) async {
     return await _api.getArticlesOfFamily(family);
   }
-
-
 }
