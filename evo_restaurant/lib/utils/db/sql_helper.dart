@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:path/path.dart' as path;
 import 'package:sqflite/sqflite.dart' as sql;
 
@@ -33,11 +34,16 @@ class SQLHelper {
     """);
   }
 
+  ///
+  /// Open the data base is exist, otherwise create a new data base
+  ///
+  ///
   static Future<sql.Database> db() async {
     return sql.openDatabase(
         path.join(await sql.getDatabasesPath(), 'evorestaurant.db'),
         version: 1, onCreate: (sql.Database database, int version) async {
       await createTable(database);
+      debugPrint("......Created database......");
     });
   }
 
@@ -84,6 +90,14 @@ class SQLHelper {
     return id;
   }
 
+  ///
+  /// Open de Data base calling SQLHelper.db().
+  /// if data base isn't exist, it will create the data base.
+  ///
+  /// return a list that contains families that are in the data base
+  /// ordered by id.
+  ///
+  ///
   static Future<List<Map<String, dynamic>>> getFamilies() async {
     final db = await SQLHelper.db();
     return db.query('family', orderBy: "id");
@@ -156,7 +170,8 @@ class SQLHelper {
     return result;
   }
 
-  static Future<void> deleteDatabase() async {
+
+   static Future<void> deleteDatabase() async {
     String pathDatabase = await sql.getDatabasesPath();
 
     sql.databaseFactory.deleteDatabase(pathDatabase);

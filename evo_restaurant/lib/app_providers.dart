@@ -4,6 +4,7 @@ import 'package:evo_restaurant/repositories/service/family/family_service.dart';
 import 'package:evo_restaurant/repositories/service/hall/hall_service.dart';
 import 'package:evo_restaurant/repositories/service/sub_family/sub_family_service.dart';
 import 'package:evo_restaurant/repositories/service/table/table_service.dart';
+import 'package:evo_restaurant/utils/db/sql_helper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'global/api_source.dart';
@@ -16,6 +17,9 @@ class AppProviders {
     return MultiProvider(
       providers: [
         Provider<User>(create: (_) => User()),
+        Provider<SQLHelper>(
+          create: (_) => SQLHelper(),
+        ),
         Provider<ApiSource>(
           create: (_) => ApiSource()..init(),
         ),
@@ -34,17 +38,18 @@ class AppProviders {
           update: (_, api, hallService) =>
               (hallService ?? HallService())..api = api,
         ),
-        ProxyProvider<ApiSource, FamilyService>(
+        ProxyProvider2<ApiSource, SQLHelper, FamilyService>(
           create: (_) => FamilyService(),
-          update: (_, api, hallService) =>
-          (hallService ?? FamilyService())..api = api,
+          update: (_, api, sqlHelper, hallService) =>
+              (hallService ?? FamilyService())
+                ..api = api
+                ..sqlHelper = sqlHelper,
         ),
         ProxyProvider<ApiSource, SubFamilyService>(
           create: (_) => SubFamilyService(),
           update: (_, api, subFamilyService) =>
-          (subFamilyService ?? SubFamilyService())..apiSource = api,
+              (subFamilyService ?? SubFamilyService())..apiSource = api,
         ),
-
         ProxyProvider<ApiSource, CommandTableService>(
           create: (_) => CommandTableService(),
           update: (_, api, tableDetailService) =>
@@ -53,7 +58,7 @@ class AppProviders {
         ProxyProvider<ApiSource, TableService>(
           create: (_) => TableService(),
           update: (_, api, tableDetailService) =>
-          (tableDetailService ?? TableService())..apiSource = api,
+              (tableDetailService ?? TableService())..apiSource = api,
         ),
         StreamProvider<HasToken>(
             initialData: HasToken(),

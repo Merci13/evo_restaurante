@@ -189,6 +189,14 @@ class ApiSource {
     }
   }
 
+  ///
+  /// Call the API to obtain the families as representation in JSON format.
+  /// Then, it takes the JSON and transform in an Object List called Family, and
+  /// send it back in the ResponseObject.
+  /// If something went wrong it will return an ErrorObject in the ResponseObject
+  /// with the body of the JSON
+  ///
+  ///
   Future<ResponseObject> getFamilies() async {
     try {
       //http://209.145.58.91/Pruebas/vERP_2_dat_dat/v1/fam_m?[off]=0&api_key=mzZ58he3
