@@ -27,23 +27,68 @@ class FamilyService {
 
   Future<bool> chargeFamiliesInDataBase() async {
     try {
-
       List<Map<String, dynamic>> listFamilies = await SQLHelper.getFamilies();
-      if(listFamilies.isEmpty){
+
+      if (listFamilies.isEmpty) {
         ResponseObject responseObject = await _api.getFamilies();
         bool res = responseObject.status ?? false;
-        if(res){
-          
-
+        if (res) {
+          for (Family family in responseObject.responseObject as List<Family>) {
+            int result = await SQLHelper.createFamily(
+                family.id ?? "-1", family.name ?? "", family.img);
+            print("Was inserted in the data base the family id: $result");
+            if (result == 0) {
+              throw "Something went wrong inserting family id: ${family.id},"
+                  " in family_service.dart. Method: chargeFamiliesInDataBase";
+            }
+          }
+          return Future.value(true);
         }
-        return Future.value(false);
+        throw "Something went wrong getting the families from the API. "
+            "Error in family_service.dart method chargeFamiliesInDataBase";
+      } else {
+        //drop all data in the table and charge fresh data in the db
+        bool allFamiliesDrop = true;
+        String failureId = "";
+        for (Map<String, dynamic> element in listFamilies) {
+          int res = await SQLHelper.deleteFamily(element['id']);
+          //affected rows must be one
+          if (res != 1) {
+            allFamiliesDrop = false;
+            failureId = element["id"];
+            break;
+          }
+        }
+        if (!allFamiliesDrop) {
+          //if it false means that was drop more than one row in the data base
+          //that means something went wrong in the previous charge or was duplicated data
+          throw "Something was wrong deleting the previous "
+              "family id: $failureId,"
+              " in family_service.dart in method chargeFamiliesInDataBase ";
+        } else {
+          //fill up the data base
+          ResponseObject responseObject = await _api.getFamilies();
+          bool res = responseObject.status ?? false;
+          if (res) {
+            for (Family family in responseObject.responseObject as List<Family>) {
+              int result = await SQLHelper.createFamily(
+                  family.id ?? "-1", family.name ?? "", family.img);
+              print("Was inserted in the data base the family id: $result");
+              if (result == 0) {
+                throw "Something went wrong inserting family id: ${family.id}, "
+                    "in family_service.dart. Method: chargeFamiliesInDataBase";
+              }
+            }
+            return Future.value(true);
+          }
+          throw "Something went wrong getting the families from the API."
+              " Error in family_service.dart method chargeFamiliesInDataBase";
+        }
       }
-
-
     } catch (error) {
       print(
           "Error in family_service.dart. Error in Method chargeFamiliesInDataBase. Error: $error-------------->>>");
-    return Future.value(false);
+      return Future.value(false);
     }
   }
 }
