@@ -13,6 +13,13 @@ class _ContainerOfDrawer extends StatelessWidget {
   Widget build(BuildContext _context) => __containerOfDrawer(_context);
 }
 
+class _AuthorizationModal extends StatelessWidget {
+  const _AuthorizationModal({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext _context) => __authorizationModal(_context);
+}
+
 class _ContainerOfIconAndNameApp extends StatelessWidget {
   const _ContainerOfIconAndNameApp({Key? key}) : super(key: key);
 

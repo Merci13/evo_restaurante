@@ -1,9 +1,11 @@
+import 'package:evo_restaurant/repositories/enums/type_information_modal.dart';
 import 'package:evo_restaurant/repositories/models/response_object.dart';
 import 'package:evo_restaurant/repositories/service/auth/user_service.dart';
 import 'package:evo_restaurant/repositories/service/hall/hall_service.dart';
 import 'package:evo_restaurant/repositories/view_models/base_widget_model.dart';
 import 'package:evo_restaurant/ui/views/widgets/appbar/own_app_bar.dart';
 import 'package:evo_restaurant/ui/views/widgets/base_widget.dart';
+import 'package:evo_restaurant/ui/views/widgets/information_modal/information_modal.dart';
 import 'package:evo_restaurant/utils/share/app_colors.dart';
 import 'package:evo_restaurant/utils/share/ui_helpers.dart';
 import 'package:flutter/material.dart';
@@ -102,6 +104,9 @@ Widget __containerOfDrawer(BuildContext context) {
             style: _buttonStyleForDrawerButtons(),
             onPressed: () async {
               //request password of manager
+              baseWidgetModel.showOverLayWidget(true,
+              _AuthorizationModal(),
+              );
             },
             child: Text(
               AppLocalizations.of(context)?.synchronizeText ?? "",
@@ -112,6 +117,39 @@ Widget __containerOfDrawer(BuildContext context) {
       ],
     );
   });
+}
+@swidget
+Widget __authorizationModal(BuildContext context) {
+  return Consumer2<HomeViewModel, BaseWidgetModel>(
+    builder: (context, model, baseWidgetModel, _) {
+      Size mediaQuery = MediaQuery.of(context).size;
+      double height = mediaQuery.height * 0.40;
+      double width = mediaQuery.width * 0.5;
+      return Container(
+        width: width,
+        height: height,
+        padding: const EdgeInsets.all(5),
+        decoration:  BoxDecoration(
+          borderRadius: const BorderRadius.all(Radius.circular(7)),
+          border: Border.all(
+            color: Colors.black,
+            width: 1,
+          ),
+        ),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: const BorderRadius.all(Radius.circular(7)),
+            border: Border.all(
+              color: Colors.black,
+              width: 1,
+            ),
+          ),
+        ),
+
+      );
+    },
+  );
+
 }
 
 @swidget
