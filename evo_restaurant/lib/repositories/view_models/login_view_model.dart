@@ -16,6 +16,8 @@ class LoginViewModel extends BaseModel {
   late UserService _userService;
   late BuildContext _context;
   late User _user;
+  final formKey = GlobalKey<FormState>();
+  bool _flag = true;
   FocusNode _userNameFocusNode = FocusNode();
   FocusNode _passwordFocusNode = FocusNode();
   FocusNode _scaffoldFocusNode = FocusNode();
@@ -142,6 +144,7 @@ class LoginViewModel extends BaseModel {
   }
 
   init(BuildContext context) async {
+    if(_flag){
     if (state == ViewState.BUSY) {
       throw ErrorDescription("Finish the process to perform a new one");
     } else {
@@ -177,7 +180,9 @@ class LoginViewModel extends BaseModel {
       }
 
       setState(ViewState.IDLE);
+      _flag = false;
       notifyListeners();
+    }
     }
   }
 

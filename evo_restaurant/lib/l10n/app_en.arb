@@ -194,7 +194,14 @@
   "tryAgainText": "Try again",
   "@tryAgainText": {
     "description": "Try Again Text"
+  },
+
+
+  "passwordIsRequiredText": "An administrator password is required to complete the process.",
+  "@passwordIsRequiredText": {
+    "description": "Password Is Required Text"
   }
+
 
 
 

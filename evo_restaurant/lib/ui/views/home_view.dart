@@ -77,6 +77,8 @@ Widget __containerOfDrawer(BuildContext context) {
   return Consumer2<HomeViewModel, BaseWidgetModel>(
       builder: (context, model, baseWidgetModel, _) {
     Size mediaQuery = MediaQuery.of(context).size;
+    double height = mediaQuery.height * 0.40;
+    double width = mediaQuery.width * 0.5;
     return Column(
       children: [
         const _ContainerOfIconAndNameApp(),
@@ -103,10 +105,82 @@ Widget __containerOfDrawer(BuildContext context) {
           child: TextButton(
             style: _buttonStyleForDrawerButtons(),
             onPressed: () async {
+              Navigator.pop(context);
               //request password of manager
-              baseWidgetModel.showOverLayWidget(true,
-              _AuthorizationModal(),
-              );
+              baseWidgetModel.showOverLayWidget(
+                  true,
+                  Material(
+                    color: Colors.black26,
+                    child: Center(
+                      child: Container(
+                        width: width,
+                        height: height,
+                        padding: const EdgeInsets.all(5),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(7)),
+                          border: Border.all(
+                            color: Colors.black,
+                            width: 1,
+                          ),
+                        ),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(7)),
+                            border: Border.all(
+                              color: Colors.black,
+                              width: 1,
+                            ),
+                          ),
+                          child: Column(
+                            children: [
+                              Container(
+                                width: double.infinity,
+                                height: mediaQuery.height * 0.05,
+                                padding: const EdgeInsets.all(5),
+                                color: colorPrimary,
+                                child: Text(
+                                  AppLocalizations.of(context)
+                                          ?.synchronizeText ??
+                                      "",
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 20,
+                                      color: Colors.white),
+                                ),
+                              ),
+                              UIHelper.verticalSpace(10),
+                              Text(
+                                AppLocalizations.of(context)
+                                        ?.passwordIsRequiredText ??
+                                    "",
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.black,
+                                ),
+                              ),
+
+                              //text input of password
+
+
+                              TextButton(
+                                  onPressed: () {
+                                    baseWidgetModel.showOverLayWidget(
+                                        false, Container());
+                                  },
+                                  child: Text(AppLocalizations.of(context)
+                                          ?.acceptText ??
+                                      ""))
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ));
             },
             child: Text(
               AppLocalizations.of(context)?.synchronizeText ?? "",
@@ -118,6 +192,7 @@ Widget __containerOfDrawer(BuildContext context) {
     );
   });
 }
+
 @swidget
 Widget __authorizationModal(BuildContext context) {
   return Consumer2<HomeViewModel, BaseWidgetModel>(
@@ -129,7 +204,7 @@ Widget __authorizationModal(BuildContext context) {
         width: width,
         height: height,
         padding: const EdgeInsets.all(5),
-        decoration:  BoxDecoration(
+        decoration: BoxDecoration(
           borderRadius: const BorderRadius.all(Radius.circular(7)),
           border: Border.all(
             color: Colors.black,
@@ -145,11 +220,9 @@ Widget __authorizationModal(BuildContext context) {
             ),
           ),
         ),
-
       );
     },
   );
-
 }
 
 @swidget
@@ -253,26 +326,25 @@ Widget __containerOfHalls(BuildContext context) {
                                 model.errorMessage = "";
                                 model.init(AppLocalizations.of(context));
                               },
-                              child:  Column(
+                              child: Column(
                                 children: [
-                                const  Icon(
+                                  const Icon(
                                     Icons.replay,
                                     color: controlColorGray,
                                     size: 25,
                                   ),
                                   Text(
-                                    AppLocalizations.of(context)?.tryAgainText ?? "",
-                                    style:const TextStyle(
+                                    AppLocalizations.of(context)
+                                            ?.tryAgainText ??
+                                        "",
+                                    style: const TextStyle(
                                         fontSize: 17,
                                         fontWeight: FontWeight.w600,
-                                        color: colorPrimary
-                                    ),
+                                        color: colorPrimary),
                                   )
                                 ],
                               ),
-
                             ),
-
                           ],
                         ),
                       ),

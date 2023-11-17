@@ -191,9 +191,9 @@ Widget __rememberUserCheckBoxContainer(BuildContext context) {
 Widget __formContainer(BuildContext context) {
   return Consumer<LoginViewModel>(
     builder: (context, model, _) {
-      final formKey = GlobalKey<FormState>();
+
       return Form(
-        key: formKey,
+        key: model.formKey,
         child: Column(
           children: <Widget>[
             const _UsersDropDown(),
