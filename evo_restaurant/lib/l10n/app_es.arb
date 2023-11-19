@@ -189,6 +189,27 @@
   "passwordIsRequiredText": "Es requerida una contraseña por parte de un administrador para completar el proceso",
   "@passwordIsRequiredText": {
     "description": "Password Is Required Text"
+  },
+
+  "chargingDataText": "Cargando Información ...",
+  "@chargingDataText": {
+    "description": "Charging Data Text"
+  },
+
+  "loadingDataSuccessfullyText": "La carga de datos se completó exitosamente",
+  "@loadingDataSuccessfullyText": {
+    "description": "Loading Data Successfully Text"
+  },
+
+  "informationText": "Información",
+  "@informationText": {
+    "description": "Information Text"
+  },
+
+  "chargingDataFailedText": "Error al cargar datos, por favor contacte con soporte",
+  "@chargingDataFailedText": {
+    "description": "Charging Data Failed Text"
   }
+
 
 }

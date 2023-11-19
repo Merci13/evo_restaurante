@@ -1,3 +1,4 @@
+import 'package:evo_restaurant/repositories/service/article/article_service.dart';
 import 'package:evo_restaurant/repositories/service/auth/user_service.dart';
 import 'package:evo_restaurant/repositories/service/command_table/command_table_service.dart';
 import 'package:evo_restaurant/repositories/service/family/family_service.dart';
@@ -22,6 +23,11 @@ class AppProviders {
         ),
         Provider<ApiSource>(
           create: (_) => ApiSource()..init(),
+        ),
+        ProxyProvider<ApiSource, ArticleService>(
+          create: (_) => ArticleService(),
+          update: (_, api, articleService) =>
+              (articleService ?? ArticleService())..apiSource = api,
         ),
         ProxyProvider<ApiSource, AuthenticationService>(
           create: (_) => AuthenticationService(),

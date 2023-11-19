@@ -164,6 +164,8 @@ class LoginViewModel extends BaseModel {
       bool resultUsers = responseObject.status ?? false;
       if (resultUsers) {
         listOfUser = responseObject.responseObject as List<User>;
+        userService.users = listOfUser;
+
         selectedUser = listOfUser.first.name ?? "";
         errorMessage = "";
       } else {

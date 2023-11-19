@@ -200,7 +200,31 @@
   "passwordIsRequiredText": "An administrator password is required to complete the process.",
   "@passwordIsRequiredText": {
     "description": "Password Is Required Text"
+  },
+
+  "chargingDataText": "Loading Data ...",
+  "@chargingDataText": {
+    "description": "Charging Data Text"
+  },
+
+  "loadingDataSuccessfullyText": "Loading data was completed successfully",
+  "@loadingDataSuccessfullyText": {
+    "description": "Loading Data Successfully Text"
+  },
+
+  "informationText": "Information",
+  "@informationText": {
+    "description": "Information Text"
+  },
+
+  "chargingDataFailedText": "Charging data failed, please contact with support",
+  "@chargingDataFailedText": {
+    "description": "Charging Data Failed Text"
   }
+
+
+
+
 
 
 
