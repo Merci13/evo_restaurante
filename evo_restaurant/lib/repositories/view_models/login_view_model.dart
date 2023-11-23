@@ -208,7 +208,7 @@ class LoginViewModel extends BaseModel {
       setState(ViewState.BUSY);
       User userValidation = User();
       for (User user in _listOfUser) {
-        if (user.name?.toLowerCase() == selectedUser) {
+        if (user.name?.toLowerCase() == selectedUser.toLowerCase()) {
           userValidation = user;
         }
       }

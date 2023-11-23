@@ -20,7 +20,7 @@ class SQLHelper {
     )
       """);
 
-    await database.execute("""" 
+    await database.execute(""" 
     CREATE TABLE articles(
     id INTEGER PRIMARY KEY NOT NULL UNIQUE, 
     id_family INTEGER NOT NULL, 
@@ -29,7 +29,7 @@ class SQLHelper {
     cod_bar TEXT, 
     reg_iva_vta TEXT, 
     pvp INTEGER, 
-    beb BIT,
+    beb BIT
     )
     """);
   }

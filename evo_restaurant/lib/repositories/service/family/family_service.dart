@@ -29,7 +29,8 @@ class FamilyService {
     try {
       List<Map<String, dynamic>> listFamilies = await SQLHelper.getFamilies();
 
-      if (listFamilies.isEmpty) {
+
+      if (listFamilies.isEmpty ) {
         ResponseObject responseObject = await _api.getFamilies();
         bool res = responseObject.status ?? false;
         if (res) {
@@ -48,12 +49,22 @@ class FamilyService {
             "Error in family_service.dart method chargeFamiliesInDataBase";
       } else {
         //drop all data in the table and charge fresh data in the db
+        for(Map<String, dynamic> element in listFamilies){
+          if(element['id']!=null){
+            print("--->>${element['id']}, ${element['name']}<<---");
+          }
+          print("--->>Count: ${listFamilies.length} <<---");
+        }
         bool allFamiliesDrop = true;
         String failureId = "";
         for (Map<String, dynamic> element in listFamilies) {
-          int res = await SQLHelper.deleteFamily(element['id']);
+          int res = 0;
+          if(element['id'] != null){
+          res = await SQLHelper.deleteFamily(element['id']);
+          }
+
           //affected rows must be one
-          if (res != 1) {
+          if (res != 1 && element['id'] != null) {
             allFamiliesDrop = false;
             failureId = element["id"];
             break;
@@ -67,6 +78,15 @@ class FamilyService {
               " in family_service.dart in method chargeFamiliesInDataBase ";
         } else {
           //fill up the data base
+          ///ToDo Remove this line, it was only use to check if the data base was erased
+          List<Map<String, dynamic>> listFamilies = await SQLHelper.getFamilies();
+          for(Map<String, dynamic> element in listFamilies){
+            if(element['id']!=null){
+              print("--->>${element['id']}, ${element['name']}<<---");
+            }
+            print("--->>Count: ${listFamilies.length} <<---");
+          }
+          ///----------------------------------------------------------^^^^^^
           ResponseObject responseObject = await _api.getFamilies();
           bool res = responseObject.status ?? false;
           if (res) {

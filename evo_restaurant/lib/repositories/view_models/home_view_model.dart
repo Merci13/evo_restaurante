@@ -165,9 +165,11 @@ class HomeViewModel extends BaseModel {
       bool resFamilyCharge = await familyService.chargeFamiliesInDataBase();
 
 
+      return resFamilyCharge;
 
     }catch(error){
       print("Error in home_view_model.dart in method resLoadingData. Error: $error ------------->>>>>");
+      return false;
     }
 
   }
