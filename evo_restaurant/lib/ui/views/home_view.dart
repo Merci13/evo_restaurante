@@ -43,6 +43,7 @@ class HomeView extends BaseWidget {
             ..familyService = familyService
             ..subFamilyService = subfamilyService
             ..articleService = articleService
+            ..context = context
             ..init(AppLocalizations.of(context)),
       child: Consumer2<HomeViewModel, BaseWidgetModel>(
         builder: (context, model, baseWidgetModel, _) {
@@ -120,302 +121,259 @@ Widget __containerOfDrawer(BuildContext context) {
               // baseWidgetModel.showOverLayWidget(true,
               //     _ContainerOfRequestAdminPassword(model, baseWidgetModel));
 
-           Map<String, bool> res = await  showDialog(
+              Map<String, bool> res = await showDialog(
                   barrierDismissible: false,
-                  context: context, builder: (BuildContext context){
-                return Material(
-                  color: Colors.black26,
-                  child: Center(
-                    child: Container(
-                      width: width,
-                      height: height,
-                      padding: const EdgeInsets.all(5),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: const BorderRadius.all(Radius.circular(7)),
-                        border: Border.all(
-                          color: Colors.black,
-                          width: 1,
-                        ),
-                      ),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: const BorderRadius.all(Radius.circular(7)),
-                          border: Border.all(
-                            color: Colors.black,
-                            width: 1,
+                  context: context,
+                  builder: (BuildContext context) {
+                    return Material(
+                      color: Colors.black26,
+                      child: Center(
+                        child: Container(
+                          width: width,
+                          height: height,
+                          padding: const EdgeInsets.all(5),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(7)),
+                            border: Border.all(
+                              color: Colors.black,
+                              width: 1,
+                            ),
+                          ),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(7)),
+                              border: Border.all(
+                                color: Colors.black,
+                                width: 1,
+                              ),
+                            ),
+                            child: Column(
+                              children: [
+                                //content title
+                                Container(
+                                  width: double.infinity,
+                                  height: mediaQuery.height * 0.05,
+                                  padding: const EdgeInsets.all(5),
+                                  color: colorPrimary,
+                                  child: Text(
+                                    AppLocalizations.of(context)
+                                            ?.synchronizeText ??
+                                        "",
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 20,
+                                        color: Colors.white),
+                                  ),
+                                ),
+                                UIHelper.verticalSpace(20),
+                                //content text
+                                Text(
+                                  AppLocalizations.of(context)
+                                          ?.passwordIsRequiredText ??
+                                      "",
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.black,
+                                  ),
+                                ),
+
+                                //text input of password
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20, vertical: 30),
+                                  child: TextFormField(
+                                    focusNode: model.passwordFocusNode,
+                                    controller: model.passwordEditingController,
+                                    textAlign: TextAlign.left,
+                                    keyboardType: TextInputType.text,
+                                    obscureText: true,
+                                    onTap: () {
+                                      if (!model.passwordFocusNode.hasFocus) {
+                                        model.passwordFocusNode.requestFocus();
+                                      }
+                                    },
+                                    decoration: InputDecoration(
+                                        labelText: AppLocalizations.of(context)
+                                                ?.passwordText ??
+                                            "",
+                                        labelStyle: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w500,
+                                            color: Colors.grey),
+                                        prefixIcon: Container(
+                                          padding: const EdgeInsets.all(10),
+                                          child: const Icon(
+                                            FontAwesomeIcons.lock,
+                                            color: Colors.grey,
+                                          ),
+                                        ),
+                                        hintText: AppLocalizations.of(context)
+                                                ?.enterPasswordHintText ??
+                                            "",
+                                        focusedBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                              width: 2,
+                                              color: Colors.blue[900] ??
+                                                  Colors.blue),
+                                        ),
+                                        hintStyle: const TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w500,
+                                            color: Colors.grey),
+                                        border: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            borderSide: BorderSide(
+                                                width: 2,
+                                                color: Colors.blue[900] ??
+                                                    Colors.blue)),
+                                        filled: true,
+                                        contentPadding:
+                                            const EdgeInsets.all(16),
+                                        fillColor: Colors.white),
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return AppLocalizations.of(context)
+                                                ?.enterACorrectUserNameText ??
+                                            "";
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                ),
+                                UIHelper.verticalSpace(30),
+                                //Buttons Accept and Cancel
+                                SizedBox(
+                                  width: double.infinity,
+                                  height: mediaQuery.height * 0.05,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    mainAxisSize: MainAxisSize.max,
+                                    children: [
+                                      Expanded(
+                                        flex: 40,
+                                        child: Container(
+                                          margin:
+                                              const EdgeInsets.only(left: 10),
+                                          decoration: BoxDecoration(
+                                              color: colorPrimary,
+                                              borderRadius:
+                                                  const BorderRadius.all(
+                                                      Radius.circular(7)),
+                                              border: Border.all(
+                                                color: Colors.black,
+                                                width: 1,
+                                              )),
+                                          child: TextButton(
+                                            style: const ButtonStyle(
+                                                enableFeedback: false),
+                                            onPressed: () async {
+                                              Navigator.pop(context,
+                                                  {'acceptButtonRes': true});
+                                            },
+                                            child: Text(
+                                              AppLocalizations.of(context)
+                                                      ?.acceptText ??
+                                                  "",
+                                              style: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.w600),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      Expanded(flex: 05, child: Container()),
+                                      Expanded(
+                                        flex: 40,
+                                        child: Container(
+                                          margin:
+                                              const EdgeInsets.only(right: 10),
+                                          decoration: BoxDecoration(
+                                              color: colorPrimary,
+                                              borderRadius:
+                                                  const BorderRadius.all(
+                                                      Radius.circular(7)),
+                                              border: Border.all(
+                                                color: Colors.black,
+                                                width: 1,
+                                              )),
+                                          child: TextButton(
+                                            style: const ButtonStyle(
+                                                enableFeedback: false),
+                                            onPressed: () {
+                                              model.passwordEditingController
+                                                  .text = "";
+                                              Navigator.pop(context,
+                                                  {'acceptButtonRes': false});
+                                            },
+                                            child: Text(
+                                              AppLocalizations.of(context)
+                                                      ?.cancelText ??
+                                                  "",
+                                              style: styleForButtons(),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              ],
+                            ),
                           ),
                         ),
-                        child: Column(
-                          children: [
-                            //content title
-                            Container(
-                              width: double.infinity,
-                              height: mediaQuery.height * 0.05,
-                              padding: const EdgeInsets.all(5),
-                              color: colorPrimary,
-                              child: Text(
-                                AppLocalizations.of(context)?.synchronizeText ?? "",
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 20,
-                                    color: Colors.white),
-                              ),
-                            ),
-                            UIHelper.verticalSpace(20),
-                            //content text
-                            Text(
-                              AppLocalizations.of(context)?.passwordIsRequiredText ?? "",
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.black,
-                              ),
-                            ),
-
-                            //text input of password
-                            Padding(
-                              padding:
-                              const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
-                              child: TextFormField(
-                                focusNode: model.passwordFocusNode,
-                                controller: model.passwordEditingController,
-                                textAlign: TextAlign.left,
-                                keyboardType: TextInputType.text,
-                                obscureText: true,
-                                onTap: () {
-                                  if (!model.passwordFocusNode.hasFocus) {
-                                    model.passwordFocusNode.requestFocus();
-                                  }
-                                },
-                                decoration: InputDecoration(
-                                    labelText:
-                                    AppLocalizations.of(context)?.passwordText ?? "",
-                                    labelStyle: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w500,
-                                        color: Colors.grey),
-                                    prefixIcon: Container(
-                                      padding: const EdgeInsets.all(10),
-                                      child: const Icon(
-                                        FontAwesomeIcons.lock,
-                                        color: Colors.grey,
-                                      ),
-                                    ),
-                                    hintText:
-                                    AppLocalizations.of(context)?.enterPasswordHintText ??
-                                        "",
-                                    focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                          width: 2, color: Colors.blue[900] ?? Colors.blue),
-                                    ),
-                                    hintStyle: const TextStyle(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w500,
-                                        color: Colors.grey),
-                                    border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(10),
-                                        borderSide: BorderSide(
-                                            width: 2,
-                                            color: Colors.blue[900] ?? Colors.blue)),
-                                    filled: true,
-                                    contentPadding: const EdgeInsets.all(16),
-                                    fillColor: Colors.white),
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return AppLocalizations.of(context)
-                                        ?.enterACorrectUserNameText ??
-                                        "";
-                                  }
-                                  return null;
-                                },
-                              ),
-                            ),
-                            UIHelper.verticalSpace(30),
-                            //Buttons Accept and Cancel
-                            SizedBox(
-                              width: double.infinity,
-                              height: mediaQuery.height * 0.05,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                mainAxisSize: MainAxisSize.max,
-                                children: [
-                                  Expanded(
-                                    flex: 40,
-                                    child: Container(
-                                      margin: const EdgeInsets.only(left: 10),
-                                      decoration: BoxDecoration(
-                                          color: colorPrimary,
-                                          borderRadius:
-                                          const BorderRadius.all(Radius.circular(7)),
-                                          border: Border.all(
-                                            color: Colors.black,
-                                            width: 1,
-                                          )),
-                                      child: TextButton(
-                                        style: const ButtonStyle(enableFeedback: false),
-                                        onPressed: () async {
-                                          Navigator.pop(context, {'acceptButtonRes': true});
-                                        },
-                                        child: Text(
-                                          AppLocalizations.of(context)?.acceptText ?? "",
-                                          style: const TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.w600),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(flex: 05, child: Container()),
-                                  Expanded(
-                                    flex: 40,
-                                    child: Container(
-                                      margin: const EdgeInsets.only(right: 10),
-                                      decoration: BoxDecoration(
-                                          color: colorPrimary,
-                                          borderRadius:
-                                          const BorderRadius.all(Radius.circular(7)),
-                                          border: Border.all(
-                                            color: Colors.black,
-                                            width: 1,
-                                          )),
-                                      child: TextButton(
-                                        style: const ButtonStyle(enableFeedback: false),
-                                        onPressed: () {
-                                          model.passwordEditingController.text = "";
-                                          baseWidgetModel.showOverLayWidget(
-                                              false, Container());
-                                        },
-                                        child: Text(
-                                          AppLocalizations.of(context)?.cancelText ?? "",
-                                          style: styleForButtons(),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
                       ),
-                    ),
-                  ),
-                );
-              });
+                    );
+                  });
 
-           if(res['acceptButtonRes'] ?? false){
-            bool resCheckPassword = await showDialog(
-                 barrierDismissible: false,
-                 context: context, builder: (BuildContext context){
-               return const InformationModal.loading(typeInformationModal: TypeInformationModal.LOADING);
-             });
-             bool res = await model.checkPassword();
-             if(res){
-               model.passwordEditingController.text = "";
-               Navigator.pop(context, true);
-             }
-             ///else PasswordCheck
-             else{
-               Navigator.pop(context, false);
-               baseWidgetModel.showOverLayWidget(
-                 true,
-                 InformationModal(
-                   typeInformationModal:
-                   TypeInformationModal.INFORMATION,
-                   title:
-                   AppLocalizations.of(context)?.warningText,
-                   contentText: AppLocalizations.of(context)
-                       ?.passwordIsNotCorrectText,
-                   acceptButton: () {
-                     baseWidgetModel.showOverLayWidget(
-                         false, Container());
-                   },
-                   icon: Icon(
-                     Icons.warning,
-                     color: Colors.yellow[700],
-                   ),
-                 ),
-               );
-             }
+              ///check password or not
+              if (res['acceptButtonRes'] ?? false) {
 
+                showDialog(
+                    context: model.context,
+                    builder: (BuildContext context) {
+                      ///variable container
+                      ///first show loading message
+                      model.process(context);
+                      return Dialog(
+                        backgroundColor: Colors.white,
+                        child: StreamBuilder(
+                            stream: model.chargingProcessWidgets.stream,
+                            builder: (BuildContext context,
+                                AsyncSnapshot<Widget> snapshot) {
 
-
-             if(resCheckPassword){
-              bool resLoadingData = await showDialog(
-                   barrierDismissible: false,
-                   context: context, builder: (BuildContext context){
-                 return const _ContainerOfChargingTextAndSpinner();
-               });
-               bool resL = await model.resLoadingData();
-               if(resL){
-                 Navigator.pop(context, resL);
-               }else{
-                 Navigator.pop(context, resL);
-               }
-
-
-               if(resLoadingData){
-                 baseWidgetModel.showOverLayWidget(true, InformationModal(
-                   typeInformationModal:
-                   TypeInformationModal.INFORMATION,
-                   title: AppLocalizations.of(context)
-                       ?.informationText ??
-                       "",
-                   contentText:
-                   AppLocalizations.of(context)
-                       ?.loadingDataSuccessfullyText,
-                   acceptButton: () {
-                     baseWidgetModel.showOverLayWidget(
-                         false, Container());
-                   },
-                   icon: const Icon(
-                     Icons.info,
-                     color: Colors.white,
-                     size: 23,
-                   ),
-                 ));
-
-               }
-               ///Failed to load data
-               else{
-                 baseWidgetModel.showOverLayWidget(true,  InformationModal(
-                   typeInformationModal:
-                   TypeInformationModal.ERROR,
-                   title: AppLocalizations.of(context)
-                       ?.somethingWentWrongText ??
-                       "",
-                   contentText: AppLocalizations.of(context)
-                       ?.chargingDataFailedText ??
-                       "",
-                   acceptButton: () {
-                     baseWidgetModel.showOverLayWidget(
-                         false, Container());
-                   },
-                   icon: const Icon(
-                     Icons.error,
-                     color: Colors.white,
-                     size: 23,
-                   ),
-                 ),);
-
-
-               }
-
-
-
-
-             }else{
-
-             }
-
-
-           }else{
-             ///Close the dialog
-             Navigator.pop(context);
-           }
+                              if (snapshot.hasError) {
+                                return Column(
+                                  children: [
+                                    Text(AppLocalizations.of(context)
+                                            ?.somethingWentWrongText ??
+                                        ""),
+                                    UIHelper.verticalSpace(20),
+                                    Text(model.errorMessage),
+                                    UIHelper.verticalSpace(20),
+                                    TextButton(
+                                        onPressed: () {
+                                          model.passwordEditingController.text =
+                                              "";
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text(AppLocalizations.of(context)
+                                                ?.acceptText ??
+                                            ""))
+                                  ],
+                                );
+                              }
+                              return snapshot.data ?? Container();
+                            }),
+                      );
+                    });
+              }
             },
             child: Text(
               AppLocalizations.of(context)?.synchronizeText ?? "",
@@ -581,16 +539,17 @@ Widget __containerOfRequestAdminPassword(BuildContext context,
                                   false, Container());
 
                               baseWidgetModel.showOverLayWidget(
-                                  true,  _ContainerOfChargingTextAndSpinner(
-                                //  model,
-                              //    baseWidgetModel
-                              ));
+                                  true,
+                                  _ContainerOfChargingTextAndSpinner(
+                                      //  model,
+                                      //    baseWidgetModel
+                                      ));
 
                               bool resL = await model.resLoadingData();
 
                               if (resL) {
                                 String title = AppLocalizations.of(context)
-                                    ?.informationText ??
+                                        ?.informationText ??
                                     "";
 
                                 baseWidgetModel.showOverLayWidget(
@@ -716,16 +675,17 @@ Widget __containerOfRequestAdminPassword(BuildContext context,
 }
 
 @swidget
-Widget __containerOfChargingTextAndSpinner(BuildContext context,
-    // HomeViewModel model,
-    // BaseWidgetModel baseWidgetModel
-    ) {
+Widget __containerOfChargingTextAndSpinner(
+  BuildContext context,
+  // HomeViewModel model,
+  // BaseWidgetModel baseWidgetModel
+) {
   Size mediaQuery = MediaQuery.of(context).size;
   double heightCharge = mediaQuery.height * 0.20;
   double widthCharge = mediaQuery.width * 0.25;
   return Consumer2<HomeViewModel, BaseWidgetModel>(
-    builder: (context, model, baseWidgetModel, _){
-      return  Material(
+    builder: (context, model, baseWidgetModel, _) {
+      return Material(
         color: Colors.black26,
         child: Center(
           child: Container(

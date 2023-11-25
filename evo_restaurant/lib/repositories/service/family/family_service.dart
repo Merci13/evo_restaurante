@@ -37,7 +37,7 @@ class FamilyService {
           for (Family family in responseObject.responseObject as List<Family>) {
             int result = await SQLHelper.createFamily(
                 family.id ?? "-1", family.name ?? "", family.img);
-            print("Was inserted in the data base the family id: $result");
+            print("Was inserted in the data base the family id: ${family.id}");
             if (result == 0) {
               throw "Something went wrong inserting family id: ${family.id},"
                   " in family_service.dart. Method: chargeFamiliesInDataBase";
@@ -53,8 +53,8 @@ class FamilyService {
           if(element['id']!=null){
             print("--->>${element['id']}, ${element['name']}<<---");
           }
-          print("--->>Count: ${listFamilies.length} <<---");
         }
+        print("--->>Count: ${listFamilies.length} <<---");
         bool allFamiliesDrop = true;
         String failureId = "";
         for (Map<String, dynamic> element in listFamilies) {
@@ -84,8 +84,8 @@ class FamilyService {
             if(element['id']!=null){
               print("--->>${element['id']}, ${element['name']}<<---");
             }
-            print("--->>Count: ${listFamilies.length} <<---");
           }
+          print("--->>Count: ${listFamilies.length}  in delete families<<---");
           ///----------------------------------------------------------^^^^^^
           ResponseObject responseObject = await _api.getFamilies();
           bool res = responseObject.status ?? false;
@@ -93,12 +93,13 @@ class FamilyService {
             for (Family family in responseObject.responseObject as List<Family>) {
               int result = await SQLHelper.createFamily(
                   family.id ?? "-1", family.name ?? "", family.img);
-              print("Was inserted in the data base the family id: $result");
+              print("Was inserted in the data base the family id: ${family.id}");
               if (result == 0) {
                 throw "Something went wrong inserting family id: ${family.id}, "
                     "in family_service.dart. Method: chargeFamiliesInDataBase";
               }
             }
+            print("--->>Count: ${(responseObject.responseObject as List<Family>).length}  in adding families<<---");
             return Future.value(true);
           }
           throw "Something went wrong getting the families from the API."
