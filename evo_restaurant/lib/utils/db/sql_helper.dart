@@ -15,6 +15,7 @@ class SQLHelper {
     await database.execute("""
       CREATE TABLE subfamilies(
     id TEXT PRIMARY KEY NOT NULL UNIQUE, 
+    id_family TEXT NOT NULL UNIQUE,
     name TEXT NOT NULL, 
     img TEXT
     )
@@ -23,7 +24,8 @@ class SQLHelper {
     await database.execute(""" 
     CREATE TABLE articles(
     id INTEGER PRIMARY KEY NOT NULL UNIQUE, 
-    id_family INTEGER NOT NULL, 
+    id_family TEXT NOT NULL UNIQUE, 
+    id_sub_family TEXT UNIQUE,
     name TEXT, 
     img TEXT, 
     cod_bar TEXT, 
@@ -56,10 +58,21 @@ class SQLHelper {
     return id;
   }
 
+  ///This method helps insert a map of values into the specified
+  ///table and returns the id of the last inserted row.
+  ///return int
   static Future<int> createSubFamily(
-      String idSubFamily, String name, String? img) async {
+      {required String idSubFamily,
+      required String idFamily,
+      required String name,
+      required String img}) async {
     final db = await SQLHelper.db();
-    final data = {'id': idSubFamily, 'name': name, 'img': img};
+    final data = {
+      'id': idSubFamily,
+      'id_family': idFamily,
+      'name': name,
+      'img': img
+    };
     final id = await db.insert('subfamilies', data,
         conflictAlgorithm: sql.ConflictAlgorithm.replace);
     return id;
@@ -68,6 +81,7 @@ class SQLHelper {
   static Future<int> createArticle(
       {required String idArticle,
       required String idFamily,
+      String? idSubfamily,
       String? name,
       String? img,
       String? codBar,
@@ -78,6 +92,7 @@ class SQLHelper {
     final data = {
       'id': idArticle,
       'id_family': idFamily,
+      'id_sub_family': idSubfamily,
       'name': name,
       'img': img,
       'cod_bar': codBar,
@@ -123,9 +138,29 @@ class SQLHelper {
     return db.query('subfamilies', where: "id = ?", whereArgs: [id], limit: 1);
   }
 
+  static Future<List<Map<String, dynamic>>> getSubFamiliesByIdOfFamily(
+      String idFamily) async {
+    final db = await SQLHelper.db();
+    return db.query('subfamilies',
+        where: "id_family =?", whereArgs: [idFamily], limit: 1);
+  }
+
   static Future<List<Map<String, dynamic>>> getArticle(String id) async {
     final db = await SQLHelper.db();
     return db.query('articles', where: "id = ?", whereArgs: [id], limit: 1);
+  }
+
+  static Future<List<Map<String, dynamic>>> getArticleByFamilyId(
+      String familyId) async {
+    final db = await SQLHelper.db();
+    return db.query('articles', where: "id_family = ?", whereArgs: [familyId]);
+  }
+
+  static Future<List<Map<String, dynamic>>> getArticleBySubFamilyId(
+      String subFamilyId) async {
+    final db = await SQLHelper.db();
+    return db.query('articles',
+        where: "id_sub_family = ?", whereArgs: [subFamilyId]);
   }
 
   static Future<int> updateFamily(
@@ -166,44 +201,41 @@ class SQLHelper {
       'beb': beb ? 1 : 0
     };
     final batch = db.batch();
-    batch
-        .update('articles', data, where: "id = ?", whereArgs: [idArticle]);
+    batch.update('articles', data, where: "id = ?", whereArgs: [idArticle]);
     List<Object?> result = await batch.commit();
     return result.first as int;
   }
 
-  static Future<int> deleteFamily(String id)async{
+  static Future<int> deleteFamily(String id) async {
     final db = await SQLHelper.db();
     final batch = db.batch();
-     batch.delete('families', where: 'id = ?', whereArgs: [id]);
+    batch.delete('families', where: 'id = ?', whereArgs: [id]);
     List<Object?> result = await batch.commit();
-     return result.first as int;
+    return result.first as int;
   }
-  static Future<int> deleteSubFamily(String id)async{
+
+  static Future<int> deleteSubFamily(String id) async {
     final db = await SQLHelper.db();
     final batch = db.batch();
     batch.delete('subfamilies', where: 'id = ?', whereArgs: [id]);
     List<Object?> result = await batch.commit();
     return result.first as int;
-
   }
-  static Future<int> deleteArticle(String id)async{
+
+  static Future<int> deleteArticle(String id) async {
     final db = await SQLHelper.db();
     final result = db.delete('articles', where: 'id = ?', whereArgs: [id]);
     return result;
   }
 
-
-
-   static Future<void> deleteDatabase() async {
+  static Future<void> deleteDatabase() async {
     String pathDatabase = await sql.getDatabasesPath();
 
     sql.databaseFactory.deleteDatabase(pathDatabase);
   }
 
-  static  Future close() async {
+  static Future close() async {
     final db = await SQLHelper.db();
     db.close();
   }
-
 }

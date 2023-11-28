@@ -336,10 +336,15 @@ Widget __containerOfDrawer(BuildContext context) {
               if (res['acceptButtonRes'] ?? false) {
 
                 showDialog(
+                  barrierDismissible: false,
                     context: model.context,
                     builder: (BuildContext context) {
                       ///variable container
                       ///first show loading message
+
+                      ///ToDo: investigate how to call this method outside the building process
+                      ///
+
                       model.process(context);
                       return Dialog(
                         backgroundColor: Colors.white,
@@ -347,6 +352,7 @@ Widget __containerOfDrawer(BuildContext context) {
                             stream: model.chargingProcessWidgets.stream,
                             builder: (BuildContext context,
                                 AsyncSnapshot<Widget> snapshot) {
+
 
                               if (snapshot.hasError) {
                                 return Column(
@@ -369,11 +375,176 @@ Widget __containerOfDrawer(BuildContext context) {
                                   ],
                                 );
                               }
+                              ConnectionState connection = snapshot.connectionState;
+                              if(connection == ConnectionState.none){
+                                return    Container(
+                                  width: mediaQuery.width * 0.3,
+                                  height: mediaQuery.width * 0.2,
+                                  decoration: const BoxDecoration(
+                                      borderRadius: BorderRadius.all(Radius.circular(7)),
+                                      color: Colors.white
+                                  ),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      //Title container
+                                      Expanded(
+                                        flex: 25,
+                                        child: Container(
+                                          width: double.infinity,
+                                          height: mediaQuery.height * 0.05,
+                                          decoration: const BoxDecoration(
+                                            borderRadius: BorderRadius.only(
+                                              topRight: Radius.circular(7),
+                                              topLeft: Radius.circular(7),
+
+                                            ),
+                                            color: colorPrimary,
+                                          ),
+                                          child: Row(
+                                            children: [
+                                              Expanded(
+                                                  flex: 75,
+                                                  child: Container(
+                                                    alignment: Alignment.center,
+                                                    child: Text(
+                                                      AppLocalizations.of(context)?.evoRestaurantText ?? "",
+                                                      style: const TextStyle(
+                                                          fontSize: 17,
+                                                          fontWeight: FontWeight.w600,
+                                                          color: Colors.white
+                                                      ),
+                                                    ),
+                                                  )
+                                              ),
+                                              Expanded(
+                                                  flex: 25,
+                                                  child: Container(
+                                                    alignment: Alignment.center,
+                                                    child: Text(
+                                                      AppLocalizations.of(context)?.chargingDataText ?? "",
+                                                      style: const TextStyle(
+                                                          fontWeight: FontWeight.w500,
+                                                          fontSize: 15,
+                                                          color: Colors.white
+                                                      ),
+                                                    ),
+                                                  )),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      //content container
+                                      Expanded(
+                                        flex: 75,
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.max,
+                                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                          children: [
+                                            Text( AppLocalizations.of(context)?.chargingDataText ?? "",
+                                              style: const TextStyle(
+                                                  fontSize: 17,
+                                                  fontWeight: FontWeight.w700,
+                                                  color: Colors.black
+                                              ),),
+                                            const Center(
+                                              child: CircularProgressIndicator(),
+                                            )
+                                          ],
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                );
+                              }else
+                              if(connection == ConnectionState.waiting){
+                                return    Container(
+                                  width: mediaQuery.width * 0.3,
+                                  height: mediaQuery.width * 0.2,
+                                  decoration: const BoxDecoration(
+                                      borderRadius: BorderRadius.all(Radius.circular(7)),
+                                      color: Colors.white
+                                  ),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      //Title container
+                                      Expanded(
+                                        flex: 25,
+                                        child: Container(
+                                          width: double.infinity,
+                                          height: mediaQuery.height * 0.05,
+                                          decoration: const BoxDecoration(
+                                            borderRadius: BorderRadius.only(
+                                              topRight: Radius.circular(7),
+                                              topLeft: Radius.circular(7),
+
+                                            ),
+                                            color: colorPrimary,
+                                          ),
+                                          child: Row(
+                                            children: [
+                                              Expanded(
+                                                  flex: 75,
+                                                  child: Container(
+                                                    alignment: Alignment.center,
+                                                    child: Text(
+                                                      AppLocalizations.of(context)?.evoRestaurantText ?? "",
+                                                      style: const TextStyle(
+                                                          fontSize: 17,
+                                                          fontWeight: FontWeight.w600,
+                                                          color: Colors.white
+                                                      ),
+                                                    ),
+                                                  )
+                                              ),
+                                              Expanded(
+                                                  flex: 25,
+                                                  child: Container(
+                                                    alignment: Alignment.center,
+                                                    child: Text(
+                                                      AppLocalizations.of(context)?.chargingDataText ?? "",
+                                                      style: const TextStyle(
+                                                          fontWeight: FontWeight.w500,
+                                                          fontSize: 15,
+                                                          color: Colors.white
+                                                      ),
+                                                    ),
+                                                  )),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      //content container
+                                      Expanded(
+                                        flex: 75,
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.max,
+                                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                          children: [
+                                            Text( AppLocalizations.of(context)?.chargingDataText ?? "",
+                                              style: const TextStyle(
+                                                  fontSize: 17,
+                                                  fontWeight: FontWeight.w700,
+                                                  color: Colors.black
+                                              ),),
+                                            const Center(
+                                              child: CircularProgressIndicator(),
+                                            )
+                                          ],
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                );
+                              }
                               return snapshot.data ?? Container();
                             }),
                       );
                     });
+
               }
+
             },
             child: Text(
               AppLocalizations.of(context)?.synchronizeText ?? "",

@@ -190,7 +190,22 @@ class HomeViewModel extends BaseModel {
 
   Future<bool> resLoadingData() async {
     try {
+      //loading families
       bool resFamilyCharge = await familyService.chargeFamiliesInDataBase();
+     if(!resFamilyCharge) {
+       print(
+           "Error in home_view_model.dart in method resLoadingData. Error resFamilyCharge=false------------>>>>>");
+       return false;
+     }else{
+       //loading sub-families
+       bool resSubFamilyCharge = await subFamilyService.chargeSubfamiliesInDataBase();
+       if(resSubFamilyCharge){
+         //loading  articles
+         bool resArticlesCharge = await articleService.chargeArticles();
+       }
+     }
+
+
 
       return resFamilyCharge;
     } catch (error) {
@@ -200,6 +215,15 @@ class HomeViewModel extends BaseModel {
     }
   }
 
+  ///
+  /// Execute a series of process to check the data in the data base,
+  /// erased and update the data.
+  ///
+  /// First: check if the password is correct.
+  /// Secondo: check if the database has data, if so, it will erased and load
+  /// the new data, if it not, it will load the data.
+  ///
+  /// return true or false.
   void process(BuildContext contextOfProcess) async {
     try {
       if(state == ViewState.BUSY){
@@ -210,6 +234,8 @@ class HomeViewModel extends BaseModel {
         ///check if password is correct
 
         // _chargingProcessWidgets
+
+        ///Loading widget
         chargingProcessWidgets.add(
             Container(
 
@@ -682,8 +708,112 @@ class HomeViewModel extends BaseModel {
       }
 
     } catch (error) {
+      setState(ViewState.IDLE);
       print(
           "Error in home_view_model.dart, in method process. Error: $error ------->>");
+      Size mediaQuery = MediaQuery.of(context).size;
+      chargingProcessWidgets.add(
+          Container(
+
+            width: mediaQuery.width * 0.3,
+            height: mediaQuery.width * 0.2,
+            decoration: const BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(7)),
+                color: Colors.white
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                //Title container
+                Expanded(
+                  flex: 25,
+                  child: Container(
+                    width: double.infinity,
+                    height: mediaQuery.height * 0.05,
+                    decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.only(
+                        topRight: Radius.circular(7),
+                        topLeft: Radius.circular(7),
+
+                      ),
+                      color: colorPrimary,
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                            flex: 75,
+                            child: Container(
+                              alignment: Alignment.center,
+                              child: Text(
+                                AppLocalizations.of(context)?.evoRestaurantText ?? "",
+                                style: const TextStyle(
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.white
+                                ),
+                              ),
+                            )
+                        ),
+                        Expanded(
+                            flex: 25,
+                            child: Container(
+                              alignment: Alignment.center,
+                              child: Text(
+                                AppLocalizations.of(context)?.errorText ?? "",
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 15,
+                                    color: Colors.white
+                                ),
+                              ),
+                            )),
+                      ],
+                    ),
+                  ),
+                ),
+                //content container
+                Expanded(
+                  flex: 75,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Icon(Icons.warning, size: 30,color: Colors.yellow[700],),
+                      Text(AppLocalizations.of(context)?.somethingWentWrongText ?? "",
+                        style: const TextStyle(
+                            fontSize: 17,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.black
+                        ),),
+                      Container(
+                        width: mediaQuery.width * 0.1,
+                        height: mediaQuery.width * 0.05,
+                        decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(7)),
+                          color: colorPrimary,
+                        ),
+                        child:  TextButton(
+                          onPressed: (){
+                            chargingProcessWidgets.stream.drain();
+                            Navigator.pop(contextOfProcess);
+                          },
+                          child: Text(
+                            AppLocalizations.of(context)?.acceptText ?? "",
+                            style: const TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 13,
+                                color: Colors.white
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                )
+              ],
+            ),
+          )
+      );
     }
   }
 
