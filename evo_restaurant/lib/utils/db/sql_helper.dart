@@ -78,6 +78,11 @@ class SQLHelper {
     return id;
   }
 
+  ///
+  /// This method helps insert a map of values into
+  /// the specified table and returns the id of the last inserted row.
+  ///
+  /// return int: last id inserted
   static Future<int> createArticle(
       {required String idArticle,
       required String idFamily,

@@ -37,7 +37,8 @@ class HomeViewModel extends BaseModel {
   bool _chargingData = false;
   bool _dataWasLoaded = false;
 
-  StreamController<Widget> _chargingProcessWidgets = StreamController<Widget>.broadcast();
+  StreamController<Widget> _chargingProcessWidgets =
+      StreamController<Widget>.broadcast();
 
   UserService get userService => _userService;
 
@@ -71,7 +72,6 @@ class HomeViewModel extends BaseModel {
   bool get showLoading => _showLoading;
 
   bool get chargingData => _chargingData;
-
 
   StreamController<Widget> get chargingProcessWidgets =>
       _chargingProcessWidgets;
@@ -179,6 +179,10 @@ class HomeViewModel extends BaseModel {
     }
   }
 
+  ///
+  /// Check if the password given in the text form field it belongs to an administrator user
+  /// return true or false
+  ///
   Future<bool> checkPassword() async {
     if (passwordEditingController.text.isNotEmpty) {
       bool res = userService.checkPassword(passwordEditingController.text);
@@ -188,26 +192,42 @@ class HomeViewModel extends BaseModel {
     }
   }
 
+  ///
+  /// Load all data that it is needed in the DB.
+  /// -> Families
+  /// -> Sub-Families
+  /// -> Articles
+  ///
+  /// return false if something went wrong.
+  ///
   Future<bool> resLoadingData() async {
     try {
       //loading families
       bool resFamilyCharge = await familyService.chargeFamiliesInDataBase();
-     if(!resFamilyCharge) {
-       print(
-           "Error in home_view_model.dart in method resLoadingData. Error resFamilyCharge=false------------>>>>>");
-       return false;
-     }else{
-       //loading sub-families
-       bool resSubFamilyCharge = await subFamilyService.chargeSubfamiliesInDataBase();
-       if(resSubFamilyCharge){
-         //loading  articles
-         bool resArticlesCharge = await articleService.chargeArticles();
-       }
-     }
-
-
-
-      return resFamilyCharge;
+      if (!resFamilyCharge) {
+        print(
+            "Error in home_view_model.dart in method resLoadingData. Error resFamilyCharge=false------------>>>>>");
+        return false;
+      } else {
+        //loading sub-families
+        bool resSubFamilyCharge =
+            await subFamilyService.chargeSubfamiliesInDataBase();
+        if (!resSubFamilyCharge) {
+          print(
+              "Error in home_view_model.dart in method resLoadingData. Error resSubFamilyCharge=false------------>>>>>");
+          return false;
+        } else {
+          //loading  articles
+          bool resArticlesCharge = await articleService.chargeArticles();
+          if (!resArticlesCharge) {
+            print(
+                "Error in home_view_model.dart in method resLoadingData. Error resArticlesCharge=false------------>>>>>");
+            return false;
+          } else {
+            return true;
+          }
+        }
+      }
     } catch (error) {
       print(
           "Error in home_view_model.dart in method resLoadingData. Error: $error ------------->>>>>");
@@ -220,507 +240,100 @@ class HomeViewModel extends BaseModel {
   /// erased and update the data.
   ///
   /// First: check if the password is correct.
-  /// Secondo: check if the database has data, if so, it will erased and load
+  /// Second: check if the database has data, if so, it will erased and load
   /// the new data, if it not, it will load the data.
   ///
-  /// return true or false.
+  /// Also update the showDialog to show a changing widget.
+  /// if something went wrong, the changing widget it will be update
+  /// and shows an error message.
+  ///
+  ///
   void process(BuildContext contextOfProcess) async {
     try {
-      if(state == ViewState.BUSY){
+      if (state == ViewState.BUSY) {
         throw ErrorDescription("Finish the process to perform a new one");
-      }else{
+      } else {
         setState(ViewState.BUSY);
         Size mediaQuery = MediaQuery.of(context).size;
+
         ///check if password is correct
 
         // _chargingProcessWidgets
 
         ///Loading widget
-        chargingProcessWidgets.add(
-            Container(
-
-              width: mediaQuery.width * 0.3,
-              height: mediaQuery.width * 0.2,
-              decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(7)),
-                  color: Colors.white
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  //Title container
-                  Expanded(
-                    flex: 25,
-                    child: Container(
-                      width: double.infinity,
-                      height: mediaQuery.height * 0.05,
-                      decoration: const BoxDecoration(
-                        borderRadius: BorderRadius.only(
-                          topRight: Radius.circular(7),
-                          topLeft: Radius.circular(7),
-
-                        ),
-                        color: colorPrimary,
-                      ),
-                      child: Row(
-                        children: [
-                          Expanded(
-                              flex: 75,
-                              child: Container(
-                                alignment: Alignment.center,
-                                child: Text(
-                                  AppLocalizations.of(context)?.evoRestaurantText ?? "",
-                                  style: const TextStyle(
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.white
-                                  ),
-                                ),
-                              )
-                          ),
-                          Expanded(
-                              flex: 25,
-                              child: Container(
-                                alignment: Alignment.center,
-                                child: Text(
-                                  AppLocalizations.of(context)?.chargingDataText ?? "",
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 15,
-                                      color: Colors.white
-                                  ),
-                                ),
-                              )),
-                        ],
-                      ),
+        chargingProcessWidgets.add(Container(
+          width: mediaQuery.width * 0.3,
+          height: mediaQuery.width * 0.2,
+          decoration: const BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(7)),
+              color: Colors.white),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              //Title container
+              Expanded(
+                flex: 25,
+                child: Container(
+                  width: double.infinity,
+                  height: mediaQuery.height * 0.05,
+                  decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(7),
+                      topLeft: Radius.circular(7),
                     ),
+                    color: colorPrimary,
                   ),
-                  //content container
-                  const Expanded(
-                    flex: 75,
-                    child: Center(child: CircularProgressIndicator(),),
-                  )
-                ],
+                  child: Row(
+                    children: [
+                      Expanded(
+                          flex: 75,
+                          child: Container(
+                            alignment: Alignment.center,
+                            child: Text(
+                              AppLocalizations.of(context)?.evoRestaurantText ??
+                                  "",
+                              style: const TextStyle(
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white),
+                            ),
+                          )),
+                      Expanded(
+                          flex: 25,
+                          child: Container(
+                            alignment: Alignment.center,
+                            child: Text(
+                              AppLocalizations.of(context)?.chargingDataText ??
+                                  "",
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 15,
+                                  color: Colors.white),
+                            ),
+                          )),
+                    ],
+                  ),
+                ),
               ),
-            )
-        );
+              //content container
+              const Expanded(
+                flex: 75,
+                child: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              )
+            ],
+          ),
+        ));
         bool resPassword = await checkPassword();
         passwordEditingController.text = "";
         if (!resPassword) {
-          chargingProcessWidgets.add(
-              Container(
-
-                width: mediaQuery.width * 0.3,
-                height: mediaQuery.width * 0.2,
-                decoration: const BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(7)),
-                    color: Colors.white
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    //Title container
-                    Expanded(
-                      flex: 25,
-                      child: Container(
-                        width: double.infinity,
-                        height: mediaQuery.height * 0.05,
-                        decoration: const BoxDecoration(
-                          borderRadius: BorderRadius.only(
-                            topRight: Radius.circular(7),
-                            topLeft: Radius.circular(7),
-
-                          ),
-                          color: colorPrimary,
-                        ),
-                        child: Row(
-                          children: [
-                            Expanded(
-                                flex: 75,
-                                child: Container(
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    AppLocalizations.of(context)?.evoRestaurantText ?? "",
-                                    style: const TextStyle(
-                                        fontSize: 17,
-                                        fontWeight: FontWeight.w600,
-                                        color: Colors.white
-                                    ),
-                                  ),
-                                )
-                            ),
-                            Expanded(
-                                flex: 25,
-                                child: Container(
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    AppLocalizations.of(context)?.errorText ?? "",
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 15,
-                                        color: Colors.white
-                                    ),
-                                  ),
-                                )),
-                          ],
-                        ),
-                      ),
-                    ),
-                    //content container
-                    Expanded(
-                      flex: 75,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Icon(Icons.warning, size: 30,color: Colors.yellow[700],),
-                          Text(AppLocalizations.of(context)?.passwordIsNotCorrectText ?? "",
-                            style: const TextStyle(
-                                fontSize: 17,
-                                fontWeight: FontWeight.w700,
-                                color: Colors.black
-                            ),),
-                          Container(
-                            width: mediaQuery.width * 0.1,
-                            height: mediaQuery.width * 0.05,
-                            decoration: const BoxDecoration(
-                              borderRadius: BorderRadius.all(Radius.circular(7)),
-                              color: colorPrimary,
-                            ),
-                            child:  TextButton(
-                              onPressed: (){
-                                chargingProcessWidgets.stream.drain();
-                                Navigator.pop(contextOfProcess);
-                              },
-                              child: Text(
-                                AppLocalizations.of(context)?.acceptText ?? "",
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 13,
-                                    color: Colors.white
-                                ),
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-              )
-          );
-        }
-        else {
-          ///Loading data from API
-          chargingProcessWidgets.add(
-              Container(
-                width: mediaQuery.width * 0.3,
-                height: mediaQuery.width * 0.2,
-                decoration: const BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(7)),
-                    color: Colors.white
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    //Title container
-                    Expanded(
-                      flex: 25,
-                      child: Container(
-                        width: double.infinity,
-                        height: mediaQuery.height * 0.05,
-                        decoration: const BoxDecoration(
-                          borderRadius: BorderRadius.only(
-                            topRight: Radius.circular(7),
-                            topLeft: Radius.circular(7),
-
-                          ),
-                          color: colorPrimary,
-                        ),
-                        child: Row(
-                          children: [
-                            Expanded(
-                                flex: 75,
-                                child: Container(
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    AppLocalizations.of(context)?.evoRestaurantText ?? "",
-                                    style: const TextStyle(
-                                        fontSize: 17,
-                                        fontWeight: FontWeight.w600,
-                                        color: Colors.white
-                                    ),
-                                  ),
-                                )
-                            ),
-                            Expanded(
-                                flex: 25,
-                                child: Container(
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    AppLocalizations.of(context)?.chargingDataText ?? "",
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 15,
-                                        color: Colors.white
-                                    ),
-                                  ),
-                                )),
-                          ],
-                        ),
-                      ),
-                    ),
-                    //content container
-                    Expanded(
-                      flex: 75,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Text( AppLocalizations.of(context)?.chargingDataText ?? "",
-                            style: const TextStyle(
-                                fontSize: 17,
-                                fontWeight: FontWeight.w700,
-                                color: Colors.black
-                            ),),
-                          const Center(
-                            child: CircularProgressIndicator(),
-                          )
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-              )
-          );
-          bool resChargingData = await resLoadingData();
-          if (!resChargingData) {
-
-            chargingProcessWidgets.add(
-                Container(
-
-                  width: mediaQuery.width * 0.3,
-                  height: mediaQuery.width * 0.2,
-                  decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(7)),
-                      color: Colors.white
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      //Title container
-                      Expanded(
-                        flex: 25,
-                        child: Container(
-                          width: double.infinity,
-                          height: mediaQuery.height * 0.05,
-                          decoration: const BoxDecoration(
-                            borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(7),
-                              topLeft: Radius.circular(7),
-
-                            ),
-                            color: colorPrimary,
-                          ),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                  flex: 75,
-                                  child: Container(
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      AppLocalizations.of(context)?.evoRestaurantText ?? "",
-                                      style: const TextStyle(
-                                          fontSize: 17,
-                                          fontWeight: FontWeight.w600,
-                                          color: Colors.white
-                                      ),
-                                    ),
-                                  )
-                              ),
-                              Expanded(
-                                  flex: 25,
-                                  child: Container(
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      AppLocalizations.of(context)?.errorText ?? "",
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 15,
-                                          color: Colors.white
-                                      ),
-                                    ),
-                                  )),
-                            ],
-                          ),
-                        ),
-                      ),
-                      //content container
-                      Expanded(
-                        flex: 75,
-                        child: Column(
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Icon(Icons.warning, size: 30,color: Colors.yellow[700],),
-                            Text(  AppLocalizations.of(context)?.chargingDataFailedText ?? "",
-                              style: const TextStyle(
-                                  fontSize: 17,
-                                  fontWeight: FontWeight.w700,
-                                  color: Colors.black
-                              ),),
-                            Container(
-                              width: mediaQuery.width * 0.1,
-                              height: mediaQuery.width * 0.05,
-                              decoration: const BoxDecoration(
-                                borderRadius: BorderRadius.all(Radius.circular(7)),
-                                color: colorPrimary,
-                              ),
-                              child:  TextButton(
-                                onPressed: (){
-                                  chargingProcessWidgets.stream.drain();
-                                  Navigator.pop(contextOfProcess);
-                                },
-                                child: Text(
-                                  AppLocalizations.of(context)?.acceptText ?? "",
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 13,
-                                      color: Colors.white
-                                  ),
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                )
-            );
-          } else {
-            AppLocalizations.of(context)?.loadingDataSuccessfullyText ?? "";
-            chargingProcessWidgets.add(
-                Container(
-                  width: mediaQuery.width * 0.3,
-                  height: mediaQuery.width * 0.2,
-                  decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(7)),
-                      color: Colors.white
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      //Title container
-                      Expanded(
-                        flex: 25,
-                        child: Container(
-                          width: double.infinity,
-                          height: mediaQuery.height * 0.05,
-                          decoration: const BoxDecoration(
-                            borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(7),
-                              topLeft: Radius.circular(7),
-
-                            ),
-                            color: colorPrimary,
-                          ),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                  flex: 75,
-                                  child: Container(
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      AppLocalizations.of(context)?.evoRestaurantText ?? "",
-                                      style: const TextStyle(
-                                          fontSize: 17,
-                                          fontWeight: FontWeight.w600,
-                                          color: Colors.white
-                                      ),
-                                    ),
-                                  )
-                              ),
-                              Expanded(
-                                  flex: 25,
-                                  child: Container(
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      AppLocalizations.of(context)?.okText ?? "",
-                                      style:const TextStyle(
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 15,
-                                          color: Colors.white
-                                      ),
-                                    ),
-                                  )),
-                            ],
-                          ),
-                        ),
-                      ),
-                      //content container
-                      Expanded(
-                        flex: 75,
-                        child: Column(
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Icon(Icons.warning, size: 30,color: Colors.yellow[700],),
-                            Text(AppLocalizations.of(context)?.loadingDataSuccessfullyText ?? "",
-                              style: const TextStyle(
-                                  fontSize: 17,
-                                  fontWeight: FontWeight.w700,
-                                  color: Colors.black
-                              ),),
-                            Container(
-                              width: mediaQuery.width * 0.1,
-                              height: mediaQuery.width * 0.05,
-                              decoration: const BoxDecoration(
-                                borderRadius: BorderRadius.all(Radius.circular(7)),
-                                color: colorPrimary,
-                              ),
-                              child:  TextButton(
-                                onPressed: (){
-                                  chargingProcessWidgets.stream.drain();
-                                  Navigator.pop(contextOfProcess);
-                                },
-                                child: Text(
-                                  AppLocalizations.of(context)?.acceptText ?? "",
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 13,
-                                      color: Colors.white
-                                  ),
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                )
-            );
-
-          }
-        }
-        setState(ViewState.IDLE);
-      }
-
-    } catch (error) {
-      setState(ViewState.IDLE);
-      print(
-          "Error in home_view_model.dart, in method process. Error: $error ------->>");
-      Size mediaQuery = MediaQuery.of(context).size;
-      chargingProcessWidgets.add(
-          Container(
-
+          chargingProcessWidgets.add(Container(
             width: mediaQuery.width * 0.3,
             height: mediaQuery.width * 0.2,
             decoration: const BoxDecoration(
                 borderRadius: BorderRadius.all(Radius.circular(7)),
-                color: Colors.white
-            ),
+                color: Colors.white),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -734,7 +347,6 @@ class HomeViewModel extends BaseModel {
                       borderRadius: BorderRadius.only(
                         topRight: Radius.circular(7),
                         topLeft: Radius.circular(7),
-
                       ),
                       color: colorPrimary,
                     ),
@@ -745,15 +357,15 @@ class HomeViewModel extends BaseModel {
                             child: Container(
                               alignment: Alignment.center,
                               child: Text(
-                                AppLocalizations.of(context)?.evoRestaurantText ?? "",
+                                AppLocalizations.of(context)
+                                        ?.evoRestaurantText ??
+                                    "",
                                 style: const TextStyle(
                                     fontSize: 17,
                                     fontWeight: FontWeight.w600,
-                                    color: Colors.white
-                                ),
+                                    color: Colors.white),
                               ),
-                            )
-                        ),
+                            )),
                         Expanded(
                             flex: 25,
                             child: Container(
@@ -763,8 +375,7 @@ class HomeViewModel extends BaseModel {
                                 style: const TextStyle(
                                     fontWeight: FontWeight.w500,
                                     fontSize: 15,
-                                    color: Colors.white
-                                ),
+                                    color: Colors.white),
                               ),
                             )),
                       ],
@@ -778,13 +389,20 @@ class HomeViewModel extends BaseModel {
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      Icon(Icons.warning, size: 30,color: Colors.yellow[700],),
-                      Text(AppLocalizations.of(context)?.somethingWentWrongText ?? "",
+                      Icon(
+                        Icons.warning,
+                        size: 30,
+                        color: Colors.yellow[700],
+                      ),
+                      Text(
+                        AppLocalizations.of(context)
+                                ?.passwordIsNotCorrectText ??
+                            "",
                         style: const TextStyle(
                             fontSize: 17,
                             fontWeight: FontWeight.w700,
-                            color: Colors.black
-                        ),),
+                            color: Colors.black),
+                      ),
                       Container(
                         width: mediaQuery.width * 0.1,
                         height: mediaQuery.width * 0.05,
@@ -792,8 +410,8 @@ class HomeViewModel extends BaseModel {
                           borderRadius: BorderRadius.all(Radius.circular(7)),
                           color: colorPrimary,
                         ),
-                        child:  TextButton(
-                          onPressed: (){
+                        child: TextButton(
+                          onPressed: () {
                             chargingProcessWidgets.stream.drain();
                             Navigator.pop(contextOfProcess);
                           },
@@ -802,8 +420,7 @@ class HomeViewModel extends BaseModel {
                             style: const TextStyle(
                                 fontWeight: FontWeight.w500,
                                 fontSize: 13,
-                                color: Colors.white
-                            ),
+                                color: Colors.white),
                           ),
                         ),
                       )
@@ -812,8 +429,406 @@ class HomeViewModel extends BaseModel {
                 )
               ],
             ),
-          )
-      );
+          ));
+        } else {
+          ///Loading data from API
+          chargingProcessWidgets.add(Container(
+            width: mediaQuery.width * 0.3,
+            height: mediaQuery.width * 0.2,
+            decoration: const BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(7)),
+                color: Colors.white),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                //Title container
+                Expanded(
+                  flex: 25,
+                  child: Container(
+                    width: double.infinity,
+                    height: mediaQuery.height * 0.05,
+                    decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.only(
+                        topRight: Radius.circular(7),
+                        topLeft: Radius.circular(7),
+                      ),
+                      color: colorPrimary,
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                            flex: 75,
+                            child: Container(
+                              alignment: Alignment.center,
+                              child: Text(
+                                AppLocalizations.of(context)
+                                        ?.evoRestaurantText ??
+                                    "",
+                                style: const TextStyle(
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.white),
+                              ),
+                            )),
+                        Expanded(
+                            flex: 25,
+                            child: Container(
+                              alignment: Alignment.center,
+                              child: Text(
+                                AppLocalizations.of(context)
+                                        ?.chargingDataText ??
+                                    "",
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 15,
+                                    color: Colors.white),
+                              ),
+                            )),
+                      ],
+                    ),
+                  ),
+                ),
+                //content container
+                Expanded(
+                  flex: 75,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Text(
+                        AppLocalizations.of(context)?.chargingDataText ?? "",
+                        style: const TextStyle(
+                            fontSize: 17,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.black),
+                      ),
+                      const Center(
+                        child: CircularProgressIndicator(),
+                      )
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ));
+          bool resChargingData = await resLoadingData();
+          if (!resChargingData) {
+            chargingProcessWidgets.add(Container(
+              width: mediaQuery.width * 0.3,
+              height: mediaQuery.width * 0.2,
+              decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(7)),
+                  color: Colors.white),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  //Title container
+                  Expanded(
+                    flex: 25,
+                    child: Container(
+                      width: double.infinity,
+                      height: mediaQuery.height * 0.05,
+                      decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(7),
+                          topLeft: Radius.circular(7),
+                        ),
+                        color: colorPrimary,
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                              flex: 75,
+                              child: Container(
+                                alignment: Alignment.center,
+                                child: Text(
+                                  AppLocalizations.of(context)
+                                          ?.evoRestaurantText ??
+                                      "",
+                                  style: const TextStyle(
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.white),
+                                ),
+                              )),
+                          Expanded(
+                              flex: 25,
+                              child: Container(
+                                alignment: Alignment.center,
+                                child: Text(
+                                  AppLocalizations.of(context)?.errorText ?? "",
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 15,
+                                      color: Colors.white),
+                                ),
+                              )),
+                        ],
+                      ),
+                    ),
+                  ),
+                  //content container
+                  Expanded(
+                    flex: 75,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Icon(
+                          Icons.warning,
+                          size: 30,
+                          color: Colors.yellow[700],
+                        ),
+                        Text(
+                          AppLocalizations.of(context)
+                                  ?.chargingDataFailedText ??
+                              "",
+                          style: const TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.black),
+                        ),
+                        Container(
+                          width: mediaQuery.width * 0.1,
+                          height: mediaQuery.width * 0.05,
+                          decoration: const BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(7)),
+                            color: colorPrimary,
+                          ),
+                          child: TextButton(
+                            onPressed: () {
+                              chargingProcessWidgets.stream.drain();
+                              Navigator.pop(contextOfProcess);
+                            },
+                            child: Text(
+                              AppLocalizations.of(context)?.acceptText ?? "",
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 13,
+                                  color: Colors.white),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            ));
+          } else {
+            AppLocalizations.of(context)?.loadingDataSuccessfullyText ?? "";
+            chargingProcessWidgets.add(Container(
+              width: mediaQuery.width * 0.3,
+              height: mediaQuery.width * 0.2,
+              decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(7)),
+                  color: Colors.white),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  //Title container
+                  Expanded(
+                    flex: 25,
+                    child: Container(
+                      width: double.infinity,
+                      height: mediaQuery.height * 0.05,
+                      decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(7),
+                          topLeft: Radius.circular(7),
+                        ),
+                        color: colorPrimary,
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                              flex: 75,
+                              child: Container(
+                                alignment: Alignment.center,
+                                child: Text(
+                                  AppLocalizations.of(context)
+                                          ?.evoRestaurantText ??
+                                      "",
+                                  style: const TextStyle(
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.white),
+                                ),
+                              )),
+                          Expanded(
+                              flex: 25,
+                              child: Container(
+                                alignment: Alignment.center,
+                                child: Text(
+                                  AppLocalizations.of(context)?.okText ?? "",
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 15,
+                                      color: Colors.white),
+                                ),
+                              )),
+                        ],
+                      ),
+                    ),
+                  ),
+                  //content container
+                  Expanded(
+                    flex: 75,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Icon(
+                          Icons.warning,
+                          size: 30,
+                          color: Colors.yellow[700],
+                        ),
+                        Text(
+                          AppLocalizations.of(context)
+                                  ?.loadingDataSuccessfullyText ??
+                              "",
+                          style: const TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.black),
+                        ),
+                        Container(
+                          width: mediaQuery.width * 0.1,
+                          height: mediaQuery.width * 0.05,
+                          decoration: const BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(7)),
+                            color: colorPrimary,
+                          ),
+                          child: TextButton(
+                            onPressed: () {
+                              chargingProcessWidgets.stream.drain();
+                              Navigator.pop(contextOfProcess);
+                            },
+                            child: Text(
+                              AppLocalizations.of(context)?.acceptText ?? "",
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 13,
+                                  color: Colors.white),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            ));
+          }
+        }
+        setState(ViewState.IDLE);
+
+      }
+    } catch (error) {
+      setState(ViewState.IDLE);
+      print(
+          "Error in home_view_model.dart, in method process. Error: $error ------->>");
+      Size mediaQuery = MediaQuery.of(context).size;
+      chargingProcessWidgets.add(Container(
+        width: mediaQuery.width * 0.3,
+        height: mediaQuery.width * 0.2,
+        decoration: const BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(7)),
+            color: Colors.white),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            //Title container
+            Expanded(
+              flex: 25,
+              child: Container(
+                width: double.infinity,
+                height: mediaQuery.height * 0.05,
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(7),
+                    topLeft: Radius.circular(7),
+                  ),
+                  color: colorPrimary,
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                        flex: 75,
+                        child: Container(
+                          alignment: Alignment.center,
+                          child: Text(
+                            AppLocalizations.of(context)?.evoRestaurantText ??
+                                "",
+                            style: const TextStyle(
+                                fontSize: 17,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white),
+                          ),
+                        )),
+                    Expanded(
+                        flex: 25,
+                        child: Container(
+                          alignment: Alignment.center,
+                          child: Text(
+                            AppLocalizations.of(context)?.errorText ?? "",
+                            style: const TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 15,
+                                color: Colors.white),
+                          ),
+                        )),
+                  ],
+                ),
+              ),
+            ),
+            //content container
+            Expanded(
+              flex: 75,
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Icon(
+                    Icons.warning,
+                    size: 30,
+                    color: Colors.yellow[700],
+                  ),
+                  Text(
+                    AppLocalizations.of(context)?.somethingWentWrongText ?? "",
+                    style: const TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.black),
+                  ),
+                  Container(
+                    width: mediaQuery.width * 0.1,
+                    height: mediaQuery.width * 0.05,
+                    decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(7)),
+                      color: colorPrimary,
+                    ),
+                    child: TextButton(
+                      onPressed: () {
+                        chargingProcessWidgets.stream.drain();
+                        Navigator.pop(contextOfProcess);
+                      },
+                      child: Text(
+                        AppLocalizations.of(context)?.acceptText ?? "",
+                        style: const TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 13,
+                            color: Colors.white),
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            )
+          ],
+        ),
+      ));
+
     }
   }
 

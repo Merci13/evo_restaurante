@@ -504,6 +504,61 @@ class ApiSource {
     }
   }
 
+
+  ///
+  /// Return a List of Articles in the ResponseObject from de API
+  /// Error: returns a ErrorObject in the ResponseObject
+  ///
+  Future<ResponseObject> getAllArticles() async{
+    //209.145.58.91/Pruebas/vERP_2_dat_dat/v1/art_m?&api_key=mzZ58he3
+    try {
+      String
+      path =
+          "$basePath/$table/art_m?&api_key=$apiKey";
+      Uri url = Uri.parse(path);
+
+      http.Response response = await http.get(url, headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+      });
+
+      if (response.statusCode != 200) {
+        return ResponseObject(
+            status: false,
+            errorObject: ErrorObject(
+              status: false,
+              errorObject: response.body,
+              errorMessage: response.body,
+            ));
+      }
+      Map<String, dynamic> body = jsonDecode(response.body);
+      List<Article> list = List.empty(growable: true);
+
+      for (var element in (body["art_m"] as List)) {
+        list.add(Article.fromJson(element));
+      }
+      for (var element in list) {
+        element.image = imageFromBase64String(element.img ?? '');
+      }
+
+      return ResponseObject(
+          status: true, responseObject: list, errorObject: null);
+    } catch (error) {
+      return ResponseObject(
+          status: false,
+          errorObject: ErrorObject(
+            status: false,
+            errorObject: "error",
+            errorMessage: "",
+          ));
+    }
+
+  }
+
+
+
+
+
   Future<ResponseObject> getArticlesOfFamily(Family family) async {
     try {
       String

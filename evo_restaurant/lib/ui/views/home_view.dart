@@ -557,6 +557,7 @@ Widget __containerOfDrawer(BuildContext context) {
   });
 }
 
+///ToDo check if we can erase this call
 @swidget
 Widget __containerOfRequestAdminPassword(BuildContext context,
     HomeViewModel model, BaseWidgetModel baseWidgetModel) {
@@ -711,7 +712,7 @@ Widget __containerOfRequestAdminPassword(BuildContext context,
 
                               baseWidgetModel.showOverLayWidget(
                                   true,
-                                  _ContainerOfChargingTextAndSpinner(
+                                  const _ContainerOfChargingTextAndSpinner(
                                       //  model,
                                       //    baseWidgetModel
                                       ));

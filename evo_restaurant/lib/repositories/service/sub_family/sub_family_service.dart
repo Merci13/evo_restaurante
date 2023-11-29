@@ -40,7 +40,9 @@ class SubFamilyService {
       List<Map<String, dynamic>> listFamilies = await SQLHelper.getFamilies();
       List<Family> families = List.empty(growable: true);
       for (Map<String, dynamic> family in listFamilies) {
-        families.add(Family.fromJson(family));
+        if(family['id'] != null){
+          families.add(Family.fromJson(family));
+        }
       }
       //check it has data
       if (families.isNotEmpty) {
@@ -56,42 +58,66 @@ class SubFamilyService {
             }
             //if the family has sub-families
             else{
-              //check if the db has subfamilies of the family and delete elements
-              List<Map<String, dynamic>> listSubFamilies = await SQLHelper.getSubFamiliesByIdOfFamily(idFamily);
-              bool allSubFamiliesDrop = true;
-              String failureSubId = "";
-              if(listSubFamilies.isNotEmpty){
-                //try to delete all elements in the data base
-                for (Map<String, dynamic> elementSub in listSubFamilies) {
-                  int res = 0;
-                  if(elementSub['id'] != null){
-                    res = await SQLHelper.deleteSubFamily(elementSub['id']);
+              List<SubFamily> temp = responseObject.responseObject as List<SubFamily>;
+              if(temp.isNotEmpty){
+                //check if the db has subfamilies of the family and delete elements
+                List<Map<String, dynamic>> listSubFamilies = await SQLHelper.getSubFamiliesByIdOfFamily(idFamily);
+                bool allSubFamiliesDrop = true;
+                String failureSubId = "";
+                if(listSubFamilies.isNotEmpty){
+                  //try to delete all elements in the data base
+                  for (Map<String, dynamic> elementSub in listSubFamilies) {
+                    int res = 0;
+                    if(elementSub['id'] != null){
+                      res = await SQLHelper.deleteSubFamily(elementSub['id']);
+                    }
+                    //affected rows must be one
+                    if (res != 1 && elementSub['id'] != null) {
+                      allSubFamiliesDrop = false;
+                      failureSubId = elementSub["id"];
+                      break;
+                    }
                   }
-                  //affected rows must be one
-                  if (res != 1 && elementSub['id'] != null) {
-                    allSubFamiliesDrop = false;
-                    failureSubId = elementSub["id"];
-                    break;
-                  }
-                }
-                if (!allSubFamiliesDrop) {
-                  //if it false means that was drop more than one row in the data base
-                  //that means something went wrong in the previous charge or was duplicated data
-                  print( "Something was wrong deleting the previous "
-                      "family id: $failureSubId,"
-                      " in sub_family_service.dart in method chargeSubfamiliesInDataBase");
-                  return false;
+                  if (!allSubFamiliesDrop) {
+                    //if it false means that was drop more than one row in the data base
+                    //that means something went wrong in the previous charge or was duplicated data
+                    print( "Something was wrong deleting the previous "
+                        "family id: $failureSubId,"
+                        " in sub_family_service.dart in method chargeSubfamiliesInDataBase");
+                    return false;
 
-                }
-                else{
+                  }
+                  else{
+                    //save sub-families
+                    List<SubFamily> subFamily = responseObject.responseObject as List<SubFamily>;
+                    for (SubFamily subFam in subFamily) {
+                      int i = await SQLHelper.createSubFamily(
+                          idSubFamily: subFam.id ?? '',
+                          idFamily: idFamily,
+                          name: subFam.name ?? '',
+                          img: subFam.img ?? ''
+                      );
+                      if(i == 0){
+                        print(
+                            "Error in sub_family_service.dart"
+                                " in method SQLHelper.createSubFamily for subfamily id=${subFam.id ?? ''}. ");
+                        return false;
+                      }else{
+                        print("--->>>Subfamily was inserted, id =${subFam.id} <<<---");
+                      }
+                    }
+                    return true;
+                  }
+                }else{
+                  //save direct the sub-family
                   //save sub-families
-                  List<SubFamily> subFamily = responseObject.responseObject as List<SubFamily>;
+                  List<SubFamily> subFamily = temp;
                   for (SubFamily subFam in subFamily) {
                     int i = await SQLHelper.createSubFamily(
-                    idSubFamily: subFam.id ?? '',
-                    idFamily: idFamily,
-                      name: subFam.name ?? '',
-                      img: subFam.img ?? ''
+                        idSubFamily: subFam.id ?? '',
+                        idFamily: idFamily,
+                        name: subFam.name ?? '',
+                        img: subFam.img ?? ''
                     );
                     if(i == 0){
                       print(
