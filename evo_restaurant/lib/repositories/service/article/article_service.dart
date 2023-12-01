@@ -13,14 +13,14 @@ class ArticleService {
 
   Future<bool> chargeArticles() async {
     try {
-      List<Map<String, dynamic>> listOfFamilies = await SQLHelper.getArticles();
-      if (listOfFamilies.isNotEmpty) {
+      List<Map<String, dynamic>> listOfArticles = await SQLHelper.getArticles();
+      if (listOfArticles.isNotEmpty) {
         //delete every article in the db
         bool fail = false;
         String id = "";
-        for (Map<String, dynamic> element in listOfFamilies) {
+        for (Map<String, dynamic> element in listOfArticles) {
           if (element['id'] != null) {
-            int res = await SQLHelper.deleteArticle(element['id']);
+            int res = await SQLHelper.deleteArticle("${element['id']}");
             if (res != 1) {
               fail = true;
               id = element['id'];
@@ -29,14 +29,16 @@ class ArticleService {
             print("---> Article Deleted. Id=${element['id']}");
           }
         }
+       listOfArticles = await SQLHelper.getArticles();
+        print("---> Articles in db: ${listOfArticles.length}");
         if (fail && id != "") {
           print("Error in chargeArticles method in article_service.dart."
               " Error: element can't be deleted in DataBase, element id=$id");
           return false;
         }
-        listOfFamilies.clear();
-        listOfFamilies = await SQLHelper.getArticles();
-        print("---> Articles in data Base: ${listOfFamilies.length}");
+        //listOfArticles.clear();
+        listOfArticles = await SQLHelper.getArticles();
+        print("---> Articles in data Base: ${listOfArticles.length}");
 
         ResponseObject resArticle = await _apiSource.getAllArticles();
         bool response = resArticle.status ?? false;
@@ -66,6 +68,10 @@ class ArticleService {
               break;
             }
           }
+          List<Map<String,dynamic>> temp = await SQLHelper.getArticles();
+          print("--->>> Agregados a bd:   ${temp.length} <<<---"); //id=303
+          List<Map<String,dynamic>> ar = await SQLHelper.getArticle("162");
+
           if (idArticle != "") {
             return false;
           } else {
@@ -108,6 +114,9 @@ class ArticleService {
               break;
             }
           }
+          List<Map<String,dynamic>> temp = await SQLHelper.getArticles();
+          print("--->>> Agregados a bd:   ${temp.length} <<<---"); //id=303
+          List<Map<String,dynamic>> ar = await SQLHelper.getArticle("162");
           if (idArticle != "") {
             return false;
           } else {
