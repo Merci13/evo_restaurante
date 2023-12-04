@@ -148,7 +148,7 @@ class SQLHelper {
       String idFamily) async {
     final db = await SQLHelper.db();
     return db.query('subfamilies',
-        where: "id_family =?", whereArgs: [idFamily], limit: 1);
+        where: "id_family =?", whereArgs: [idFamily]);
   }
 
   static Future<List<Map<String, dynamic>>> getArticle(String id) async {
@@ -156,13 +156,13 @@ class SQLHelper {
     return await db.query('articles', where: "id = ?", whereArgs: [int.tryParse(id)], limit: 1);
   }
 
-  static Future<List<Map<String, dynamic>>> getArticleByFamilyId(
+  static Future<List<Map<String, dynamic>>> getArticlesByFamilyId(
       String familyId) async {
     final db = await SQLHelper.db();
     return db.query('articles', where: "id_family = ?", whereArgs: [familyId]);
   }
 
-  static Future<List<Map<String, dynamic>>> getArticleBySubFamilyId(
+  static Future<List<Map<String, dynamic>>> getArticlesBySubFamilyId(
       String subFamilyId) async {
     final db = await SQLHelper.db();
     return db.query('articles',

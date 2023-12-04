@@ -178,9 +178,9 @@ class TableViewModel extends BaseModel {
 
   String getTotalOfCommand() {
     int val = 0;
-    listOfCommand.forEach((element) {
+    for (var element in listOfCommand) {
       val = val + ((element.can ?? 0) * (element.pre ?? 0));
-    });
+    }
     return "$val";
   }
 

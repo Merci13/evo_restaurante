@@ -101,8 +101,6 @@ class FamilyViewModel extends BaseModel {
       if(res){
         listOfSubFamily = responseObjectSubFam.responseObject as List<SubFamily>;
         bool resArticlesSubfamily =  await chargeArticlesOfSubFamily(listOfFamilies.first.id ?? "", family.id ?? "");
-
-
          ResponseObject responseObjectArticle = await subFamilyService.getArticlesAsFamily(family);
       }
 
