@@ -353,7 +353,6 @@ Widget __containerOfDrawer(BuildContext context) {
                             builder: (BuildContext context,
                                 AsyncSnapshot<Widget> snapshot) {
 
-
                               if (snapshot.hasError) {
                                 return Column(
                                   children: [
@@ -544,6 +543,11 @@ Widget __containerOfDrawer(BuildContext context) {
                     });
 
               }
+             ///ToDo: by Josue's recommendation, change this show dialog for
+              ///base widgets, and create a variable that holds the state of
+              ///the process.
+              ///example:
+              ///switch (value): show widget
 
             },
             child: Text(

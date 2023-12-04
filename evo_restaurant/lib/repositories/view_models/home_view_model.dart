@@ -613,7 +613,8 @@ class HomeViewModel extends BaseModel {
                 ],
               ),
             ));
-          } else {
+          }
+          else {
             AppLocalizations.of(context)?.loadingDataSuccessfullyText ?? "";
             chargingProcessWidgets.add(Container(
               width: mediaQuery.width * 0.3,

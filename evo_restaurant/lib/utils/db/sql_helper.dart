@@ -15,7 +15,7 @@ class SQLHelper {
     await database.execute("""
       CREATE TABLE subfamilies(
     id TEXT PRIMARY KEY NOT NULL UNIQUE, 
-    id_family TEXT NOT NULL UNIQUE,
+    id_family TEXT NOT NULL,
     name TEXT NOT NULL, 
     img TEXT
     )
@@ -24,8 +24,8 @@ class SQLHelper {
     await database.execute(""" 
     CREATE TABLE articles(
     id INTEGER PRIMARY KEY NOT NULL UNIQUE, 
-    id_family TEXT NOT NULL UNIQUE, 
-    id_sub_family TEXT UNIQUE,
+    id_family TEXT NOT NULL, 
+    id_sub_family TEXT,
     name TEXT, 
     img TEXT, 
     cod_bar TEXT, 
