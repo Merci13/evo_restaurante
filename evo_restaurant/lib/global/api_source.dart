@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'dart:async';
 import 'dart:convert';
 
@@ -14,7 +16,6 @@ import '../repositories/models/article.dart';
 import '../repositories/models/error_object.dart';
 import '../repositories/models/family.dart';
 import '../repositories/models/response_object.dart';
-import '../repositories/models/command_table.dart';
 import '../repositories/models/table_detail.dart';
 import '../repositories/models/user.dart';
 import '../repositories/models/table.dart' as own_table;

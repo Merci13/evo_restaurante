@@ -13,15 +13,19 @@ class _ContainerOfDrawer extends StatelessWidget {
   Widget build(BuildContext _context) => __containerOfDrawer(_context);
 }
 
+///ToDo check if we can erase this call
 class _ContainerOfRequestAdminPassword extends StatelessWidget {
+  ///ToDo check if we can erase this call
   const _ContainerOfRequestAdminPassword(
     this.model,
     this.baseWidgetModel, {
     Key? key,
   }) : super(key: key);
 
+  ///ToDo check if we can erase this call
   final HomeViewModel model;
 
+  ///ToDo check if we can erase this call
   final BaseWidgetModel baseWidgetModel;
 
   @override

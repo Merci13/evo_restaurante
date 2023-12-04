@@ -1,7 +1,6 @@
-// ignore_for_file: unnecessary_getters_setters
+// ignore_for_file: unnecessary_getters_setters, use_build_context_synchronously
 
 import 'dart:async';
-import 'dart:ffi';
 
 import 'package:evo_restaurant/repositories/enums/view_state.dart';
 import 'package:evo_restaurant/repositories/models/article.dart';
@@ -14,7 +13,7 @@ import 'package:evo_restaurant/repositories/service/family/family_service.dart';
 import 'package:evo_restaurant/repositories/service/sub_family/sub_family_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:rxdart/rxdart.dart';
+
 
 import '../models/family.dart';
 import '../models/sub_family.dart';
@@ -34,7 +33,7 @@ class TableViewModel extends BaseModel {
   late BuildContext _context;
   late SubFamilyService _subFamilyService;
   late List<CommandTable> _listOfCommand = List.empty(growable: true);
-  late List<CommandTable> _listOfCommandImmutable = List.empty(growable: true);
+  late final List<CommandTable> _listOfCommandImmutable = List.empty(growable: true);
 
   List<Family> _listOfFamilies = List.empty(growable: true);
   List<SubFamily> _listOfSubFamilies = List.empty(growable: true);
@@ -338,7 +337,7 @@ class TableViewModel extends BaseModel {
     int cant = listOfCommand[index].can ?? 0;
    //check if it exist in the original command
     bool resOfCheck = false;
-    _listOfCommandImmutable.forEach((element) {
+    for (var element in _listOfCommandImmutable) {
       if(element.id == listOfCommand[index].id){
         //if Exist check if resting 1 is not below to the original cant
         if((listOfCommand[index].can! - 1) < (element.can??0)){
@@ -349,7 +348,7 @@ class TableViewModel extends BaseModel {
         }
 
       }
-    });
+    }
     //if not existing in the original command rest 1 or eliminate the command line
     if((listOfCommand[index].can! - 1) < 1){
       listOfCommand.remove(listOfCommand[index]);

@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, unnecessary_getters_setters
 
 import 'dart:async';
 
@@ -11,8 +11,6 @@ import 'package:evo_restaurant/repositories/service/hall/hall_service.dart';
 import 'package:evo_restaurant/repositories/service/sub_family/sub_family_service.dart';
 import 'package:evo_restaurant/repositories/view_models/base_model.dart';
 import 'package:evo_restaurant/utils/share/app_colors.dart';
-import 'package:evo_restaurant/utils/share/ui_helpers.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 

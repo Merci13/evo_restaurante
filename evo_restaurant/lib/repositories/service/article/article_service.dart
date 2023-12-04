@@ -1,6 +1,5 @@
 import 'package:evo_restaurant/global/api_source.dart';
 import 'package:evo_restaurant/repositories/models/article.dart';
-import 'package:evo_restaurant/repositories/models/family.dart';
 import 'package:evo_restaurant/repositories/models/response_object.dart';
 import 'package:evo_restaurant/utils/db/sql_helper.dart';
 
@@ -70,7 +69,10 @@ class ArticleService {
           }
           List<Map<String,dynamic>> temp = await SQLHelper.getArticles();
           print("--->>> Agregados a bd:   ${temp.length} <<<---"); //id=303
+
+          //ToDo: remove this lines
           List<Map<String,dynamic>> ar = await SQLHelper.getArticle("162");
+
 
           if (idArticle != "") {
             return false;
@@ -116,6 +118,9 @@ class ArticleService {
           }
           List<Map<String,dynamic>> temp = await SQLHelper.getArticles();
           print("--->>> Agregados a bd:   ${temp.length} <<<---"); //id=303
+
+
+          //ToDo: remove this lines
           List<Map<String,dynamic>> ar = await SQLHelper.getArticle("162");
           if (idArticle != "") {
             return false;
