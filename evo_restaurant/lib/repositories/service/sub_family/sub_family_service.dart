@@ -1,7 +1,9 @@
 import 'dart:convert';
 
 import 'package:evo_restaurant/global/api_source.dart';
+import 'package:evo_restaurant/global/error_codes.dart';
 import 'package:evo_restaurant/repositories/models/article.dart';
+import 'package:evo_restaurant/repositories/models/error_object.dart';
 import 'package:evo_restaurant/repositories/models/family.dart';
 import 'package:evo_restaurant/repositories/models/response_object.dart';
 import 'package:evo_restaurant/repositories/models/sub_family.dart';
@@ -25,7 +27,7 @@ class SubFamilyService {
       List<SubFamily> subfamilies = List.empty(growable: true);
       for (var element in listOfSubfamilies) {
         SubFamily subFamily = SubFamily.fromJson(element);
-        subFamily.image =  Image.memory(base64Decode(subFamily.img ?? ""));
+        subFamily.image = Image.memory(base64Decode(subFamily.img ?? ""));
         subfamilies.add(subFamily);
       }
       return ResponseObject(
@@ -34,7 +36,102 @@ class SubFamilyService {
         errorObject: null,
       );
     } else {
-      return await _apiSource.getSubfamily(family);
+      ResponseObject responseObject = await _apiSource.getSubfamily(family);
+      String idFamily = family.id ?? "";
+      if (!(responseObject.status ?? false)) {
+        print(
+            "Error in sub_family_service.dart in method chargeSubfamiliesInDataBase."
+            " Family id=$idFamily don't have sub-families");
+      }
+      //if the family has sub-families
+      else {
+        List<SubFamily> temp = responseObject.responseObject as List<SubFamily>;
+        if (temp.isNotEmpty) {
+          //check if the db has subfamilies of the family and delete elements
+          List<Map<String, dynamic>> listSubFamilies =
+              await SQLHelper.getSubFamiliesByIdOfFamily(idFamily);
+          bool allSubFamiliesDrop = true;
+          String failureSubId = "";
+          if (listSubFamilies.isNotEmpty) {
+            //try to delete all elements in the data base
+            for (Map<String, dynamic> elementSub in listSubFamilies) {
+              int res = 0;
+              if (elementSub['id'] != null) {
+                res = await SQLHelper.deleteSubFamily(elementSub['id']);
+              }
+              //affected rows must be one
+              if (res != 1 && elementSub['id'] != null) {
+                allSubFamiliesDrop = false;
+                failureSubId = elementSub["id"];
+                break;
+              }
+            }
+            if (!allSubFamiliesDrop) {
+              //if it false means that was drop more than one row in the data base
+              //that means something went wrong in the previous charge or was duplicated data
+
+              return ResponseObject(
+                  status: false,
+                  errorObject: ErrorObject(
+                    status: false,
+                    message: "Something was wrong deleting the previous "
+                        "family id: $failureSubId,"
+                        " in sub_family_service.dart in method chargeSubfamiliesInDataBase",
+                    errorCode: errorChargingData,
+                  ));
+            } else {
+              //save sub-families
+              List<SubFamily> subFamily =
+                  responseObject.responseObject as List<SubFamily>;
+              for (SubFamily subFam in subFamily) {
+                int i = await SQLHelper.createSubFamily(
+                    idSubFamily: subFam.id ?? '',
+                    idFamily: idFamily,
+                    name: subFam.name ?? '',
+                    img: subFam.img ?? '');
+                if (i == 0) {
+                  return ResponseObject(
+                      status: false,
+                      errorObject: ErrorObject(
+                        status: false,
+                        message: "Error in sub_family_service.dart"
+                            " in method SQLHelper.createSubFamily for subfamily id=${subFam.id ?? ''}. ",
+                        errorCode: errorChargingData,
+                      ));
+                } else {
+                  print(
+                      "--->>>Subfamily was inserted, id =${subFam.id} <<<---");
+                }
+              }
+              return responseObject;
+            }
+          } else {
+            //save direct the sub-family
+            //save sub-families
+            List<SubFamily> subFamily = temp;
+            for (SubFamily subFam in subFamily) {
+              int i = await SQLHelper.createSubFamily(
+                  idSubFamily: subFam.id ?? '',
+                  idFamily: idFamily,
+                  name: subFam.name ?? '',
+                  img: subFam.img ?? '');
+              if (i == 0) {
+                return ResponseObject(
+                    status: false,
+                    errorObject: ErrorObject(
+                      status: false,
+                      message: "Error in sub_family_service.dart"
+                          " in method SQLHelper.createSubFamily for subfamily id=${subFam.id ?? ''}. ",
+                      errorCode: errorChargingData,
+                    ));
+              } else {
+                print("--->>>Subfamily was inserted, id =${subFam.id} <<<---");
+              }
+            }
+            return responseObject;
+          }
+        }
+      }
     }
   }
 
@@ -48,7 +145,7 @@ class SubFamilyService {
       List<Article> listArticles = List.empty(growable: true);
       for (Map<String, dynamic> element in temp) {
         Article value = Article.fromJson(element);
-        value.image =  Image.memory(base64Decode(value.img ?? ""));
+        value.image = Image.memory(base64Decode(value.img ?? ""));
         listArticles.add(value);
       }
       return ResponseObject(
@@ -59,30 +156,23 @@ class SubFamilyService {
   }
 
   Future<ResponseObject> getArticlesAsFamily(Family family) async {
-
     //ask to db if it has data, if not, ask to API
 
-    List<Map<String, dynamic>> listArticles = await SQLHelper.getArticlesByFamilyId(family.id ?? "");
-    if(listArticles.isNotEmpty){
+    List<Map<String, dynamic>> listArticles =
+        await SQLHelper.getArticlesByFamilyId(family.id ?? "");
+    if (listArticles.isNotEmpty) {
       List<Article> temp = List.empty(growable: true);
 
       for (var element in listArticles) {
         Article article = Article.fromJson(element);
         temp.add(article);
-
       }
 
       return ResponseObject(
-        responseObject: temp,
-        status: true,
-        errorObject: null
-      );
-
-    }else{
+          responseObject: temp, status: true, errorObject: null);
+    } else {
       return await _apiSource.getArticlesOfFamily(family);
     }
-
-
   }
 
   Future<bool> chargeSubfamiliesInDataBase() async {
@@ -188,7 +278,7 @@ class SubFamilyService {
         //this true will never be returned unless all families don't have sub-families
         return true;
       } else {
-        print("listFamilies hasn't data");
+        print("listFamilies hasn't has data");
         return false;
       }
     } catch (error) {

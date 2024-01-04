@@ -1,6 +1,13 @@
 import 'package:flutter/widgets.dart';
 
 
+///
+/// Family
+///   String? id;
+///   String? name;
+///   String? img;
+///   Image? image;
+///
 class Family {
   String? id;
   String? name;

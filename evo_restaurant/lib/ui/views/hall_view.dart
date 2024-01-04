@@ -49,7 +49,8 @@ class HallView extends BaseWidget {
             height: mediaQuery.height,
             child: Scaffold(
               appBar: AppBar(
-                title: Text(AppLocalizations.of(context)?.evoRestaurantText ?? ""),
+                title:
+                    Text(AppLocalizations.of(context)?.evoRestaurantText ?? ""),
                 elevation: 0.5,
                 backgroundColor: colorPrimary,
                 leading: IconButton(
@@ -110,7 +111,7 @@ Widget __body(BuildContext context) {
                               color: controlColorGray),
                         )));
                   }
-                  index = index -1;
+                  index = index - 1;
                   return Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Center(
@@ -163,9 +164,13 @@ Widget __body(BuildContext context) {
                                                     TypeInformationModal
                                                         .WARNING,
                                                 title:
-                                                    AppLocalizations.of(context)?.warningText ?? "",
-                                                contentText:
-                                                    AppLocalizations.of(context)?.somethingWentWrongText ?? "",
+                                                    AppLocalizations.of(context)
+                                                            ?.warningText ??
+                                                        "",
+                                                contentText: AppLocalizations
+                                                            .of(context)
+                                                        ?.somethingWentWrongText ??
+                                                    "",
                                                 acceptButton: () {
                                                   baseWidgetModel
                                                       .showOverLayWidget(
@@ -202,7 +207,11 @@ Widget __body(BuildContext context) {
                                         style: TextStyle(
                                             fontSize: 25,
                                             fontWeight: FontWeight.bold,
-                                            color: Colors.grey[700]),
+                                            color: (model.listOfTables[index]
+                                                        .est ??
+                                                    false)
+                                                ? Colors.red[700]
+                                                : Colors.green[700]),
                                       ),
                                     ),
                                   ],
@@ -217,7 +226,11 @@ Widget __body(BuildContext context) {
                                         style: TextStyle(
                                             fontSize: 25,
                                             fontWeight: FontWeight.bold,
-                                            color: Colors.grey[700]),
+                                            color: (model.listOfTables[index]
+                                                .est ??
+                                                false)
+                                                ? Colors.red[700]
+                                                : Colors.green[700]),
                                       ),
                                     ),
                                     LayoutBuilder(
@@ -253,15 +266,20 @@ Widget __body(BuildContext context) {
                                               true,
                                               InformationModal(
                                                 typeInformationModal:
-                                                TypeInformationModal.WARNING,
+                                                    TypeInformationModal
+                                                        .WARNING,
                                                 title:
-                                                AppLocalizations.of(context)?.warningText ?? "",
-                                                contentText:
-                                                AppLocalizations.of(context)?.somethingWentWrongText ?? "",
+                                                    AppLocalizations.of(context)
+                                                            ?.warningText ??
+                                                        "",
+                                                contentText: AppLocalizations
+                                                            .of(context)
+                                                        ?.somethingWentWrongText ??
+                                                    "",
                                                 acceptButton: () {
                                                   baseWidgetModel
                                                       .showOverLayWidget(
-                                                      false, Container());
+                                                          false, Container());
                                                 },
                                                 icon: Icon(
                                                   Icons.warning,
@@ -270,7 +288,6 @@ Widget __body(BuildContext context) {
                                               ),
                                             );
                                           }
-
                                         },
                                         child: Container(
                                           height: constraints.maxHeight,

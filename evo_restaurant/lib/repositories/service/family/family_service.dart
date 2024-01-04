@@ -1,7 +1,9 @@
 import 'dart:convert';
 
 import 'package:evo_restaurant/global/api_source.dart';
+import 'package:evo_restaurant/global/error_codes.dart';
 import 'package:evo_restaurant/repositories/models/article.dart';
+import 'package:evo_restaurant/repositories/models/error_object.dart';
 import 'package:evo_restaurant/repositories/models/family.dart';
 import 'package:evo_restaurant/repositories/models/response_object.dart';
 import 'package:evo_restaurant/utils/db/sql_helper.dart';
@@ -39,7 +41,38 @@ class FamilyService {
       return ResponseObject(
           responseObject: families, status: true, errorObject: null);
     } else {
-      return await _api.getFamilies();
+      ResponseObject responseObject = await _api.getFamilies();
+      bool res = responseObject.status ?? false;
+      if (res) {
+        for (Family family in responseObject.responseObject as List<Family>) {
+          if((family.id??"").length <= 2){
+            int result = await SQLHelper.createFamily(
+                family.id ?? "-1", family.name ?? "", family.img);
+            print("Was inserted in the data base the family id: ${family.id}");
+            if (result == 0) {
+              ResponseObject rest = ResponseObject(
+                  status: false,
+                  responseObject: null,
+                  errorObject: ErrorObject(
+                      status: false,
+                      errorCode: errorChargingData,
+                      errorMessage: "Something went wrong inserting family id: ${family.id},"
+                          " in family_service.dart. Method: chargeFamiliesInDataBase",
+                      errorObject: null,
+                      message: ""
+                  )
+              );
+              return rest;
+            }
+          }
+
+
+
+        }
+        return responseObject;
+      }
+      return responseObject;
+
     }
   }
 

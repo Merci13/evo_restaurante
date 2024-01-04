@@ -47,10 +47,16 @@ class ArticleService {
           String idArticle = "";
           for (Article article in articlesAPI) {
             //check of the family id, if the id has length 4 is a sub-family
+
+            //--------------TEST-----------//
+              if((article.fam??"").length > 2){
+                print(article);
+              }
+            //--------------TEST-----------//
             String va = "${article.fam}";
             int id = await SQLHelper.createArticle(
               idArticle: "${article.id}",
-              idFamily: "${article.fam}",
+              idFamily: va.length == 4 ? null : va,
               img: article.img,
               name: article.name,
               codBar: article.codBar,
@@ -99,7 +105,7 @@ class ArticleService {
             String va = "${article.fam}";
             int id = await SQLHelper.createArticle(
               idArticle: "${article.id}",
-              idFamily: "${article.fam}",
+              idFamily: va.length == 4 ? null : va,
               img: article.img,
               name: article.name,
               codBar: article.codBar,

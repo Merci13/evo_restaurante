@@ -24,7 +24,7 @@ class SQLHelper {
     await database.execute(""" 
     CREATE TABLE articles(
     id INTEGER PRIMARY KEY NOT NULL UNIQUE, 
-    id_family TEXT NOT NULL, 
+    id_family TEXT, 
     id_sub_family TEXT,
     name TEXT, 
     img TEXT, 
@@ -85,7 +85,7 @@ class SQLHelper {
   /// return int: last id inserted
   static Future<int> createArticle(
       {required String idArticle,
-      required String idFamily,
+      String? idFamily,
       String? idSubfamily,
       String? name,
       String? img,
