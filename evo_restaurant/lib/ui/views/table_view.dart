@@ -3,7 +3,6 @@
 import 'dart:io' show Platform;
 
 import 'package:evo_restaurant/repositories/enums/type_information_modal.dart';
-import 'package:evo_restaurant/repositories/enums/view_state.dart';
 import 'package:evo_restaurant/repositories/models/command_table.dart';
 import 'package:evo_restaurant/repositories/models/family.dart';
 import 'package:evo_restaurant/repositories/models/sub_family.dart';
@@ -14,12 +13,8 @@ import 'package:evo_restaurant/repositories/service/sub_family/sub_family_servic
 import 'package:evo_restaurant/repositories/view_models/base_widget_model.dart';
 import 'package:evo_restaurant/ui/views/widgets/base_widget.dart';
 import 'package:evo_restaurant/ui/views/widgets/information_modal/information_modal.dart';
-import 'package:evo_restaurant/ui/views/widgets/loading/login_loading.dart';
 import 'package:evo_restaurant/utils/share/ui_helpers.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:functional_widget_annotation/functional_widget_annotation.dart';
 import 'package:provider/provider.dart';
 import '../../repositories/models/article.dart';
@@ -95,7 +90,6 @@ class TableView extends BaseWidget {
 Widget __body(BuildContext context) {
   return Consumer2<TableViewModel, BaseWidgetModel>(
     builder: (context, model, baseWidgetModel, _) {
-      Size mediaQuery = MediaQuery.of(context).size;
       return const Row(
         children: [
           Expanded(flex: 30, child: _ContainerOfCommandAndDetails()),
@@ -374,7 +368,6 @@ Widget __containerOfSubFamilyComponent(
     BuildContext context, SubFamily subFamily, int index) {
   return Consumer2<TableViewModel, BaseWidgetModel>(
       builder: (context, model, baseWidgetModel, _) {
-    Size mediaQuery = MediaQuery.of(context).size;
     bool hasImage = subFamily.img != "";
 
     return TextButton(
@@ -512,7 +505,6 @@ Widget __containerOfArticlesOfFamily(BuildContext context) {
 Widget __containerOfArticleComponent(BuildContext context, Article article) {
   return Consumer2<TableViewModel, BaseWidgetModel>(
       builder: (context, model, baseWidgetModel, _) {
-    Size mediaQuery = MediaQuery.of(context).size;
     bool hasImage = article.img != "";
     return Padding(
       padding: const EdgeInsets.all(5.0),
@@ -624,7 +616,6 @@ Widget __containerOfNameOfFamily(BuildContext context, String name) {
 Widget __containerOfFamilies(BuildContext context) {
   return Consumer2<TableViewModel, BaseWidgetModel>(
       builder: (context, model, baseWidgetModel, _) {
-    Size mediaQuery = MediaQuery.of(context).size;
     return model.listOfFamilies.isEmpty
         ? const Center(
             child: CircularProgressIndicator(),
@@ -853,7 +844,7 @@ Widget __containerOfUser(BuildContext context) {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              "${AppLocalizations.of(context)?.attendedByText}:" ?? "",
+              "${AppLocalizations.of(context)?.attendedByText ?? ""}:",
               style: styleForDetails(),
             ),
             Text(
@@ -893,7 +884,7 @@ Widget __containerOfCommands(BuildContext context) {
         children: [
           const _ContainerOfTitleOfCommand(),
           UIHelper.verticalSpace(10),
-          model.listOfCommand.length > 0
+          model.listOfCommand.isNotEmpty
               ? Flexible(
             fit: FlexFit.loose,
                 child: ListView.builder(
@@ -952,61 +943,59 @@ Widget __containerOfCommands(BuildContext context) {
                                     ),
                                     Expanded(
                                       flex: 50,
-                                      child: Container(
-                                        child: Row(
-                                          children: [
-                                            Expanded(
-                                              flex: 30,
-                                              child: Align(
-                                                alignment: Alignment.centerRight,
-                                                child: IconButton(
-                                                  icon: const Icon(Icons.do_not_disturb_on_outlined,
+                                      child: Row(
+                                        children: [
+                                          Expanded(
+                                            flex: 30,
+                                            child: Align(
+                                              alignment: Alignment.centerRight,
+                                              child: IconButton(
+                                                icon: const Icon(Icons.do_not_disturb_on_outlined,
+                                                color: colorPrimary,
+                                                  size: sizeButton,
+                                                ),
+
+                                                onPressed: () async{
+                                                  bool res =  model.restArticle(index);
+                                                  /*
+                                                  *
+                                                  * if res is false
+                                                  * means that is resting amount
+                                                  * articles that the original command that are provide from the API
+                                                  * ask for administrator password
+                                                  * */
+                                                  if(!res){
+
+                                                  }
+                                                },
+                                              ),
+                                            ),
+                                          ),
+                                          Expanded(
+                                            flex: 40,
+                                            child: Container(
+                                            alignment: Alignment.center,
+                                              child: Text(
+                                                "${command.can ?? "0"}"
+                                              ),
+                                            ),
+                                          ),
+                                          Expanded(
+                                            flex: 30,
+                                            child: Align(
+                                              alignment: Alignment.centerLeft,
+                                              child: IconButton(
+                                                icon: const Icon(Icons.add_circle,
                                                   color: colorPrimary,
-                                                    size: sizeButton,
-                                                  ),
-
-                                                  onPressed: () async{
-                                                    bool res =  model.restArticle(index);
-                                                    /*
-                                                    *
-                                                    * if res is false
-                                                    * means that is resting amount
-                                                    * articles that the original command that are provide from the API
-                                                    * ask for administrator password
-                                                    * */
-                                                    if(!res){
-
-                                                    }
-                                                  },
+                                                  size: sizeButton,
                                                 ),
+                                                onPressed: (){
+                                                model.add(index);
+                                                },
                                               ),
                                             ),
-                                            Expanded(
-                                              flex: 40,
-                                              child: Container(
-                                              alignment: Alignment.center,
-                                                child: Text(
-                                                  "${command.can ?? "0"}"
-                                                ),
-                                              ),
-                                            ),
-                                            Expanded(
-                                              flex: 30,
-                                              child: Align(
-                                                alignment: Alignment.centerLeft,
-                                                child: IconButton(
-                                                  icon: const Icon(Icons.add_circle,
-                                                    color: colorPrimary,
-                                                    size: sizeButton,
-                                                  ),
-                                                  onPressed: (){
-                                                  model.add(index);
-                                                  },
-                                                ),
-                                              ),
-                                            )
-                                          ],
-                                        )
+                                          )
+                                        ],
                                       ),
                                     )
                                   ],
@@ -1028,14 +1017,14 @@ Widget __containerOfCommands(BuildContext context) {
                         color: Colors.grey.withOpacity(0.5),
                         spreadRadius: 2,
                         blurRadius: 3,
-                        offset: Offset(0, 1), // changes position of shadow
+                        offset: const Offset(0, 1), // changes position of shadow
                       ),
                     ],
                   ),
                   child: Center(
                     child: Text(
                       AppLocalizations.of(context)?.noArticlesText ?? "",
-                      style: TextStyle(
+                      style: const TextStyle(
                           fontWeight: FontWeight.w500,
                           fontSize: 17,
                           color: Colors.black),
