@@ -309,11 +309,11 @@ class TableViewModel extends BaseModel {
     }
   }
 
-  Future<bool> loadArticlesOfSubfamily(int index) async {
+  Future<bool> loadArticlesOfSubfamily(String idSuFamily) async {
     try {
       listOfArticlesBySubFamily.clear();
       ResponseObject responseObject =
-          await subFamilyService.getArticlesOfSubfamily("$index");
+          await subFamilyService.getArticlesOfSubfamily(idSuFamily);
       bool res = responseObject.status ?? false;
       if (res) {
         listOfArticlesBySubFamily =

@@ -209,6 +209,15 @@
   "chargingDataFailedText": "Error al cargar datos, por favor contacte con soporte",
   "@chargingDataFailedText": {
     "description": "Charging Data Failed Text"
+  },
+  "familiesText": "Familias",
+  "@familiesText": {
+    "description": "Families Text"
+  },
+
+  "searchArticleText": "Buscar Articulo",
+  "@searchArticleText": {
+    "description": "Search Article Text"
   }
 
 

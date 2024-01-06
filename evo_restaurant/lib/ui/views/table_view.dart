@@ -111,30 +111,76 @@ Widget __containerOfFamiliesAndSearch(BuildContext context) {
   return Consumer2<TableViewModel, BaseWidgetModel>(
       builder: (context, model, baseWidgetModel, _) {
     Size mediaQuery = MediaQuery.of(context).size;
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        AnimatedSwitcher(
-          duration: const Duration(seconds: 2),
-          transitionBuilder: (Widget child, Animation<double> animation) {
-            return ScaleTransition(scale: animation, child: child);
-          },
-          child: SizedBox(
-              width: mediaQuery.width * 0.55,
-              child: model.isFamilySelected != -1
-                  ? const _ContainerOfSubFamilyAndArticlesOfFamily(
-                      key: ValueKey(2),
-                    )
-                  : const _ContainerOfFamilies(
-                      key: ValueKey(1),
-                    )),
-        ),
-        SizedBox(
-            width: mediaQuery.width * 0.10,
+    return Padding(
+      padding: const EdgeInsets.only(top: 5, right: 5),
+      child: Column(
+        children: [
+
+          SizedBox(
+            height: mediaQuery.height * 0.095,
             child: Container(
-              color: Colors.green,
-            ))
-      ],
+              decoration: const BoxDecoration(
+                color: colorPrimary,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(7),
+                  topRight: Radius.circular(7)
+                )
+              ),
+
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              alignment: Alignment.centerLeft,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    AppLocalizations.of(context)?.familiesText ?? "",
+                    style: const TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: (){},
+                    child: Row(
+                      children: [
+                       const VerticalDivider(),
+                        const Icon(Icons.search, color: Colors.white,size: 35,),
+                        Text(AppLocalizations.of(context)?.searchArticleText ?? "",
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 12,
+                          color: Colors.white
+                        ),
+                        ),
+
+                      ],
+                    ),
+
+                  )
+
+                ],
+              ),
+            ),
+          ),
+          AnimatedSwitcher(
+            duration: const Duration(seconds: 2),
+            transitionBuilder: (Widget child, Animation<double> animation) {
+              return ScaleTransition(scale: animation, child: child);
+            },
+            child: SizedBox(
+                height: mediaQuery.width * 0.53,
+                child: model.isFamilySelected != -1
+                    ? const _ContainerOfSubFamilyAndArticlesOfFamily(
+                        key: ValueKey(2),
+                      )
+                    : const _ContainerOfFamilies(
+                        key: ValueKey(1),
+                      )),
+          ),
+
+        ],
+      ),
     );
   });
 }
@@ -334,7 +380,7 @@ Widget __containerOfSubFamilyComponent(
     return TextButton(
       onPressed: () async {
         //load the articles of the sub-family
-        bool res = await model.loadArticlesOfSubfamily(index);
+        bool res = await model.loadArticlesOfSubfamily(subFamily.id??"");
         if (res) {
           model.subfamilySelected = index;
         } else {
@@ -367,6 +413,7 @@ Widget __containerOfSubFamilyComponent(
             Expanded(
               flex: 25,
               child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 2),
                 decoration: const BoxDecoration(
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(7),
@@ -388,17 +435,25 @@ Widget __containerOfSubFamilyComponent(
             ),
             Expanded(
               flex: 75,
-              child: hasImage
-                  ? Image(image: subFamily.image!.image)
-                  : const Center(
-                      child: Text(
-                        "N/A",
-                        style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.black,
-                            fontWeight: FontWeight.w600),
+              child: Container(
+                margin: const EdgeInsets.all(2),
+                decoration:const BoxDecoration(
+                  borderRadius:  BorderRadius.all(Radius.circular(7)),
+
+
+                ),
+                child: hasImage
+                    ? Image(image: subFamily.image!.image, fit: BoxFit.fill,)
+                    : const Center(
+                        child: Text(
+                          "N/A",
+                          style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.black,
+                              fontWeight: FontWeight.w600),
+                        ),
                       ),
-                    ),
+              ),
             )
           ],
         ),
@@ -475,11 +530,11 @@ Widget __containerOfArticleComponent(BuildContext context, Article article) {
               Expanded(
                 flex: 25,
                 child: Container(
-                  decoration: BoxDecoration(
-                      borderRadius: const BorderRadius.only(
-                          topRight: Radius.circular(7),
-                          topLeft: Radius.circular(7)),
-                      border: Border.all(width: 1, color: Colors.black),
+                  padding: const EdgeInsets.symmetric(horizontal: 2),
+                  decoration: const BoxDecoration(
+                      borderRadius:  BorderRadius.only(
+                          topRight: Radius.circular(6),
+                          topLeft: Radius.circular(6)),
                       color: colorPrimary),
                   child: Center(
                     child: Text(
@@ -495,19 +550,26 @@ Widget __containerOfArticleComponent(BuildContext context, Article article) {
               ),
               Expanded(
                 flex: 75,
-                child: hasImage
-                    ? Image(
-                        image: article.image!.image,
-                      )
-                    : const Center(
-                        child: Text(
-                          "N/A",
-                          style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w500,
-                              color: colorPrimary),
-                        ),
-                      ),
+                child: Padding(
+                  padding: const EdgeInsets.all(2.0),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(7.0),
+                    child: hasImage
+                        ? Image(
+                            image: article.image!.image,
+                      fit: BoxFit.fill,
+                          )
+                        : const Center(
+                            child: Text(
+                              "N/A",
+                              style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w500,
+                                  color: colorPrimary),
+                            ),
+                          ),
+                  ),
+                ),
               )
             ],
           ),
@@ -622,23 +684,46 @@ Widget __containerOfFamilies(BuildContext context) {
                         child: Column(
                           children: [
                             Expanded(
-                              flex: 80,
-                              child: family.img != ""
-                                  ? Image(
-                                      image: model
-                                          .listOfFamilies[index].image!.image,
-                                      fit: BoxFit.contain,
-                                    )
-                                  : const Center(
-                                      child: Text("N/A"),
-                                    ),
-                            ),
-                            Expanded(
                                 flex: 20,
-                                child: Text(
-                                  family.name ?? "",
-                                  style: styleForDetails(),
-                                ))
+                                child: Container(
+                                  width: double.infinity,
+                                  padding: const EdgeInsets.all(5),
+                                  decoration: const BoxDecoration(
+                                    color: colorPrimary,
+                                    borderRadius: BorderRadius.only(
+                                      topRight: Radius.circular(7),
+                                      topLeft: Radius.circular(7)
+                                    ),
+
+                                  ),
+                                  child: Text(
+                                    family.name ?? "",
+                                    style:const TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.white,
+                                        fontSize: 15,
+                                    overflow: TextOverflow.ellipsis),
+                                  ),
+                                )),
+                            Expanded(
+                              flex: 80,
+                              child: ClipRRect(
+                                borderRadius: const BorderRadius.only(
+                                  bottomLeft: Radius.circular(8),
+                                  bottomRight: Radius.circular(8)
+                                ),
+                                child: family.img != ""
+                                    ? Image(
+                                        image: model
+                                            .listOfFamilies[index].image!.image,
+                                        fit: BoxFit.fill,
+                                      )
+                                    : const Center(
+                                        child: Text("N/A"),
+                                      ),
+                              ),
+                            ),
+
                           ],
                         )),
                   );

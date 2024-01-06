@@ -220,7 +220,21 @@
   "chargingDataFailedText": "Charging data failed, please contact with support",
   "@chargingDataFailedText": {
     "description": "Charging Data Failed Text"
+  },
+
+
+  "familiesText": "Families",
+  "@familiesText": {
+    "description": "Families Text"
+  },
+
+  "searchArticleText": "Search Article",
+  "@searchArticleText": {
+    "description": "Search Article Text"
   }
+
+
+
 
 
 
