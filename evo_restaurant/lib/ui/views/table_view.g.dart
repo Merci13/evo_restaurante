@@ -6,6 +6,21 @@ part of 'table_view.dart';
 // FunctionalWidgetGenerator
 // **************************************************************************
 
+class _ErrorInitMessage extends StatelessWidget {
+  const _ErrorInitMessage(
+    this.errorMessage, {
+    Key? key,
+  }) : super(key: key);
+
+  final String errorMessage;
+
+  @override
+  Widget build(BuildContext _context) => __errorInitMessage(
+        _context,
+        errorMessage,
+      );
+}
+
 class _Body extends StatelessWidget {
   const _Body({Key? key}) : super(key: key);
 
@@ -159,6 +174,13 @@ class _ContainerOfApplyButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext _context) => __containerOfApplyButton(_context);
+}
+
+class _ApproveCommandMessage extends StatelessWidget {
+  const _ApproveCommandMessage({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext _context) => __approveCommandMessage(_context);
 }
 
 class _ContainerOfTotal extends StatelessWidget {

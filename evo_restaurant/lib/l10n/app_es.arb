@@ -218,7 +218,21 @@
   "searchArticleText": "Buscar Articulo",
   "@searchArticleText": {
     "description": "Search Article Text"
+  },
+
+  "approveCommandText": "Comanda recivida!",
+  "@approveCommandText": {
+    "description": "Approve Command Text"
+  },
+
+
+  "enterAAdministratorPasswordText": "Por favor introduzca una contraseña de administrador para continuar con la acción.",
+  "@enterAAdministratorPasswordText": {
+    "description": "Enter A Administrator Password Text"
+  },
+
+  "initErrorMessageTableText": "Algo salio mal al tratar de cargar la informacion de la mesa,\n porfavor comunicarse con un administrador.",
+  "@initErrorMessageTableText": {
+    "description": "init Error Message Table Text"
   }
-
-
 }

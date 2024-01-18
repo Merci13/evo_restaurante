@@ -1,6 +1,7 @@
 // ignore_for_file: unnecessary_getters_setters, use_build_context_synchronously
 
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:evo_restaurant/repositories/enums/view_state.dart';
 import 'package:evo_restaurant/repositories/models/article.dart';
@@ -14,7 +15,6 @@ import 'package:evo_restaurant/repositories/service/sub_family/sub_family_servic
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-
 import '../models/family.dart';
 import '../models/sub_family.dart';
 import '../models/table.dart' as own_table;
@@ -23,6 +23,7 @@ import '../service/table/table_service.dart';
 import 'base_model.dart';
 
 class TableViewModel extends BaseModel {
+  bool _flag = true;
   late User _user;
   late UserService _userService;
   late CommandTableService _commandTableService;
@@ -33,7 +34,7 @@ class TableViewModel extends BaseModel {
   late BuildContext _context;
   late SubFamilyService _subFamilyService;
   late List<CommandTable> _listOfCommand = List.empty(growable: true);
-  late final List<CommandTable> _listOfCommandImmutable = List.empty(growable: true);
+  late List<CommandTable> _listOfCommandImmutable = List.empty(growable: true);
 
   List<Family> _listOfFamilies = List.empty(growable: true);
   List<SubFamily> _listOfSubFamilies = List.empty(growable: true);
@@ -42,6 +43,11 @@ class TableViewModel extends BaseModel {
   int _isFamilySelected = -1;
   int _subfamilySelected = -1;
   String _errorMessage = "";
+  String _errorMessageInit = "";
+
+  FocusNode _administratorPasswordFocusNode = FocusNode();
+  TextEditingController _administratorPasswordTextController =
+      TextEditingController();
 
   own_table.Table get table => _table;
 
@@ -76,6 +82,30 @@ class TableViewModel extends BaseModel {
   List<Article> get listOfArticlesByFamily => _listOfArticlesByFamily;
 
   List<CommandTable> get listOfCommand => _listOfCommand;
+
+  TextEditingController get administratorPasswordTextController =>
+      _administratorPasswordTextController;
+
+  FocusNode get administratorPasswordFocusNode =>
+      _administratorPasswordFocusNode;
+
+
+  String get errorMessageInit => _errorMessageInit;
+
+  set errorMessageInit(String value) {
+    _errorMessageInit = value;
+    notifyListeners();
+  }
+
+  set administratorPasswordFocusNode(FocusNode value) {
+    _administratorPasswordFocusNode = value;
+    notifyListeners();
+  }
+
+  set administratorPasswordTextController(TextEditingController value) {
+    _administratorPasswordTextController = value;
+    notifyListeners();
+  }
 
   set listOfCommand(List<CommandTable> value) {
     _listOfCommand = value;
@@ -153,26 +183,61 @@ class TableViewModel extends BaseModel {
   }
 
   init() async {
-    if (state == ViewState.BUSY) {
-      throw ErrorDescription("Finish the process to perform a new one");
-    } else {
-      setState(ViewState.BUSY);
-      listOfFamilies.clear();
-      ResponseObject resFamilies = await familyService.getFamilies();
-      bool res = resFamilies.status ?? false;
-      if (!res) {
-        errorMessage = AppLocalizations.of(context)?.somethingWentWrongText ?? "";
+    if (_flag) {
+      if (state == ViewState.BUSY) {
+        throw ErrorDescription("Finish the process to perform a new one");
       } else {
-        listOfFamilies.addAll(resFamilies.responseObject as List<Family>);
-      }
-      //add the articles that are in the command to the list to show
-      //and create a immutable copy to check changes later
-      listOfCommand
-          .addAll(tableDetail.commandTable ?? List.empty(growable: true));
-      _listOfCommandImmutable.addAll(tableDetail.commandTable ?? List.empty());
-      setState(ViewState.IDLE);
-      notifyListeners();
+        try{
+          setState(ViewState.BUSY);
+          listOfFamilies.clear();
+          ResponseObject resFamilies = await familyService.getFamilies();
+          bool res = resFamilies.status ?? false;
+          if (!res) {
+            errorMessage =
+                AppLocalizations.of(context)?.somethingWentWrongText ?? "";
+          } else {
+            listOfFamilies.addAll(resFamilies.responseObject as List<Family>);
+          }
+          //--------------------------------------------------------------------//
+          ///
+          ///this section was needed because when listOfCommand and _listOfCommandImmutable
+          ///were copying tableDetail.commandTable, they copy the memory point that was located,
+          ///so, the solution to this problem was converting the data in a string json to create a
+          ///temporal memory of the object, recreate the data in a Map<String, dynamic> type,
+          ///and take this map to create an object of CommandTable to finally add this new object
+          ///to the listOfCommand and _listOfCommandImmutable
+          ///
+          List<CommandTable> temp = List.empty(growable: true);
+          for (var element in tableDetail.commandTable!) {
+            temp.add(element);
+          }
+
+          String jsonTemp = CommandTable.toJson(tableDetail.commandTable!);
+
+          Map<String, dynamic> jsonCon = jsonDecode(jsonTemp);
+          jsonCon.forEach((key, value) {
+            print("$key : $value");
+            List<dynamic> conv = jsonCon["items"];
+            for (var element in conv) {
+              print("$element");
+              listOfCommand.add(CommandTable.fromJson(element));
+              _listOfCommandImmutable.add(CommandTable.fromJson(element));
+            }
+          });
+
+          //--------------------------------------------------------------------//
+
+          setState(ViewState.IDLE);
+          notifyListeners();
+
+        _flag = false;
+        }catch(error){
+            _errorMessageInit = AppLocalizations.of(context)?.initErrorMessageTableText ?? "";
+        }
+
+
     }
+  }
   }
 
   String getTotalOfCommand() {
@@ -270,8 +335,6 @@ class TableViewModel extends BaseModel {
         ));
       }
 
-      //if already exist, plus 1 the article in the command
-      //if it's not exist in the command, add to the command
       setState(ViewState.IDLE);
       return Future.value(true);
     } catch (error) {
@@ -280,8 +343,6 @@ class TableViewModel extends BaseModel {
       return Future.value(false);
     }
   }
-
-
 
   Future<bool> loadArticlesOfFamilyAndSubfamilies(int value) async {
     try {
@@ -332,40 +393,63 @@ class TableViewModel extends BaseModel {
     super.dispose();
   }
 
-  bool restArticle(int index)  {
+  bool restArticle(int index) {
     //check the original amount in the command
     int cant = listOfCommand[index].can ?? 0;
-   //check if it exist in the original command
+    //check if it exist in the original command
     bool resOfCheck = false;
     for (var element in _listOfCommandImmutable) {
-      if(element.id == listOfCommand[index].id){
+      if (element.id == listOfCommand[index].id) {
         //if Exist check if resting 1 is not below to the original cant
-        if((listOfCommand[index].can! - 1) < (element.can??0)){
-          resOfCheck = false;
-        }else{
+        if ((listOfCommand[index].can! - 1) < (element.can ?? 0)) {
+          return false;
+        } else {
           listOfCommand[index].can = listOfCommand[index].can! - 1;
           resOfCheck = true;
         }
-
       }
     }
     //if not existing in the original command rest 1 or eliminate the command line
-    if((listOfCommand[index].can! - 1) < 1){
+    if ((listOfCommand[index].can! - 1) < 1) {
       listOfCommand.remove(listOfCommand[index]);
       resOfCheck = true;
-    }else{
+    } else {
       listOfCommand[index].can = listOfCommand[index].can! - 1;
       resOfCheck = true;
     }
 
     notifyListeners();
     return resOfCheck;
-
-
   }
 
   void add(int index) {
-  listOfCommand[index].can = ((listOfCommand[index].can ?? 0) + 1);
+    listOfCommand[index].can = ((listOfCommand[index].can ?? 0) + 1);
     notifyListeners();
   }
+
+  Future<bool> sendCommand() async {
+    try {
+      if (state == ViewState.BUSY) {
+        throw ErrorDescription("Finish the process to perform a new one");
+      }
+      setState(ViewState.BUSY);
+
+      ResponseObject responseObject =
+          await tableService.sendCommand(listOfCommand, "${_table.id}");
+
+      setState(ViewState.IDLE);
+
+      return responseObject.status ?? false;
+    } catch (error) {
+      print(
+          "Error sending command to review, Error in table_view_model.dart file in sendCommand method."
+          "Error: $error.");
+      return false;
+    }
+  }
+
+  bool checkAdminPassword() {
+    return userService.checkPassword(_administratorPasswordTextController.text);
+  }
+
 }

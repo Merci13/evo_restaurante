@@ -231,7 +231,26 @@
   "searchArticleText": "Search Article",
   "@searchArticleText": {
     "description": "Search Article Text"
+  },
+
+  "approveCommandText": "Command received!",
+  "@approveCommandText": {
+    "description": "Approve Command Text"
+  },
+
+  "enterAAdministratorPasswordText": "Please enter an administrator password to continue the action.",
+  "@enterAAdministratorPasswordText": {
+    "description": "Enter A Administrator Password Text"
+  },
+
+  "initErrorMessageTableText": "Something went wrong trying loading data from table,\n please communicate with an admin.",
+  "@initErrorMessageTableText": {
+    "description": "init Error Message Table Text"
   }
+
+
+
+
 
 
 

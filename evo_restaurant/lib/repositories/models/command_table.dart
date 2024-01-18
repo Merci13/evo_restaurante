@@ -97,4 +97,65 @@ class CommandTable {
   String toString() {
     return 'CommandTable{id: $id, idLin: $idLin, idArt: $idArt, name: $name, can: $can, pre: $pre, porDto: $porDto, preNet: $preNet, imp: $imp, porIva: $porIva, mesT: $mesT, depT: $depT, cBar: $cBar, fec: $fec}';
   }
+
+  static toJson(List<CommandTable> listOfCommand) {
+    String temp = "{ \"items\": [";
+
+    for (int i = 0; i < listOfCommand.length; i++) {
+      String val = "{";
+      if (i+1 == listOfCommand.length) {
+        val += "\"id\": ${listOfCommand[i].id},"
+            " \"idLin\": ${listOfCommand[i].idLin},"
+            " \"idArt\": ${listOfCommand[i].idArt},"
+            " \"name\": \"${listOfCommand[i].name}\","
+            " \"can\": ${listOfCommand[i].can},"
+            " \"pre\": ${listOfCommand[i].pre},"
+            " \"porDto\": ${listOfCommand[i].porDto},"
+            " \"preNet\": ${listOfCommand[i].preNet},"
+            " \"imp\": ${listOfCommand[i].imp},"
+            " \"porIva\": ${listOfCommand[i].porIva},"
+            " \"mesT\": ${listOfCommand[i].mesT},"
+            " \"depT\": ${listOfCommand[i].depT},"
+            " \"cBar\": \"${listOfCommand[i].cBar}\","
+            " \"fec\": \"${listOfCommand[i].fec}\""
+            "}]}";
+      } else {
+        val += "\"id\": ${listOfCommand[i].id},"
+            " \"idLin\": ${listOfCommand[i].idLin},"
+            " \"idArt\": ${listOfCommand[i].idArt},"
+            " \"name\": \"${listOfCommand[i].name}\","
+            " \"can\": ${listOfCommand[i].can},"
+            " \"pre\": ${listOfCommand[i].pre},"
+            " \"porDto\": ${listOfCommand[i].porDto},"
+            " \"preNet\": ${listOfCommand[i].preNet},"
+            " \"imp\": ${listOfCommand[i].imp},"
+            " \"porIva\": ${listOfCommand[i].porIva},"
+            " \"mesT\": ${listOfCommand[i].mesT},"
+            " \"depT\": ${listOfCommand[i].depT},"
+            " \"cBar\": \"${listOfCommand[i].cBar}\","
+            " \"fec\": \"${listOfCommand[i].fec}\"},";
+      }
+      temp += val;
+    }
+    return temp ;
+  }
+
+  static toJsonLine(CommandTable commandTable) {
+    String val = "{\"id\": ${commandTable.id},"
+        " \"idLin\": ${commandTable.idLin},"
+        " \"idArt\": ${commandTable.idArt},"
+        " \"name\": \"${commandTable.name}\","
+        " \"can\": ${commandTable.can},"
+        " \"pre\": ${commandTable.pre},"
+        " \"porDto\": ${commandTable.porDto},"
+        " \"preNet\": ${commandTable.preNet},"
+        " \"imp\": ${commandTable.imp},"
+        " \"porIva\": ${commandTable.porIva},"
+        " \"mesT\": ${commandTable.mesT},"
+        " \"depT\": ${commandTable.depT},"
+        " \"cBar\": \"${commandTable.cBar}\","
+        " \"fec\": \"${commandTable.fec}\""
+        "}";
+    return val;
+  }
 }

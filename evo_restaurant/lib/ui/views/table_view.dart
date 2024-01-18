@@ -78,12 +78,115 @@ class TableView extends BaseWidget {
                   fontWeight: FontWeight.w600,
                   fontSize: 30),
             ),
-            body: const _Body(),
+            body: model.errorMessageInit != ""
+                ?  _ErrorInitMessage(model.errorMessageInit)
+                :const _Body(),
           ),
         );
       }),
     );
   }
+}
+@swidget
+Widget __errorInitMessage(BuildContext context, String errorMessage){
+  Size mediaQuery = MediaQuery.of(context).size;
+  return Center(
+    child: Container(
+      width: mediaQuery.width * 0.4,
+      height: mediaQuery.width * 0.3,
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: Colors.black,
+          width: 1,
+        ),
+        borderRadius: BorderRadius.all(Radius.circular(7)),
+          color: Colors.white
+      ),
+      padding: EdgeInsets.all(5),
+      child: Container(
+        width: mediaQuery.width * 0.7,
+        height: mediaQuery.width * 0.4,
+        decoration: BoxDecoration(
+            border: Border.all(
+              color: Colors.black,
+              width: 1,
+            ),
+            borderRadius: BorderRadius.all(Radius.circular(7)),
+            color: Colors.white
+        ),
+        child: Column(
+          children: [
+            Expanded(flex: 25,
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              decoration: const BoxDecoration(
+                color: colorPrimary,
+                borderRadius: BorderRadius.only(
+                  topRight: Radius.circular(7),
+                  topLeft: Radius.circular(7)
+                )
+              ),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  AppLocalizations.of(context)?.evoRestaurantText ?? "",
+
+                  style:const TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white
+                  ),
+                ),
+              ),
+            ),
+            ),
+            Expanded(
+              flex: 50,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(errorMessage,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 18,
+                    color: Colors.black
+                  ),
+                  ),
+                ),
+              ),
+            ),
+            Expanded(
+              flex: 25,
+              child: Container(
+                width: mediaQuery.width * 0.1,
+                height: mediaQuery.height * 0.1,
+                alignment: Alignment.center,
+                child: ElevatedButton(
+                  onPressed: (){
+                    Navigator.pop(context);
+
+                  },
+                  child: Text(
+                    AppLocalizations.of(context)?.acceptText ?? "",
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white
+                    ),
+                  ),
+                ),
+              ),
+            )
+
+
+          ],
+        ),
+      ),
+
+    ),
+  );
 }
 
 @swidget
@@ -109,18 +212,14 @@ Widget __containerOfFamiliesAndSearch(BuildContext context) {
       padding: const EdgeInsets.only(top: 5, right: 5),
       child: Column(
         children: [
-
           SizedBox(
             height: mediaQuery.height * 0.095,
             child: Container(
               decoration: const BoxDecoration(
-                color: colorPrimary,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(7),
-                  topRight: Radius.circular(7)
-                )
-              ),
-
+                  color: colorPrimary,
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(7),
+                      topRight: Radius.circular(7))),
               padding: const EdgeInsets.symmetric(horizontal: 10),
               alignment: Alignment.centerLeft,
               child: Row(
@@ -129,30 +228,30 @@ Widget __containerOfFamiliesAndSearch(BuildContext context) {
                   Text(
                     AppLocalizations.of(context)?.familiesText ?? "",
                     style: const TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white
-                    ),
+                        fontSize: 17,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white),
                   ),
                   TextButton(
-                    onPressed: (){},
+                    onPressed: () {},
                     child: Row(
                       children: [
-                       const VerticalDivider(),
-                        const Icon(Icons.search, color: Colors.white,size: 35,),
-                        Text(AppLocalizations.of(context)?.searchArticleText ?? "",
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 12,
-                          color: Colors.white
+                        const VerticalDivider(),
+                        const Icon(
+                          Icons.search,
+                          color: Colors.white,
+                          size: 35,
                         ),
+                        Text(
+                          AppLocalizations.of(context)?.searchArticleText ?? "",
+                          style: const TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 12,
+                              color: Colors.white),
                         ),
-
                       ],
                     ),
-
                   )
-
                 ],
               ),
             ),
@@ -172,7 +271,6 @@ Widget __containerOfFamiliesAndSearch(BuildContext context) {
                         key: ValueKey(1),
                       )),
           ),
-
         ],
       ),
     );
@@ -373,7 +471,7 @@ Widget __containerOfSubFamilyComponent(
     return TextButton(
       onPressed: () async {
         //load the articles of the sub-family
-        bool res = await model.loadArticlesOfSubfamily(subFamily.id??"");
+        bool res = await model.loadArticlesOfSubfamily(subFamily.id ?? "");
         if (res) {
           model.subfamilySelected = index;
         } else {
@@ -430,13 +528,14 @@ Widget __containerOfSubFamilyComponent(
               flex: 75,
               child: Container(
                 margin: const EdgeInsets.all(2),
-                decoration:const BoxDecoration(
-                  borderRadius:  BorderRadius.all(Radius.circular(7)),
-
-
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(7)),
                 ),
                 child: hasImage
-                    ? Image(image: subFamily.image!.image, fit: BoxFit.fill,)
+                    ? Image(
+                        image: subFamily.image!.image,
+                        fit: BoxFit.fill,
+                      )
                     : const Center(
                         child: Text(
                           "N/A",
@@ -524,7 +623,7 @@ Widget __containerOfArticleComponent(BuildContext context, Article article) {
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 2),
                   decoration: const BoxDecoration(
-                      borderRadius:  BorderRadius.only(
+                      borderRadius: BorderRadius.only(
                           topRight: Radius.circular(6),
                           topLeft: Radius.circular(6)),
                       color: colorPrimary),
@@ -549,7 +648,7 @@ Widget __containerOfArticleComponent(BuildContext context, Article article) {
                     child: hasImage
                         ? Image(
                             image: article.image!.image,
-                      fit: BoxFit.fill,
+                            fit: BoxFit.fill,
                           )
                         : const Center(
                             child: Text(
@@ -682,27 +781,24 @@ Widget __containerOfFamilies(BuildContext context) {
                                   decoration: const BoxDecoration(
                                     color: colorPrimary,
                                     borderRadius: BorderRadius.only(
-                                      topRight: Radius.circular(7),
-                                      topLeft: Radius.circular(7)
-                                    ),
-
+                                        topRight: Radius.circular(7),
+                                        topLeft: Radius.circular(7)),
                                   ),
                                   child: Text(
                                     family.name ?? "",
-                                    style:const TextStyle(
+                                    style: const TextStyle(
                                         fontWeight: FontWeight.w500,
                                         color: Colors.white,
                                         fontSize: 15,
-                                    overflow: TextOverflow.ellipsis),
+                                        overflow: TextOverflow.ellipsis),
                                   ),
                                 )),
                             Expanded(
                               flex: 80,
                               child: ClipRRect(
                                 borderRadius: const BorderRadius.only(
-                                  bottomLeft: Radius.circular(8),
-                                  bottomRight: Radius.circular(8)
-                                ),
+                                    bottomLeft: Radius.circular(8),
+                                    bottomRight: Radius.circular(8)),
                                 child: family.img != ""
                                     ? Image(
                                         image: model
@@ -714,7 +810,6 @@ Widget __containerOfFamilies(BuildContext context) {
                                       ),
                               ),
                             ),
-
                           ],
                         )),
                   );
@@ -804,7 +899,35 @@ Widget __containerOfApplyButton(BuildContext context) {
       width: mediaQuery.width * 0.2,
       child: ElevatedButton(
         style: raisedButtonStyle,
-        onPressed: () {},
+        onPressed: () async {
+          baseWidgetModel.showOverLayWidget(
+              true,
+              const InformationModal.loading(
+                  typeInformationModal: TypeInformationModal.LOADING));
+          bool res = await model.sendCommand();
+          if (res) {
+            baseWidgetModel.showOverLayWidget(false, Container());
+            baseWidgetModel.showOverLayWidget(true, _ApproveCommandMessage());
+          } else {
+            baseWidgetModel.showOverLayWidget(false, Container());
+            baseWidgetModel.showOverLayWidget(
+                true,
+                InformationModal(
+                    typeInformationModal: TypeInformationModal.ERROR,
+                    title: AppLocalizations.of(context)?.errorText ?? "",
+                    contentText:
+                        AppLocalizations.of(context)?.somethingWentWrongText ??
+                            "",
+                    acceptButton: () {
+                      baseWidgetModel.showOverLayWidget(false, Container());
+                    },
+                    icon: Icon(
+                      Icons.warning,
+                      color: Colors.yellow[700],
+                      size: 40,
+                    )));
+          }
+        },
         child: Text(
           AppLocalizations.of(context)?.applyText ?? "",
           style: styleForButton(),
@@ -812,6 +935,109 @@ Widget __containerOfApplyButton(BuildContext context) {
       ),
     );
   });
+}
+
+@swidget
+Widget __approveCommandMessage(BuildContext context) {
+  Size mediaQuery = MediaQuery.of(context).size;
+  return Material(
+    color: Colors.transparent,
+    child: Container(
+      width: mediaQuery.width,
+      height: mediaQuery.height,
+      color: const Color(0xbd000000),
+      child: Center(
+        child: Container(
+          width: mediaQuery.width * 0.5,
+          height: mediaQuery.height * 0.5,
+          decoration: BoxDecoration(
+            borderRadius: const BorderRadius.all(Radius.circular(7)),
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.5),
+                spreadRadius: 5,
+                blurRadius: 7,
+                offset: const Offset(0, 3), // changes position of shadow
+              ),
+            ],
+          ),
+          child: Column(
+            children: [
+              Expanded(
+                flex: 20,
+                child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    width: double.infinity,
+                    decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(7),
+                          topLeft: Radius.circular(7),
+                        ),
+                        color: colorPrimary),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        AppLocalizations.of(context)?.evoRestaurantText ?? "",
+                        style: const TextStyle(
+                            fontSize: 22,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w700),
+                      ),
+                    )),
+              ),
+              Expanded(
+                flex: 60,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.check_circle_outline,
+                      size: 100,
+                      color: Color(0xff1ce210),
+                    ),
+                    UIHelper.verticalSpace(20),
+                    Text(
+                      AppLocalizations.of(context)?.approveCommandText ?? "",
+                      style: const TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 15,
+                          color: colorPrimary),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                flex: 20,
+                child: Container(
+                  width: mediaQuery.width * 0.2,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: colorPrimary,
+                      enableFeedback: false,
+                      elevation: 5,
+                    ),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Text(
+                      AppLocalizations.of(context)?.acceptText ?? "",
+                      style: const TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white),
+                    ),
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
+    ),
+  );
 }
 
 @swidget
@@ -886,15 +1112,15 @@ Widget __containerOfCommands(BuildContext context) {
           UIHelper.verticalSpace(10),
           model.listOfCommand.isNotEmpty
               ? Flexible(
-            fit: FlexFit.loose,
-                child: ListView.builder(
+                  fit: FlexFit.loose,
+                  child: ListView.builder(
                     itemCount: model.listOfCommand.length,
                     shrinkWrap: true,
                     physics: const BouncingScrollPhysics(),
                     scrollDirection: Axis.vertical,
                     itemBuilder: (BuildContext context, int index) {
                       CommandTable command = model.listOfCommand[index];
-                   const  double sizeButton = 30.0;
+                      const double sizeButton = 30.0;
                       return Container(
                         decoration: const BoxDecoration(
                             border: Border(
@@ -930,15 +1156,14 @@ Widget __containerOfCommands(BuildContext context) {
                                     Expanded(
                                       flex: 50,
                                       child: Text(
-                                          "${AppLocalizations.of(context)?.priceText ?? ""}:"
-                                              " ${command.pre}",
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 1,
-                                      style:const TextStyle(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w600,
-                                        color: controlColorGray
-                                      ),
+                                        "${AppLocalizations.of(context)?.priceText ?? ""}:"
+                                        " ${command.pre}",
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 1,
+                                        style: const TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w600,
+                                            color: controlColorGray),
                                       ),
                                     ),
                                     Expanded(
@@ -950,13 +1175,15 @@ Widget __containerOfCommands(BuildContext context) {
                                             child: Align(
                                               alignment: Alignment.centerRight,
                                               child: IconButton(
-                                                icon: const Icon(Icons.do_not_disturb_on_outlined,
-                                                color: colorPrimary,
+                                                icon: const Icon(
+                                                  Icons
+                                                      .do_not_disturb_on_outlined,
+                                                  color: colorPrimary,
                                                   size: sizeButton,
                                                 ),
-
-                                                onPressed: () async{
-                                                  bool res =  model.restArticle(index);
+                                                onPressed: () async {
+                                                  bool res =
+                                                      model.restArticle(index);
                                                   /*
                                                   *
                                                   * if res is false
@@ -964,7 +1191,119 @@ Widget __containerOfCommands(BuildContext context) {
                                                   * articles that the original command that are provide from the API
                                                   * ask for administrator password
                                                   * */
-                                                  if(!res){
+                                                  if (!res) {
+                                                    baseWidgetModel.showOverLayWidget(true,
+                                                    Material(
+                                                      color: Colors.black87,
+                                                      child: Container(
+                                                        width: mediaQuery.width * 0.50,
+                                                        height: mediaQuery.height * 0.40,
+                                                        decoration: const BoxDecoration(
+                                                          borderRadius: BorderRadius.all(Radius.circular(7)),
+                                                          color: Colors.white,
+                                                        ),
+                                                        child: Column(
+                                                          mainAxisAlignment: MainAxisAlignment.center,
+                                                          children: [
+                                                            Expanded(
+                                                                flex: 25,
+                                                                child: Container(
+                                                              decoration: const BoxDecoration(
+                                                                borderRadius: BorderRadius.only(
+                                                                  topLeft: Radius.circular(8),
+                                                                  topRight: Radius.circular(8),
+                                                                ),
+                                                                color: colorPrimary,
+                                                              ),
+                                                                  child: Text(
+                                                                    AppLocalizations.of(context)?.passwordIsRequiredText ?? "",
+                                                                    style: const TextStyle(
+                                                                      fontWeight: FontWeight.w600,
+                                                                      fontSize: 22,
+                                                                      color: Colors.white
+                                                                    ),
+                                                                  ),
+                                                            )),
+                                                            Expanded(
+                                                                flex: 50,
+                                                                child: Column(
+                                                                  children: [
+                                                                    Align(
+                                                                      alignment: Alignment.centerLeft,
+                                                                      child: Text(
+                                                                        AppLocalizations.of(context)?.enterAAdministratorPasswordText ?? "",
+                                                                        style: const TextStyle(
+                                                                          fontSize: 20,
+                                                                          fontWeight: FontWeight.w500,
+                                                                          color: Colors.black
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                    TextFormField(
+                                                                      focusNode: model.administratorPasswordFocusNode,
+                                                                      controller: model.administratorPasswordTextController,
+                                                                      decoration: InputDecoration(
+                                                                        hintText: AppLocalizations.of(context)?.enterPasswordHintText ?? "",
+                                                                        hintStyle: const TextStyle(
+                                                                          fontWeight: FontWeight.w400,
+                                                                          fontSize: 17,
+                                                                          color: controlColorGray
+                                                                        )
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                )),
+                                                            Expanded(
+                                                                flex: 25,
+                                                                child: Row(
+                                                              children: [
+                                                                Container(
+                                                                  width: mediaQuery.width * 0.3,
+                                                                  color: colorPrimary,
+                                                                  child: ElevatedButton(
+                                                                    onPressed: (){
+                                                                      bool res = model.checkAdminPassword();
+                                                                      if(!res){
+
+                                                                      }
+                                                                    },
+                                                                    child: Text(
+                                                                      AppLocalizations.of(context)?.acceptText ?? "",
+                                                                      style: const TextStyle(
+                                                                      fontSize: 17,
+                                                                        fontWeight: FontWeight.w700,
+                                                                        color: Colors.white
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                                Container(
+                                                                  width: mediaQuery.width * 0.3,
+                                                                  color: Colors.red[800],
+                                                                  child: ElevatedButton(
+                                                                    onPressed: (){
+                                                                   baseWidgetModel.showOverLayWidget(false, Container());
+                                                                    },
+                                                                    child: Text(
+                                                                      AppLocalizations.of(context)?.cancelText ?? "",
+                                                                      style: const TextStyle(
+                                                                          fontSize: 17,
+                                                                          fontWeight: FontWeight.w700,
+                                                                          color: Colors.white
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ),
+
+                                                              ],
+                                                            ))
+                                                          ],
+                                                        ),
+
+                                                      ),
+                                                    )
+
+                                                    );
 
                                                   }
                                                 },
@@ -974,10 +1313,9 @@ Widget __containerOfCommands(BuildContext context) {
                                           Expanded(
                                             flex: 40,
                                             child: Container(
-                                            alignment: Alignment.center,
-                                              child: Text(
-                                                "${command.can ?? "0"}"
-                                              ),
+                                              alignment: Alignment.center,
+                                              child:
+                                                  Text("${command.can ?? "0"}"),
                                             ),
                                           ),
                                           Expanded(
@@ -985,12 +1323,13 @@ Widget __containerOfCommands(BuildContext context) {
                                             child: Align(
                                               alignment: Alignment.centerLeft,
                                               child: IconButton(
-                                                icon: const Icon(Icons.add_circle,
+                                                icon: const Icon(
+                                                  Icons.add_circle,
                                                   color: colorPrimary,
                                                   size: sizeButton,
                                                 ),
-                                                onPressed: (){
-                                                model.add(index);
+                                                onPressed: () {
+                                                  model.add(index);
                                                 },
                                               ),
                                             ),
@@ -1007,7 +1346,7 @@ Widget __containerOfCommands(BuildContext context) {
                       );
                     },
                   ),
-              )
+                )
               : Container(
                   width: double.infinity,
                   height: mediaQuery.height * 0.1,
@@ -1017,7 +1356,8 @@ Widget __containerOfCommands(BuildContext context) {
                         color: Colors.grey.withOpacity(0.5),
                         spreadRadius: 2,
                         blurRadius: 3,
-                        offset: const Offset(0, 1), // changes position of shadow
+                        offset:
+                            const Offset(0, 1), // changes position of shadow
                       ),
                     ],
                   ),

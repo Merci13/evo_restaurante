@@ -76,8 +76,6 @@ class ArticleService {
           List<Map<String,dynamic>> temp = await SQLHelper.getArticles();
           print("--->>> Agregados a bd:   ${temp.length} <<<---"); //id=303
 
-          //ToDo: remove this lines
-          List<Map<String,dynamic>> ar = await SQLHelper.getArticle("162");
 
 
           if (idArticle != "") {
@@ -126,8 +124,7 @@ class ArticleService {
           print("--->>> Agregados a bd:   ${temp.length} <<<---"); //id=303
 
 
-          //ToDo: remove this lines
-          List<Map<String,dynamic>> ar = await SQLHelper.getArticle("162");
+
           if (idArticle != "") {
             return false;
           } else {

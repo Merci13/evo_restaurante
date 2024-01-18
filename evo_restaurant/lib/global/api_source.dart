@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:evo_restaurant/global/config.dart';
+import 'package:evo_restaurant/repositories/models/command_table.dart';
 import 'package:evo_restaurant/repositories/models/hall.dart';
 import 'package:evo_restaurant/repositories/models/sub_family.dart';
 import 'package:flutter/foundation.dart';
@@ -545,6 +546,8 @@ class ApiSource {
       return ResponseObject(
           status: true, responseObject: list, errorObject: null);
     } catch (error) {
+      print(
+          "Error in api_source.dart in method getAllArticles. Error: $error ------->>>>");
       return ResponseObject(
           status: false,
           errorObject: ErrorObject(
@@ -594,6 +597,8 @@ class ApiSource {
       return ResponseObject(
           status: true, responseObject: list, errorObject: null);
     } catch (error) {
+      print(
+          "Error in api_source.dart in method getArticlesOfFamily. Error: $error ------->>>>");
       return ResponseObject(
           status: false,
           errorObject: ErrorObject(
@@ -603,6 +608,52 @@ class ApiSource {
           ));
     }
   }
+  Future<ResponseObject> senCommand(List<CommandTable> listOfCommand, String idTable) async {
+    try{
+
+      String path =
+          "$basePath/$table/FAC_APA_LIN_T??filter[mes_t]=$idTable&api_key=$apiKey";
+      Uri url = Uri.parse(path);
+      for(CommandTable commandTable in listOfCommand){
+        http.Response response = await http.post(url, headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+
+        },
+          body: CommandTable.toJsonLine(commandTable),
+        );
+        if(response.statusCode != 200){
+          return ResponseObject(
+              status: false,
+              errorObject: ErrorObject(
+                status: false,
+                errorObject: response.body,
+                errorMessage: "${response.body} Problem line ${commandTable.id} or article id ${commandTable.idArt}",
+              ));
+        }
+      }
+        return ResponseObject(
+          responseObject: "",
+          status: true,
+        );
+
+
+    }catch(error){
+
+      print(
+          "Error in api_source.dart in method senCommand. Error: $error ------->>>>");
+      return ResponseObject(
+          status: false,
+          errorObject: ErrorObject(
+            status: false,
+            errorObject: "error",
+            errorMessage: "",
+          ));
+    }
+
+  }
+
+
 
   //-------------------------------------------------------------//
 
@@ -617,6 +668,8 @@ class ApiSource {
   String base64String(Uint8List data) {
     return base64Encode(data);
   }
+
+
 
 //-------------------------------------------------------------//
 }
