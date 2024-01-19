@@ -79,29 +79,29 @@ class TableView extends BaseWidget {
                   fontSize: 30),
             ),
             body: model.errorMessageInit != ""
-                ?  _ErrorInitMessage(model.errorMessageInit)
-                :const _Body(),
+                ? _ErrorInitMessage(model.errorMessageInit)
+                : const _Body(),
           ),
         );
       }),
     );
   }
 }
+
 @swidget
-Widget __errorInitMessage(BuildContext context, String errorMessage){
+Widget __errorInitMessage(BuildContext context, String errorMessage) {
   Size mediaQuery = MediaQuery.of(context).size;
   return Center(
     child: Container(
       width: mediaQuery.width * 0.4,
       height: mediaQuery.width * 0.3,
       decoration: BoxDecoration(
-        border: Border.all(
-          color: Colors.black,
-          width: 1,
-        ),
-        borderRadius: BorderRadius.all(Radius.circular(7)),
-          color: Colors.white
-      ),
+          border: Border.all(
+            color: Colors.black,
+            width: 1,
+          ),
+          borderRadius: BorderRadius.all(Radius.circular(7)),
+          color: Colors.white),
       padding: EdgeInsets.all(5),
       child: Container(
         width: mediaQuery.width * 0.7,
@@ -112,34 +112,30 @@ Widget __errorInitMessage(BuildContext context, String errorMessage){
               width: 1,
             ),
             borderRadius: BorderRadius.all(Radius.circular(7)),
-            color: Colors.white
-        ),
+            color: Colors.white),
         child: Column(
           children: [
-            Expanded(flex: 25,
-            child: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              decoration: const BoxDecoration(
-                color: colorPrimary,
-                borderRadius: BorderRadius.only(
-                  topRight: Radius.circular(7),
-                  topLeft: Radius.circular(7)
-                )
-              ),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  AppLocalizations.of(context)?.evoRestaurantText ?? "",
-
-                  style:const TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white
+            Expanded(
+              flex: 25,
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                decoration: const BoxDecoration(
+                    color: colorPrimary,
+                    borderRadius: BorderRadius.only(
+                        topRight: Radius.circular(7),
+                        topLeft: Radius.circular(7))),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    AppLocalizations.of(context)?.evoRestaurantText ?? "",
+                    style: const TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white),
                   ),
                 ),
               ),
-            ),
             ),
             Expanded(
               flex: 50,
@@ -147,12 +143,12 @@ Widget __errorInitMessage(BuildContext context, String errorMessage){
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Align(
                   alignment: Alignment.centerLeft,
-                  child: Text(errorMessage,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w500,
-                    fontSize: 18,
-                    color: Colors.black
-                  ),
+                  child: Text(
+                    errorMessage,
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w500,
+                        fontSize: 18,
+                        color: Colors.black),
                   ),
                 ),
               ),
@@ -164,27 +160,22 @@ Widget __errorInitMessage(BuildContext context, String errorMessage){
                 height: mediaQuery.height * 0.1,
                 alignment: Alignment.center,
                 child: ElevatedButton(
-                  onPressed: (){
+                  onPressed: () {
                     Navigator.pop(context);
-
                   },
                   child: Text(
                     AppLocalizations.of(context)?.acceptText ?? "",
                     style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white
-                    ),
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white),
                   ),
                 ),
               ),
             )
-
-
           ],
         ),
       ),
-
     ),
   );
 }
@@ -1153,163 +1144,13 @@ Widget __containerOfCommands(BuildContext context) {
                                 flex: 50,
                                 child: Row(
                                   children: [
-                                    Expanded(
-                                      flex: 50,
-                                      child: Text(
-                                        "${AppLocalizations.of(context)?.priceText ?? ""}:"
-                                        " ${command.pre}",
-                                        overflow: TextOverflow.ellipsis,
-                                        maxLines: 1,
-                                        style: const TextStyle(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w600,
-                                            color: controlColorGray),
-                                      ),
-                                    ),
+                                    _ContainerOfPriceCommandLine(
+                                        "${command.pre ?? 0}"),
                                     Expanded(
                                       flex: 50,
                                       child: Row(
                                         children: [
-                                          Expanded(
-                                            flex: 30,
-                                            child: Align(
-                                              alignment: Alignment.centerRight,
-                                              child: IconButton(
-                                                icon: const Icon(
-                                                  Icons
-                                                      .do_not_disturb_on_outlined,
-                                                  color: colorPrimary,
-                                                  size: sizeButton,
-                                                ),
-                                                onPressed: () async {
-                                                  bool res =
-                                                      model.restArticle(index);
-                                                  /*
-                                                  *
-                                                  * if res is false
-                                                  * means that is resting amount
-                                                  * articles that the original command that are provide from the API
-                                                  * ask for administrator password
-                                                  * */
-                                                  if (!res) {
-                                                    baseWidgetModel.showOverLayWidget(true,
-                                                    Material(
-                                                      color: Colors.black87,
-                                                      child: Container(
-                                                        width: mediaQuery.width * 0.50,
-                                                        height: mediaQuery.height * 0.40,
-                                                        decoration: const BoxDecoration(
-                                                          borderRadius: BorderRadius.all(Radius.circular(7)),
-                                                          color: Colors.white,
-                                                        ),
-                                                        child: Column(
-                                                          mainAxisAlignment: MainAxisAlignment.center,
-                                                          children: [
-                                                            Expanded(
-                                                                flex: 25,
-                                                                child: Container(
-                                                              decoration: const BoxDecoration(
-                                                                borderRadius: BorderRadius.only(
-                                                                  topLeft: Radius.circular(8),
-                                                                  topRight: Radius.circular(8),
-                                                                ),
-                                                                color: colorPrimary,
-                                                              ),
-                                                                  child: Text(
-                                                                    AppLocalizations.of(context)?.passwordIsRequiredText ?? "",
-                                                                    style: const TextStyle(
-                                                                      fontWeight: FontWeight.w600,
-                                                                      fontSize: 22,
-                                                                      color: Colors.white
-                                                                    ),
-                                                                  ),
-                                                            )),
-                                                            Expanded(
-                                                                flex: 50,
-                                                                child: Column(
-                                                                  children: [
-                                                                    Align(
-                                                                      alignment: Alignment.centerLeft,
-                                                                      child: Text(
-                                                                        AppLocalizations.of(context)?.enterAAdministratorPasswordText ?? "",
-                                                                        style: const TextStyle(
-                                                                          fontSize: 20,
-                                                                          fontWeight: FontWeight.w500,
-                                                                          color: Colors.black
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                    TextFormField(
-                                                                      focusNode: model.administratorPasswordFocusNode,
-                                                                      controller: model.administratorPasswordTextController,
-                                                                      decoration: InputDecoration(
-                                                                        hintText: AppLocalizations.of(context)?.enterPasswordHintText ?? "",
-                                                                        hintStyle: const TextStyle(
-                                                                          fontWeight: FontWeight.w400,
-                                                                          fontSize: 17,
-                                                                          color: controlColorGray
-                                                                        )
-                                                                      ),
-                                                                    ),
-                                                                  ],
-                                                                )),
-                                                            Expanded(
-                                                                flex: 25,
-                                                                child: Row(
-                                                              children: [
-                                                                Container(
-                                                                  width: mediaQuery.width * 0.3,
-                                                                  color: colorPrimary,
-                                                                  child: ElevatedButton(
-                                                                    onPressed: (){
-                                                                      bool res = model.checkAdminPassword();
-                                                                      if(!res){
-
-                                                                      }
-                                                                    },
-                                                                    child: Text(
-                                                                      AppLocalizations.of(context)?.acceptText ?? "",
-                                                                      style: const TextStyle(
-                                                                      fontSize: 17,
-                                                                        fontWeight: FontWeight.w700,
-                                                                        color: Colors.white
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                                Container(
-                                                                  width: mediaQuery.width * 0.3,
-                                                                  color: Colors.red[800],
-                                                                  child: ElevatedButton(
-                                                                    onPressed: (){
-                                                                   baseWidgetModel.showOverLayWidget(false, Container());
-                                                                    },
-                                                                    child: Text(
-                                                                      AppLocalizations.of(context)?.cancelText ?? "",
-                                                                      style: const TextStyle(
-                                                                          fontSize: 17,
-                                                                          fontWeight: FontWeight.w700,
-                                                                          color: Colors.white
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                ),
-
-                                                              ],
-                                                            ))
-                                                          ],
-                                                        ),
-
-                                                      ),
-                                                    )
-
-                                                    );
-
-                                                  }
-                                                },
-                                              ),
-                                            ),
-                                          ),
+                                          _ContainerMinusCommandLine(index),
                                           Expanded(
                                             flex: 40,
                                             child: Container(
@@ -1318,22 +1159,7 @@ Widget __containerOfCommands(BuildContext context) {
                                                   Text("${command.can ?? "0"}"),
                                             ),
                                           ),
-                                          Expanded(
-                                            flex: 30,
-                                            child: Align(
-                                              alignment: Alignment.centerLeft,
-                                              child: IconButton(
-                                                icon: const Icon(
-                                                  Icons.add_circle,
-                                                  color: colorPrimary,
-                                                  size: sizeButton,
-                                                ),
-                                                onPressed: () {
-                                                  model.add(index);
-                                                },
-                                              ),
-                                            ),
-                                          )
+                                          _ContainerOfPlusCommandLine(index),
                                         ],
                                       ),
                                     )
@@ -1374,6 +1200,214 @@ Widget __containerOfCommands(BuildContext context) {
         ],
       );
     },
+  );
+}
+
+@swidget
+Widget __containerOfPlusCommandLine(BuildContext context, int index) {
+  return Consumer2<TableViewModel, BaseWidgetModel>(
+      builder: (context, model, baseWidgetModel, _) {
+    const double sizeButton = 30.0;
+    return Expanded(
+      flex: 30,
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: IconButton(
+          icon: const Icon(
+            Icons.add_circle,
+            color: colorPrimary,
+            size: sizeButton,
+          ),
+          onPressed: () {
+            model.add(index);
+          },
+        ),
+      ),
+    );
+  });
+}
+
+@swidget
+Widget __containerMinusCommandLine(BuildContext context, int index) {
+  return Consumer2<TableViewModel, BaseWidgetModel>(
+    builder: (context, model, baseWidgetModel, _) {
+      const double sizeButton = 30.0;
+      bool wasCheckedByAdmin = false;
+      return Expanded(
+        flex: 30,
+        child: Align(
+          alignment: Alignment.centerRight,
+          child: IconButton(
+            icon: const Icon(
+              Icons.do_not_disturb_on_outlined,
+              color: colorPrimary,
+              size: sizeButton,
+            ),
+            onPressed: () async {
+              bool res = model.restArticle(index);
+              /*
+               * if res is false
+                  means that is resting amount
+                  articles that the original command that are provide from the API
+                  ask for administrator password.
+                  * also
+                  * Check if the admin provides the password for this line before,
+                  * if it was, don't request the password
+               * */
+              if(wasCheckedByAdmin){
+                model.restArticleByAdmin(index);
+              }else{
+                if (!res) {
+                  baseWidgetModel.showOverLayWidget(
+                    true,
+                    _ContainerOfRequestPasswordOfAdmin(
+                      accept: (textEditingController) {
+                        model.administratorPasswordTextController.text =
+                            textEditingController.text;
+                        bool res = model.checkAdminPassword();
+
+                        if(res){
+                          model.restArticleByAdmin(index);
+                        }
+                      },
+                      cancel: () {
+                        baseWidgetModel.showOverLayWidget(false, Container());
+                      },
+                    ),
+                  );
+                }
+              }
+
+            },
+          ),
+        ),
+      );
+    },
+  );
+}
+
+@swidget
+Widget __containerOfPriceCommandLine(BuildContext context, String price) {
+  return Expanded(
+    flex: 50,
+    child: Text(
+      "${AppLocalizations.of(context)?.priceText ?? ""}:"
+      " $price}",
+      overflow: TextOverflow.ellipsis,
+      maxLines: 1,
+      style: const TextStyle(
+          fontSize: 15, fontWeight: FontWeight.w600, color: controlColorGray),
+    ),
+  );
+}
+
+@swidget
+Widget __containerOfRequestPasswordOfAdmin(BuildContext context,
+    {required Function accept, required Function cancel}) {
+  Size mediaQuery = MediaQuery.of(context).size;
+  FocusNode focusNode = FocusNode();
+  TextEditingController textEditingController = TextEditingController();
+  return Material(
+    color: Colors.black87,
+    child: Container(
+      width: mediaQuery.width * 0.50,
+      height: mediaQuery.height * 0.40,
+      decoration: const BoxDecoration(
+        borderRadius: BorderRadius.all(Radius.circular(7)),
+        color: Colors.white,
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Expanded(
+              flex: 25,
+              child: Container(
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(8),
+                    topRight: Radius.circular(8),
+                  ),
+                  color: colorPrimary,
+                ),
+                child: Text(
+                  AppLocalizations.of(context)?.passwordIsRequiredText ?? "",
+                  style: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 22,
+                      color: Colors.white),
+                ),
+              )),
+          Expanded(
+              flex: 50,
+              child: Column(
+                children: [
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      AppLocalizations.of(context)
+                              ?.enterAAdministratorPasswordText ??
+                          "",
+                      style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black),
+                    ),
+                  ),
+                  TextFormField(
+                    focusNode: focusNode,
+                    controller: textEditingController,
+                    decoration: InputDecoration(
+                        hintText: AppLocalizations.of(context)
+                                ?.enterPasswordHintText ??
+                            "",
+                        hintStyle: const TextStyle(
+                            fontWeight: FontWeight.w400,
+                            fontSize: 17,
+                            color: controlColorGray)),
+                  ),
+                ],
+              )),
+          Expanded(
+              flex: 25,
+              child: Row(
+                children: [
+                  Container(
+                    width: mediaQuery.width * 0.3,
+                    color: colorPrimary,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        accept(textEditingController);
+                      },
+                      child: Text(
+                        AppLocalizations.of(context)?.acceptText ?? "",
+                        style: const TextStyle(
+                            fontSize: 17,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    width: mediaQuery.width * 0.3,
+                    color: Colors.red[800],
+                    child: ElevatedButton(
+                      onPressed: () {
+                        cancel();
+                      },
+                      child: Text(
+                        AppLocalizations.of(context)?.cancelText ?? "",
+                        style: const TextStyle(
+                            fontSize: 17,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ],
+              ))
+        ],
+      ),
+    ),
   );
 }
 

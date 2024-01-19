@@ -394,32 +394,41 @@ class TableViewModel extends BaseModel {
   }
 
   bool restArticle(int index) {
-    //check the original amount in the command
-    int cant = listOfCommand[index].can ?? 0;
+
     //check if it exist in the original command
-    bool resOfCheck = false;
+    bool exist = false;
     for (var element in _listOfCommandImmutable) {
       if (element.id == listOfCommand[index].id) {
         //if Exist check if resting 1 is not below to the original cant
-        if ((listOfCommand[index].can! - 1) < (element.can ?? 0)) {
-          return false;
-        } else {
-          listOfCommand[index].can = listOfCommand[index].can! - 1;
-          resOfCheck = true;
-        }
+
       }
     }
-    //if not existing in the original command rest 1 or eliminate the command line
-    if ((listOfCommand[index].can! - 1) < 1) {
-      listOfCommand.remove(listOfCommand[index]);
-      resOfCheck = true;
-    } else {
-      listOfCommand[index].can = listOfCommand[index].can! - 1;
-      resOfCheck = true;
+
+    int indexInImmutable = 0;
+    for(int i =0; _listOfCommandImmutable.length > i; i++){
+      if(_listOfCommandImmutable[i].id == listOfCommand[index].id){
+        exist = true;
+        indexInImmutable = i;
+        break;
+      }
+    }
+    if(exist){
+      if ((listOfCommand[index].can! - 1) < (_listOfCommandImmutable[indexInImmutable].can ?? 0)) {
+        return false;
+      } else {
+        listOfCommand[index].can = listOfCommand[index].can! - 1;
+      }
+    }else{
+      //if not existing in the original command rest 1 or eliminate the command line
+      if ((listOfCommand[index].can! - 1) < 1) {
+        listOfCommand.remove(listOfCommand[index]);
+      } else {
+        listOfCommand[index].can = listOfCommand[index].can! - 1;
+      }
     }
 
     notifyListeners();
-    return resOfCheck;
+    return true;
   }
 
   void add(int index) {
@@ -450,6 +459,16 @@ class TableViewModel extends BaseModel {
 
   bool checkAdminPassword() {
     return userService.checkPassword(_administratorPasswordTextController.text);
+  }
+
+  void restArticleByAdmin(int index) {
+
+    if ((listOfCommand[index].can! - 1) < 1) {
+      listOfCommand.remove(listOfCommand[index]);
+    } else {
+      listOfCommand[index].can = listOfCommand[index].can! - 1;
+    }
+
   }
 
 }

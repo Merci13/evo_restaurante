@@ -211,6 +211,70 @@ class _ContainerOfCommands extends StatelessWidget {
   Widget build(BuildContext _context) => __containerOfCommands(_context);
 }
 
+class _ContainerOfPlusCommandLine extends StatelessWidget {
+  const _ContainerOfPlusCommandLine(
+    this.index, {
+    Key? key,
+  }) : super(key: key);
+
+  final int index;
+
+  @override
+  Widget build(BuildContext _context) => __containerOfPlusCommandLine(
+        _context,
+        index,
+      );
+}
+
+class _ContainerMinusCommandLine extends StatelessWidget {
+  const _ContainerMinusCommandLine(
+    this.index, {
+    Key? key,
+  }) : super(key: key);
+
+  final int index;
+
+  @override
+  Widget build(BuildContext _context) => __containerMinusCommandLine(
+        _context,
+        index,
+      );
+}
+
+class _ContainerOfPriceCommandLine extends StatelessWidget {
+  const _ContainerOfPriceCommandLine(
+    this.price, {
+    Key? key,
+  }) : super(key: key);
+
+  final String price;
+
+  @override
+  Widget build(BuildContext _context) => __containerOfPriceCommandLine(
+        _context,
+        price,
+      );
+}
+
+class _ContainerOfRequestPasswordOfAdmin extends StatelessWidget {
+  const _ContainerOfRequestPasswordOfAdmin({
+    Key? key,
+    required this.accept,
+    required this.cancel,
+  }) : super(key: key);
+
+  final Function accept;
+
+  final Function cancel;
+
+  @override
+  Widget build(BuildContext _context) => __containerOfRequestPasswordOfAdmin(
+        _context,
+        accept: accept,
+        cancel: cancel,
+      );
+}
+
 class _ContainerOfTitleOfCommand extends StatelessWidget {
   const _ContainerOfTitleOfCommand({Key? key}) : super(key: key);
 
