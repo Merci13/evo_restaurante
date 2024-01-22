@@ -15,6 +15,7 @@ import 'package:evo_restaurant/ui/views/widgets/base_widget.dart';
 import 'package:evo_restaurant/ui/views/widgets/information_modal/information_modal.dart';
 import 'package:evo_restaurant/utils/share/ui_helpers.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:functional_widget_annotation/functional_widget_annotation.dart';
 import 'package:provider/provider.dart';
 import '../../repositories/models/article.dart';
@@ -56,6 +57,7 @@ class TableView extends BaseWidget {
           width: mediaQuery.width,
           height: mediaQuery.height,
           child: Scaffold(
+            resizeToAvoidBottomInset: false,
             appBar: AppBar(
               title:
                   Text(AppLocalizations.of(context)?.evoRestaurantText ?? ""),
@@ -1232,7 +1234,7 @@ Widget __containerMinusCommandLine(BuildContext context, int index) {
   return Consumer2<TableViewModel, BaseWidgetModel>(
     builder: (context, model, baseWidgetModel, _) {
       const double sizeButton = 30.0;
-      bool wasCheckedByAdmin = false;
+
       return Expanded(
         flex: 30,
         child: Align(
@@ -1254,9 +1256,10 @@ Widget __containerMinusCommandLine(BuildContext context, int index) {
                   * Check if the admin provides the password for this line before,
                   * if it was, don't request the password
                * */
-              if(wasCheckedByAdmin){
+              bool wasChecked = model.getIfWasChecked(index);
+              if (wasChecked) {
                 model.restArticleByAdmin(index);
-              }else{
+              } else {
                 if (!res) {
                   baseWidgetModel.showOverLayWidget(
                     true,
@@ -1266,18 +1269,20 @@ Widget __containerMinusCommandLine(BuildContext context, int index) {
                             textEditingController.text;
                         bool res = model.checkAdminPassword();
 
-                        if(res){
+                        if (res) {
                           model.restArticleByAdmin(index);
                         }
                       },
                       cancel: () {
                         baseWidgetModel.showOverLayWidget(false, Container());
                       },
+                      focusNode: model.administratorPasswordFocusNode,
+                      textEditingController: model.administratorPasswordTextController,
+
                     ),
                   );
                 }
               }
-
             },
           ),
         ),
@@ -1292,7 +1297,7 @@ Widget __containerOfPriceCommandLine(BuildContext context, String price) {
     flex: 50,
     child: Text(
       "${AppLocalizations.of(context)?.priceText ?? ""}:"
-      " $price}",
+      " $price",
       overflow: TextOverflow.ellipsis,
       maxLines: 1,
       style: const TextStyle(
@@ -1303,109 +1308,156 @@ Widget __containerOfPriceCommandLine(BuildContext context, String price) {
 
 @swidget
 Widget __containerOfRequestPasswordOfAdmin(BuildContext context,
-    {required Function accept, required Function cancel}) {
+    {required Function accept,
+    required Function cancel,
+    required FocusNode focusNode,
+    required TextEditingController textEditingController}) {
   Size mediaQuery = MediaQuery.of(context).size;
-  FocusNode focusNode = FocusNode();
-  TextEditingController textEditingController = TextEditingController();
   return Material(
     color: Colors.black87,
-    child: Container(
-      width: mediaQuery.width * 0.50,
-      height: mediaQuery.height * 0.40,
-      decoration: const BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(7)),
-        color: Colors.white,
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Expanded(
-              flex: 25,
-              child: Container(
-                decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(8),
-                    topRight: Radius.circular(8),
-                  ),
-                  color: colorPrimary,
-                ),
-                child: Text(
-                  AppLocalizations.of(context)?.passwordIsRequiredText ?? "",
-                  style: const TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 22,
-                      color: Colors.white),
-                ),
-              )),
-          Expanded(
+    child: SizedBox(
+      width: mediaQuery.width,
+      height: mediaQuery.height,
+      child: SingleChildScrollView(
+        padding: EdgeInsets.only(top: mediaQuery.height * 0.25),
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.manual,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Flexible(fit: FlexFit.loose, flex: 25, child: Container()),
+            Flexible(
+              fit: FlexFit.loose,
               flex: 50,
-              child: Column(
-                children: [
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      AppLocalizations.of(context)
-                              ?.enterAAdministratorPasswordText ??
-                          "",
-                      style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.black),
-                    ),
+              child: Container(
+                padding: const EdgeInsets.all(5),
+                decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.all(Radius.circular(7)),
+                    border: Border.all(color: Colors.black, width: 1),
+                    color: Colors.white),
+                child: Container(
+                  width: mediaQuery.width * 0.50,
+                  height: mediaQuery.height * 0.40,
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.all(Radius.circular(7)),
+                    border: Border.all(color: Colors.black, width: 1),
+                    color: Colors.white,
                   ),
-                  TextFormField(
-                    focusNode: focusNode,
-                    controller: textEditingController,
-                    decoration: InputDecoration(
-                        hintText: AppLocalizations.of(context)
-                                ?.enterPasswordHintText ??
-                            "",
-                        hintStyle: const TextStyle(
-                            fontWeight: FontWeight.w400,
-                            fontSize: 17,
-                            color: controlColorGray)),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(
+                          flex: 25,
+                          child: Container(
+                            width: double.infinity,
+                            alignment: Alignment.centerLeft,
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                            decoration: const BoxDecoration(
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(6),
+                                topRight: Radius.circular(6),
+                              ),
+                              color: colorPrimary,
+                            ),
+                            child: Text(
+                              AppLocalizations.of(context)?.evoRestaurantText ??
+                                  "",
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 22,
+                                  color: Colors.white),
+                            ),
+                          )),
+                      Expanded(
+                          flex: 50,
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    AppLocalizations.of(context)
+                                            ?.enterAAdministratorPasswordText ??
+                                        "",
+                                    style: const TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.black),
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: TextFormField(
+                                  focusNode: focusNode,
+                                  controller: textEditingController,
+                                  autofocus: false,
+                                  decoration: InputDecoration(
+                                      enabledBorder: const OutlineInputBorder(
+                                          borderSide:
+                                              BorderSide(color: colorPrimary)),
+                                      border: const OutlineInputBorder(),
+                                      hintText: AppLocalizations.of(context)
+                                              ?.enterPasswordHintText ??
+                                          "",
+                                      hintStyle: const TextStyle(
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 17,
+                                          color: controlColorGray)),
+                                ),
+                              ),
+                            ],
+                          )),
+                      Expanded(
+                          flex: 25,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              SizedBox(
+                                width: mediaQuery.width * 0.2,
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    accept(textEditingController);
+                                  },
+                                  child: Text(
+                                    AppLocalizations.of(context)?.acceptText ??
+                                        "",
+                                    style: const TextStyle(
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.w700,
+                                        color: Colors.white),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                width: mediaQuery.width * 0.2,
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.red[800]),
+                                  onPressed: () {
+                                    cancel();
+                                  },
+                                  child: Text(
+                                    AppLocalizations.of(context)?.cancelText ??
+                                        "",
+                                    style: const TextStyle(
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.w700,
+                                        color: Colors.white),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ))
+                    ],
                   ),
-                ],
-              )),
-          Expanded(
-              flex: 25,
-              child: Row(
-                children: [
-                  Container(
-                    width: mediaQuery.width * 0.3,
-                    color: colorPrimary,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        accept(textEditingController);
-                      },
-                      child: Text(
-                        AppLocalizations.of(context)?.acceptText ?? "",
-                        style: const TextStyle(
-                            fontSize: 17,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.white),
-                      ),
-                    ),
-                  ),
-                  Container(
-                    width: mediaQuery.width * 0.3,
-                    color: Colors.red[800],
-                    child: ElevatedButton(
-                      onPressed: () {
-                        cancel();
-                      },
-                      child: Text(
-                        AppLocalizations.of(context)?.cancelText ?? "",
-                        style: const TextStyle(
-                            fontSize: 17,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.white),
-                      ),
-                    ),
-                  ),
-                ],
-              ))
-        ],
+                ),
+              ),
+            ),
+            Flexible(fit: FlexFit.loose, flex: 25, child: Container())
+          ],
+        ),
       ),
     ),
   );

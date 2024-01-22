@@ -40,6 +40,7 @@ class TableViewModel extends BaseModel {
   List<SubFamily> _listOfSubFamilies = List.empty(growable: true);
   List<Article> _listOfArticlesBySubFamily = List.empty(growable: true);
   List<Article> _listOfArticlesByFamily = List.empty(growable: true);
+  Map<String, bool> _listCommandLineWasChecked = {};
   int _isFamilySelected = -1;
   int _subfamilySelected = -1;
   String _errorMessage = "";
@@ -91,6 +92,14 @@ class TableViewModel extends BaseModel {
 
 
   String get errorMessageInit => _errorMessageInit;
+
+
+  Map<String, bool> get listCommandLineWasChecked => _listCommandLineWasChecked;
+
+  set listCommandLineWasChecked(Map<String, bool> value) {
+    _listCommandLineWasChecked = value;
+    notifyListeners();
+  }
 
   set errorMessageInit(String value) {
     _errorMessageInit = value;
@@ -221,6 +230,9 @@ class TableViewModel extends BaseModel {
             for (var element in conv) {
               print("$element");
               listOfCommand.add(CommandTable.fromJson(element));
+              for(CommandTable value in listOfCommand){
+                listCommandLineWasChecked.putIfAbsent("${value.id}", () => false);
+              }
               _listOfCommandImmutable.add(CommandTable.fromJson(element));
             }
           });
@@ -397,13 +409,6 @@ class TableViewModel extends BaseModel {
 
     //check if it exist in the original command
     bool exist = false;
-    for (var element in _listOfCommandImmutable) {
-      if (element.id == listOfCommand[index].id) {
-        //if Exist check if resting 1 is not below to the original cant
-
-      }
-    }
-
     int indexInImmutable = 0;
     for(int i =0; _listOfCommandImmutable.length > i; i++){
       if(_listOfCommandImmutable[i].id == listOfCommand[index].id){
@@ -468,6 +473,20 @@ class TableViewModel extends BaseModel {
     } else {
       listOfCommand[index].can = listOfCommand[index].can! - 1;
     }
+
+  }
+
+  bool getIfWasChecked(int index) {
+
+    bool val = false;
+    listCommandLineWasChecked.forEach((key, value) {
+      if(key == "${listOfCommand[index].id}"){
+        val = value;
+      }
+    });
+
+    return val;
+
 
   }
 

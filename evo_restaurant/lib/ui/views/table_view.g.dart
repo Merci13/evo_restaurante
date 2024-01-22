@@ -261,17 +261,25 @@ class _ContainerOfRequestPasswordOfAdmin extends StatelessWidget {
     Key? key,
     required this.accept,
     required this.cancel,
+    required this.focusNode,
+    required this.textEditingController,
   }) : super(key: key);
 
   final Function accept;
 
   final Function cancel;
 
+  final FocusNode focusNode;
+
+  final TextEditingController textEditingController;
+
   @override
   Widget build(BuildContext _context) => __containerOfRequestPasswordOfAdmin(
         _context,
         accept: accept,
         cancel: cancel,
+        focusNode: focusNode,
+        textEditingController: textEditingController,
       );
 }
 
