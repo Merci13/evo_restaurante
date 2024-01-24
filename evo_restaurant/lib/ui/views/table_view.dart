@@ -256,6 +256,7 @@ Widget __containerOfFamiliesAndSearch(BuildContext context) {
             },
             child: SizedBox(
                 height: mediaQuery.width * 0.53,
+                width: double.infinity,
                 child: model.isFamilySelected != -1
                     ? const _ContainerOfSubFamilyAndArticlesOfFamily(
                         key: ValueKey(2),
@@ -1271,6 +1272,7 @@ Widget __containerMinusCommandLine(BuildContext context, int index) {
 
                         if (res) {
                           model.restArticleByAdmin(index);
+                          baseWidgetModel.showOverLayWidget(false, Container());
                         }
                       },
                       cancel: () {

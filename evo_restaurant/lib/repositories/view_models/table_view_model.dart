@@ -473,6 +473,7 @@ class TableViewModel extends BaseModel {
     } else {
       listOfCommand[index].can = listOfCommand[index].can! - 1;
     }
+    notifyListeners();
 
   }
 

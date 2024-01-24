@@ -43,7 +43,22 @@ class LoginView extends BaseWidget {
           Size mediaQuery = MediaQuery.of(context).size;
           // var data = MediaQuery.of(context).viewPadding;
 
-          return SizedBox(
+          return
+            model.state == ViewState.BUSY ?
+                Center(
+                  child: SizedBox(
+                      width: mediaQuery.width * 0.01,
+                      height: mediaQuery.height * 0.01,
+                      child: const CircularProgressIndicator()),
+                )
+                : model.errorMessage != "" ?
+                  Center(
+                    child: Text(
+                      AppLocalizations.of(context)?.somethingWentWrongText ?? "",
+                    ),
+                  )
+                :
+            SizedBox(
             width: mediaQuery.width,
             height: mediaQuery.height,
             child: GestureDetector(

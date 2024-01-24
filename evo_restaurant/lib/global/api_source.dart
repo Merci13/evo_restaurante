@@ -610,12 +610,14 @@ class ApiSource {
   }
   Future<ResponseObject> senCommand(List<CommandTable> listOfCommand, String idTable) async {
     try{
-
+///ToDo check this method to send the command line
       String path =
           "$basePath/$table/FAC_APA_LIN_T??filter[mes_t]=$idTable&api_key=$apiKey";
+
+
       Uri url = Uri.parse(path);
       for(CommandTable commandTable in listOfCommand){
-        http.Response response = await http.post(url, headers: {
+        http.Response response = await http.put(url, headers: {
           "Content-Type": "application/json",
           "Accept": "application/json",
 
@@ -647,7 +649,7 @@ class ApiSource {
           errorObject: ErrorObject(
             status: false,
             errorObject: "error",
-            errorMessage: "",
+            errorMessage: "$error",
           ));
     }
 

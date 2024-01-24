@@ -149,41 +149,49 @@ class LoginViewModel extends BaseModel {
       throw ErrorDescription("Finish the process to perform a new one");
     } else {
       setState(ViewState.BUSY);
-
-      listOfUser.clear();
-      selectedUser = "";
-      String userNameRemember =
-          await authenticationService.getRememberUserName();
-      if (userNameRemember != "") {
-        _rememberUserName = true;
-        _userNameEditingController.text = userNameRemember;
-      }
-      //charge list of users
-
-      ResponseObject responseObject = await userService.loadUsers();
-      bool resultUsers = responseObject.status ?? false;
-      if (resultUsers) {
-        listOfUser = responseObject.responseObject as List<User>;
-        userService.users = listOfUser;
-
-        selectedUser = listOfUser.first.name ?? "";
-        errorMessage = "";
-      } else {
-
-        switch (responseObject.errorObject?.errorCode) {
-          //503
-          case 503:
-            errorMessage = AppLocalizations.of(context)?.unavailableToLoadData ?? "";
-            break;
-
-          default:
-            errorMessage = AppLocalizations.of(context)?.somethingWentWrongText??"";
+      try{
+        listOfUser.clear();
+        selectedUser = "";
+        String userNameRemember =
+        await authenticationService.getRememberUserName();
+        if (userNameRemember != "") {
+          _rememberUserName = true;
+          _userNameEditingController.text = userNameRemember;
         }
+        //charge list of users
+
+        ResponseObject responseObject = await userService.loadUsers();
+        bool resultUsers = responseObject.status ?? false;
+        if (resultUsers) {
+          listOfUser = responseObject.responseObject as List<User>;
+          userService.users = listOfUser;
+
+          selectedUser = listOfUser.first.name ?? "";
+          errorMessage = "";
+        }
+        else {
+
+          switch (responseObject.errorObject?.errorCode) {
+          //503
+            case 503:
+              errorMessage = AppLocalizations.of(context)?.unavailableToLoadData ?? "";
+              break;
+
+            default:
+              errorMessage = AppLocalizations.of(context)?.somethingWentWrongText??"";
+          }
+        }
+
+        setState(ViewState.IDLE);
+        _flag = false;
+        notifyListeners();
+
+      }catch(error){
+        print("Something went wrong in init method in login_view_model.dart. Error: $error --->>");
+        errorMessage = AppLocalizations.of(context)?.somethingWentWrongText ?? "";
+        setState(ViewState.IDLE);
       }
 
-      setState(ViewState.IDLE);
-      _flag = false;
-      notifyListeners();
     }
     }
   }
