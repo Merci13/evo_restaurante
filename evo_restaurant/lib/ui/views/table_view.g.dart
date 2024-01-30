@@ -36,6 +36,14 @@ class _ContainerOfFamiliesAndSearch extends StatelessWidget {
       __containerOfFamiliesAndSearch(_context);
 }
 
+class _ContainerOfSearchingArticle extends StatelessWidget {
+  const _ContainerOfSearchingArticle({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext _context) =>
+      __containerOfSearchingArticle(_context);
+}
+
 class _ContainerOfSubFamilyAndArticlesOfFamily extends StatelessWidget {
   const _ContainerOfSubFamilyAndArticlesOfFamily({Key? key}) : super(key: key);
 

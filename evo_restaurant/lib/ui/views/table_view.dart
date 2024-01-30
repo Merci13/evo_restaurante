@@ -186,10 +186,33 @@ Widget __errorInitMessage(BuildContext context, String errorMessage) {
 Widget __body(BuildContext context) {
   return Consumer2<TableViewModel, BaseWidgetModel>(
     builder: (context, model, baseWidgetModel, _) {
-      return const Row(
+      Size mediaQuery = MediaQuery.of(context).size;
+      return Row(
         children: [
-          Expanded(flex: 30, child: _ContainerOfCommandAndDetails()),
-          Expanded(flex: 70, child: _ContainerOfFamiliesAndSearch())
+          const Expanded(flex: 30, child: _ContainerOfCommandAndDetails()),
+
+          // model.searching ?
+          // const _ContainerOfSearchingArticle()
+          Expanded(
+            flex: 70,
+            child: AnimatedSwitcher(
+              duration: const Duration(seconds: 2),
+              transitionBuilder: (Widget child, Animation<double> animation) {
+                return ScaleTransition(scale: animation, child: child);
+              },
+              child: SizedBox(
+                  width: double.infinity,
+                  child: model.searching
+                      ? const _ContainerOfSearchingArticle(
+                          key: ValueKey(3),
+                        )
+                      : const Expanded(
+                          flex: 70,
+                          child: _ContainerOfFamiliesAndSearch(
+                            key: ValueKey(4),
+                          ))),
+            ),
+          ),
         ],
       );
     },
@@ -226,7 +249,9 @@ Widget __containerOfFamiliesAndSearch(BuildContext context) {
                         color: Colors.white),
                   ),
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      model.searching = true;
+                    },
                     child: Row(
                       children: [
                         const VerticalDivider(),
@@ -269,6 +294,53 @@ Widget __containerOfFamiliesAndSearch(BuildContext context) {
       ),
     );
   });
+}
+
+@swidget
+Widget __containerOfSearchingArticle(BuildContext context) {
+  return Consumer2<TableViewModel, BaseWidgetModel>(
+    builder: (context, model, baseWidgetModel, _) {
+      return Container(
+        margin: const EdgeInsets.only(bottom: 4,right: 5),
+        padding: const EdgeInsets.all(2),
+        decoration: BoxDecoration(
+            borderRadius: const BorderRadius.only(
+                bottomRight: Radius.circular(7),
+                bottomLeft: Radius.circular(7)),
+            border: Border.all(color: Colors.black, width: 1),
+            color: Colors.white),
+        child: Container(
+          padding: const EdgeInsets.all(2),
+          decoration: BoxDecoration(
+              borderRadius: const BorderRadius.all(Radius.circular(8)),
+              border: Border.all(color: Colors.black, width: 1),
+              color: Colors.white),
+          child: Container(
+            color: Colors.white,
+            child: Column(
+              children: [
+                Expanded(
+                  flex: 10,
+                  child:Container(
+                    color: colorPrimary,
+                    child: Row(
+                      children: [
+
+                      ],
+                    ),
+                  ),
+                ),
+                Expanded(
+                  flex: 90,
+                  child: Container(color: Colors.green,),
+                )
+              ],
+            ),
+          ),
+        ),
+      );
+    },
+  );
 }
 
 @swidget
@@ -901,7 +973,8 @@ Widget __containerOfApplyButton(BuildContext context) {
           bool res = await model.sendCommand();
           if (res) {
             baseWidgetModel.showOverLayWidget(false, Container());
-            baseWidgetModel.showOverLayWidget(true, _ApproveCommandMessage());
+            baseWidgetModel.showOverLayWidget(
+                true, const _ApproveCommandMessage());
           } else {
             baseWidgetModel.showOverLayWidget(false, Container());
             baseWidgetModel.showOverLayWidget(
@@ -1279,8 +1352,8 @@ Widget __containerMinusCommandLine(BuildContext context, int index) {
                         baseWidgetModel.showOverLayWidget(false, Container());
                       },
                       focusNode: model.administratorPasswordFocusNode,
-                      textEditingController: model.administratorPasswordTextController,
-
+                      textEditingController:
+                          model.administratorPasswordTextController,
                     ),
                   );
                 }

@@ -41,8 +41,11 @@ class TableViewModel extends BaseModel {
   List<Article> _listOfArticlesBySubFamily = List.empty(growable: true);
   List<Article> _listOfArticlesByFamily = List.empty(growable: true);
   Map<String, bool> _listCommandLineWasChecked = {};
+
+  bool _searching = false;
   int _isFamilySelected = -1;
   int _subfamilySelected = -1;
+
   String _errorMessage = "";
   String _errorMessageInit = "";
 
@@ -90,11 +93,17 @@ class TableViewModel extends BaseModel {
   FocusNode get administratorPasswordFocusNode =>
       _administratorPasswordFocusNode;
 
-
   String get errorMessageInit => _errorMessageInit;
 
-
   Map<String, bool> get listCommandLineWasChecked => _listCommandLineWasChecked;
+
+
+  bool get searching => _searching;
+
+  set searching(bool value) {
+    _searching = value;
+    notifyListeners();
+  }
 
   set listCommandLineWasChecked(Map<String, bool> value) {
     _listCommandLineWasChecked = value;
@@ -196,7 +205,7 @@ class TableViewModel extends BaseModel {
       if (state == ViewState.BUSY) {
         throw ErrorDescription("Finish the process to perform a new one");
       } else {
-        try{
+        try {
           setState(ViewState.BUSY);
           listOfFamilies.clear();
           ResponseObject resFamilies = await familyService.getFamilies();
@@ -216,40 +225,40 @@ class TableViewModel extends BaseModel {
           ///and take this map to create an object of CommandTable to finally add this new object
           ///to the listOfCommand and _listOfCommandImmutable
           ///
-          List<CommandTable> temp = List.empty(growable: true);
-          for (var element in tableDetail.commandTable!) {
-            temp.add(element);
-          }
 
-          String jsonTemp = CommandTable.toJson(tableDetail.commandTable!);
+          if (tableDetail.commandTable!.isNotEmpty) {
+            String jsonTemp = CommandTable.toJson(tableDetail.commandTable!);
 
-          Map<String, dynamic> jsonCon = jsonDecode(jsonTemp);
-          jsonCon.forEach((key, value) {
-            print("$key : $value");
-            List<dynamic> conv = jsonCon["items"];
-            for (var element in conv) {
-              print("$element");
-              listOfCommand.add(CommandTable.fromJson(element));
-              for(CommandTable value in listOfCommand){
-                listCommandLineWasChecked.putIfAbsent("${value.id}", () => false);
+            Map<String, dynamic> jsonCon = jsonDecode(jsonTemp);
+            jsonCon.forEach((key, value) {
+              print("$key : $value");
+              List<dynamic> conv = jsonCon["items"];
+              for (var element in conv) {
+                print("$element");
+                listOfCommand.add(CommandTable.fromJson(element));
+                for (CommandTable value in listOfCommand) {
+                  listCommandLineWasChecked.putIfAbsent(
+                      "${value.id}", () => false);
+                }
+                _listOfCommandImmutable.add(CommandTable.fromJson(element));
               }
-              _listOfCommandImmutable.add(CommandTable.fromJson(element));
-            }
-          });
+            });
+          }
 
           //--------------------------------------------------------------------//
 
           setState(ViewState.IDLE);
           notifyListeners();
 
-        _flag = false;
-        }catch(error){
-            _errorMessageInit = AppLocalizations.of(context)?.initErrorMessageTableText ?? "";
+          _flag = false;
+        } catch (error) {
+          _errorMessageInit =
+              AppLocalizations.of(context)?.initErrorMessageTableText ?? "";
+          print(
+              "Error in init method in table_view_model.dart. Error: $error ---------->>>");
         }
-
-
+      }
     }
-  }
   }
 
   String getTotalOfCommand() {
@@ -406,24 +415,24 @@ class TableViewModel extends BaseModel {
   }
 
   bool restArticle(int index) {
-
     //check if it exist in the original command
     bool exist = false;
     int indexInImmutable = 0;
-    for(int i =0; _listOfCommandImmutable.length > i; i++){
-      if(_listOfCommandImmutable[i].id == listOfCommand[index].id){
+    for (int i = 0; _listOfCommandImmutable.length > i; i++) {
+      if (_listOfCommandImmutable[i].id == listOfCommand[index].id) {
         exist = true;
         indexInImmutable = i;
         break;
       }
     }
-    if(exist){
-      if ((listOfCommand[index].can! - 1) < (_listOfCommandImmutable[indexInImmutable].can ?? 0)) {
+    if (exist) {
+      if ((listOfCommand[index].can! - 1) <
+          (_listOfCommandImmutable[indexInImmutable].can ?? 0)) {
         return false;
       } else {
         listOfCommand[index].can = listOfCommand[index].can! - 1;
       }
-    }else{
+    } else {
       //if not existing in the original command rest 1 or eliminate the command line
       if ((listOfCommand[index].can! - 1) < 1) {
         listOfCommand.remove(listOfCommand[index]);
@@ -467,28 +476,22 @@ class TableViewModel extends BaseModel {
   }
 
   void restArticleByAdmin(int index) {
-
     if ((listOfCommand[index].can! - 1) < 1) {
       listOfCommand.remove(listOfCommand[index]);
     } else {
       listOfCommand[index].can = listOfCommand[index].can! - 1;
     }
     notifyListeners();
-
   }
 
   bool getIfWasChecked(int index) {
-
     bool val = false;
     listCommandLineWasChecked.forEach((key, value) {
-      if(key == "${listOfCommand[index].id}"){
+      if (key == "${listOfCommand[index].id}") {
         val = value;
       }
     });
 
     return val;
-
-
   }
-
 }
